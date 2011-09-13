@@ -21,11 +21,11 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
             var v1={x:p1.x-p3.x,y:p1.y-p3.y},
             v2={x:p2.x-p3.x,y:p2.y-p3.y},
             v3={x:p4.x-p3.x,y:p4.y-p3.y},
-            v=this.CrossMul(v1,v3)*this.CrossMul(v2,v3)
+            v=this.CrossMul(v1,v3)*this.CrossMul(v2,v3);
             v1={x:p3.x-p1.x,y:p3.y-p1.y}
             v2={x:p4.x-p1.x,y:p4.y-p1.y}
             v3={x:p2.x-p1.x,y:p2.y-p1.y}
-            return (v<=0&&this.CrossMul(v1,v3)*this.CrossMul(v2,v3)<=0)?true:false
+            return v<=0&&this.CrossMul(v1,v3)*this.CrossMul(v2,v3)<=0;
         },
         InFences:function(curPoint,points){//判断一个点是否在多边图形中,算法需要测试
             var p1,p2,p3,p4
@@ -36,7 +36,7 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
             for(var i=0;i<points.length;i++){
                 p3=points[i];
                 p4= (i+1==points.length)?points[0]:points[i+1];
-                if(this.CheckCross(p1,p2,p3,p4)==true){
+                if(this.CheckCross(p1,p2,p3,p4)&&p3.y!=p1.y||p4.y==p1.y){
                     count++;
                 }
             }
