@@ -31,21 +31,16 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
             var p1,p2,p3,p4
             p1=curPoint;
             p2={x:-100,y:curPoint.y}
-            var count=0
+            var count=0;
             //对每条边都和射线作对比
-            for(var i=0;i<points.length-1;i++){
-                p3=points[i]
-                p4=points[i+1]
+            for(var i=0;i<points.length;i++){
+                p3=points[i];
+                p4= (i+1==points.length)?points[0]:points[i+1];
                 if(this.CheckCross(p1,p2,p3,p4)==true){
-                    count++
+                    count++;
                 }
             }
-            p3=points[points.length-1]
-            p4=points[0]
-            if(this.CheckCross(p1,p2,p3,p4)==true){
-                count++
-            }
-            return (count%2==0)?false:true
+            return count%2!=0;
         }
     }
     window.Ga = Graphic;
