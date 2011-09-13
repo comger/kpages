@@ -285,3 +285,55 @@ Weibo.Graphic.Fences = Weibo.Graphic.Fences || ((function(){
 })())
 
 
+/**
+    Text 文字
+    opts = {
+        x,
+        y,
+        text,
+        maxWidth,
+        font:{
+            ...
+            textAlign:start|end|left|right|center,
+            textBaseline:alphabetic|top|bottom|middle|handing
+        },
+        styles:{
+            
+        }
+    }
+**/
+Weibo.Graphic.Text = Weibo.Graphic.Text || ((function(){
+    var Text = function(opts,fill){ this.Init(opts,fill) }
+    Co.Inheritance(Weibo.Graphic.Base,Text);
+    Co.extend({
+        Opts:null,
+        IsFill:true,
+        Init:function(opts,fill){  
+            this.Opts = opts;
+            this.InitMouseEvn();
+        },
+        InRange:function(m){//需要支持Mouse、Click 等事件时，此方法必须实现
+            return false;
+        },
+        Render:function(ctx){
+            var o = this.Opts;
+            if(o.font){ //样式设置
+                ctx.font = o.font;
+                if(o.font.baseline)
+                    ctx.textBaseline = o.font.baseline;
+                if(o.font.textAlign)
+                    ctx.textAlign = o.font.textAlign;
+            }
+
+            if(this.IsFill){ //填充还是勾边
+                ctx.fillText(text,o.x,o.y,o.maxWidth)
+            }else{
+                ctx.strokeText(text,o.x,o.y,o.maxWidth)
+            }
+            
+        }
+    },Text.prototype);
+    return Text;
+})())
+
+
