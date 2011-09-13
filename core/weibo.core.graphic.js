@@ -36,6 +36,13 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
             for(var i=0;i<points.length;i++){
                 p3=points[i];
                 p4= (i+1==points.length)?points[0]:points[i+1];
+                if(p3.y == p4.py)
+                     continue;
+                if(p1.y <= Math.min(p3.y, p4.y))
+                    continue;
+                if(p1.y >= Math.max(p3.y,p4.y))
+                    continue;
+
                 if(this.CheckCross(p1,p2,p3,p4)&&(p3.y!=p1.y||p4.y==p1.y)){
                     count++;
                 }
