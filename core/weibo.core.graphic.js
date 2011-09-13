@@ -36,16 +36,21 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
             for(var i=0;i<points.length;i++){
                 p3=points[i];
                 p4= (i+1==points.length)?points[0]:points[i+1];
-                if(p3.y == p4.py)
-                     continue;
-                if(p1.y <= Math.min(p3.y, p4.y))
+                if(p4.y == curPoint.y)
                     continue;
-                if(p1.y >= Math.max(p3.y,p4.y))
+                if(p1.y < Math.min(p3.y, p4.y))
                     continue;
-
-                if(this.CheckCross(p1,p2,p3,p4)&&(p3.y!=p1.y||p4.y==p1.y)){
-                    count++;
+                if(p1.y > Math.max(p3.y,p4.y))
+                    continue;
+                if(p3.y == curPoint.y){
+                    next= (i+1==points.length)?points[0]:points[i+1];
+                    last= (i == 0)?points[points.length - 1]:points[i-1];
+                    if((next.y - curPoint.y)*(last.y - curPoint.y)<0)
+                        count++;
+                    continue;
                 }
+                if(this.CheckCross(p1,p2,p3,p4))
+                    count++;
             }
             return count%2!=0;
         }
@@ -53,7 +58,6 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
     window.Ga = Graphic;
     return Graphic;
 })());
-
 /**
  图型容器类
  功能清单

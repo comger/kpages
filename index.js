@@ -153,8 +153,24 @@ $(function(){
          console.log("tri2out");
     })
 
+
+    var ps3 = [{x:200,y:200},{x:300,y:200},{x:250,y:250}];
+    var tri3 = new Weibo.Graphic.Fences({
+        points:ps3
+    });
+
+
+    tri3.MouseOver.Add(function(e){
+         console.log("tri3over");
+    });
+
+    tri3.MouseOut.Add(function(e){
+         console.log("tri3out");
+    })
+
     canvas.Draw(tri);    
     canvas.Draw(tri2); 
+    canvas.Draw(tri3); 
 
 
     var text1 =new Weibo.Graphic.Text({
