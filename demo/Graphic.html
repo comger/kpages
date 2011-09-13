@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
     <title>无标题页</title>
-    <link href="../../static/js/core/skin/defualt.css" rel="stylesheet" type="text/css" />
-    <script src="../../static/js/jquery-1.4.4.min.js" type="text/javascript"></script>
-    <script src="../../static/js/excanvas.js" type="text/javascript"></script>
-    <script src="../../static/js/core/weibo.core.js" type="text/javascript"></script>
-    <script src="../../static/js/core/weibo.core.graphic.js" type="text/javascript"></script>
+    <link href="/js/core/skin/defualt.css" rel="stylesheet" type="text/css" />
+    <script src="/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="/js/excanvas.js" type="text/javascript"></script>
+    <script src="/js/core/weibo.core.js" type="text/javascript"></script>
+    <script src="/js/core/weibo.core.graphic.js" type="text/javascript"></script>
 </head>
 <body>
     <canvas id="canvas" width="800px" height="600px"></canvas>
@@ -15,6 +15,35 @@
 <script type="text/javascript">
 $(function(){
     var canvas = new Weibo.Graphic.Canvas("#canvas");
+
+    for(var i=0;i<50;i++){
+        _l1 = new Weibo.Graphic.Line({
+            x:0,
+            y:i*10,
+            endx:500,
+            endy:i*10,
+            styles:{
+                strokeStyle:"#ccc",
+                lineWidth:0.5
+            }
+        });
+        canvas.Draw(_l1);
+
+        _l2 = new Weibo.Graphic.Line({
+            x:i*10,
+            y:0,
+            endx:i*10,
+            endy:500,
+            styles:{
+                strokeStyle:"#ccc",
+                lineWidth:0.5
+            }
+        });
+        canvas.Draw(_l2);
+        
+    }
+
+
     var rect1 = new Weibo.Graphic.Rect({
             x:100,
             y:120,
@@ -57,19 +86,87 @@ $(function(){
     var line1 = new Weibo.Graphic.Line({
         x:0,
         y:0,
-        endx:400,
-        endy:400
+        endx:500,
+        endy:0
     });
 
     canvas.Draw(line1);
     var line2 = new Weibo.Graphic.Line({
-        x:400,
-        y:400,
-        endx:500,
-        endy:300
+        x:0,
+        y:0,
+        endx:000,
+        endy:500
     });
     
     canvas.Draw(line2);
+
+    var arc = new Weibo.Graphic.Arc({
+        x:500,
+        y:250,
+        r:50,
+        w:0
+    });
+
+    arc.MouseOver.Add(function(e){
+         console.log("arcover");
+    });
+
+    arc.MouseOut.Add(function(e){
+         console.log("arcout");
+    })
+
+
+    var arc2 = new Weibo.Graphic.Arc({
+        x:500,
+        y:500,
+        r:50,
+        w:0
+    });
+
+    arc2.MouseOver.Add(function(e){
+         console.log("arc2over");
+    });
+
+    arc2.MouseOut.Add(function(e){
+         console.log("arc2out");
+    })
+
+    canvas.Draw(arc);
+    canvas.Draw(arc2);
+
+    var ps = [{x:400,y:400},{x:400,y:600},{x:300,y:500}];
+    var tri = new Weibo.Graphic.Fences({
+        points:ps
+    });
+
+
+    tri.MouseOver.Add(function(e){
+         var m ={ x:e.clientX, y:e.clientY};
+         console.log(m);
+         console.log("triover");
+    });
+
+    tri.MouseOut.Add(function(e){
+         console.log("triout");
+    })
+
+    var ps2 = [{x:400,y:400},{x:400,y:600},{x:500,y:500}];
+    var tri2 = new Weibo.Graphic.Fences({
+        points:ps2
+    });
+
+
+    tri2.MouseOver.Add(function(e){
+         console.log("tri2over");
+    });
+
+    tri2.MouseOut.Add(function(e){
+         console.log("tri2out");
+    })
+
+    canvas.Draw(tri);    
+    canvas.Draw(tri2); 
     
 })
 </script>
+
