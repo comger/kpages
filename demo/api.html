@@ -1,0 +1,717 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>core.js api demo</title>
+    <link href="../../static/js/core/skin/defualt.css" rel="stylesheet" type="text/css" />
+    <script src="../../static/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="../../static/js/jquery.cookie.js" type="text/javascript"></script>
+    <script src="../../static/js/core/weibo.core.js" type="text/javascript"></script>
+    <script src="../../static/js/core/weibo.core.static.js" type="text/javascript"></script>
+    <script src="../../static/js/core/weibo.core.data.js" type="text/javascript"></script>
+    <script src="../../static/js/core/weibo.core.ui.js" type="text/javascript"></script>
+    <style>
+    .wrap{ width:1000px; margin:10px auto;text-align: left; }
+    h3{ color:red;}
+    .box { padding:5px; margin-bottom:10px;  }
+    .item{padding-left:12px;}
+    pre {     background: none repeat scroll 0 0 #F5F5F5;
+    border: 1px dotted #778855;
+    font-family: "Courier New",monospace;
+    font-size: 12px;
+    margin: 10px 0 0;
+    padding: 10px;
+    width: 800px; line-height:24px;}
+    .test{ padding:5px;}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="box">
+            <h3>构架工具类 Weibo.Common as window.Co</h3>
+                <div class="item">
+                    <h4>Co.Cookie </h4>
+                    <p>方法与jquery.cookie 的使用方法一致</p>
+                    <pre>
+Co.Cookie("domain","barfoo.com") //设置 domain cookie 值为 "barfoo.com" 
+Co.Cookie("domain","barfoo.com",1000*60) //设置 domain cookie 值为 "barfoo.com" ,失效时间为 1000*60
+var domain = Co.Cookie("domain") //获取 domain 的 cookie 值               
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='Co.Cookie("domain","barfoo.com");' value="设置" />
+                        <input type="button" onclick='alert(Co.Cookie("domain"));'  value="获取" />
+                        <script type="text/javascript">
+                            
+                        </script>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <h4>Co.CookieStartWith </h4>
+                    <pre>
+Co.Cookie("bf_domain","barfoo.com");
+Co.Cookie("bf_nickname","comger");
+Co.CookieStartWith("bf_",true) //获取以 key 开头的cookie,并返回字典；当 keyflag 为 true 时字典键删除开关 key              
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testCookieStartWith()'  value="获取nickname" />
+                        <script type="text/javascript">
+                            function testCookieStartWith(){
+                                Co.Cookie("bf_domain","barfoo.com");
+                                Co.Cookie("bf_nickname","comger");
+                                var cookies = Co.CookieStartWith("bf_",true);
+                                alert(cookies.nickname);
+                            }
+                        </script>
+                    </div>
+                </div>
+               
+                <div class="item">
+                    <h4>Co.IsHtml5() 获取是否支持html5 (未实现) </h4>
+                </div>
+
+                <div class="item">
+                    <h4>Co.LoadScript(src) </h4>
+                    <pre>
+Co.LoadScript("http://www.xxx.com/xxx.js") //动态加载 script
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>Co.extend(base,obj) </h4>
+                    <p>拷贝继承base对象属性，并返回obj</p>
+                    <pre>
+    Co.extend({
+        CountName:null,
+        Init: function(elm,target,cname) {
+            //todo
+        },
+        SetContent:function(content){
+            //设置提示内容，可支持Dom
+            this.Element.html(content);
+        }
+    },Message.prototype);
+    //此时 Message.prototype 除本身的之外，还拥有了 CountName,Init(),SetContent() 等方法和属性
+                    </pre>
+                </div>
+
+               
+                <div class="item">
+                    <h4>Co.Inheritance(base,obj) </h4>
+                    <p> 把base的原型复制给obj,并返回 （原型继承） </p>
+                    <pre>
+    Weibo.Common.Inheritance(Weibo.UI.Base, Message);
+    //此时 Message 除本身的之外，还拥有了 Weibo.UI.Base 的方法和属性
+                    </pre>
+                </div>
+
+
+                <div class="item">
+                    <h4>Co.CustomDict   自定义字典</h4>
+                    <pre>
+var dict ={};
+Co.CustomDict(dict,'domain','barfoo.com'); //设置dict['domain']='barfoo.com';
+Co.CustomDict(dict,{
+    'domain':'barfoo.com',
+    'nickname':'comger'
+});//当key为字典时，dict = $.extend(dict,key) 将 key的键值赋给dict,此时 dict 添加或重写了 domain,nickname
+Co.CustomDict(dict,'nickname')  //当key为字符串时，返回dict[nickname] ('comger')
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>Co.ToArray(iterable) </h4>
+                    <p> 将 iterable 对象转换成数组 </p>
+                    <pre>
+var rs = Co.ToArray(Function);
+
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testToArray()'  value="对象转换成数组" />
+                        <script type="text/javascript">
+                            function testToArray(){
+                                var rs = Co.ToArray(Function.prototype);
+                                for(var i=0;i<rs.length;i++){
+                                    alert(rs[i]);
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <h4>Filter(fn,arr)</h4>
+                    <p> 过滤 返回满足 fn 的，arr 项数组 </p>
+                    <pre>
+var arr = [1,5,6,8,9]
+var rs = Co.Filter(function(seg){
+    return seg%2==0;
+},arr);
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testFilter()'  value="数组过滤" />
+                        <script type="text/javascript">
+                            function testFilter(){
+                                var arr = [1,5,6,8,9];
+                                var rs = Co.Filter(function(item){
+                                    return item%2==0;
+                                },arr);
+                                for(var i=0;i<rs.length;i++){
+                                    alert(rs[i]);
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <h4>Map(fn,arr)</h4>
+                    <p> 映射 map函数fn 作用于给定序列的每个元素，并用一个列表来提供返回值。</p>
+                    <pre>
+var arr = [1,5,6,8,9]
+var rs = Co.Map(function(seg){
+    return seg%2;
+},arr);
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testMap()'  value="数组映射" />
+                        <script type="text/javascript">
+                            function testMap(){
+                                var arr = [1,5,6,8,9];
+                                var rs = Co.Map(function(item){
+                                    return item%2;
+                                },arr);
+                                for(var i=0;i<rs.length;i++){
+                                    alert(rs[i]);
+                                }
+
+                            }
+                        </script>
+                    </div>
+                </div>
+
+
+                <div class="item">
+                    <h4>Reduce(fn,arr,initail)</h4>
+                    <p>  化简  fn有两参数，将fn作用于arr 数组的元素，每次携带一对（先前的结果以及下一个序列的元素），<br>
+                    连续的将现有的结果和下一个值作用在获得的随后的结果上，最后减少我们的序列为一个单一的返回值<br>
+                    initail 为计算的初始值，可不传入这参数
+                    </p>
+                    <pre>
+var arr = [1,5,6,8,9]
+var rs = Co.Reduce(function(a,b){
+    return a+b;
+},arr,10); //rs =39
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testReduce()'  value="数组化简" />
+                        <script type="text/javascript">
+                            function testReduce(){
+                                var arr = [1,5,6,8,9];
+                                var rs = Co.Reduce(function(a,b){
+                                    return a+b;
+                                },arr,10);
+                                alert(rs);
+                            }
+                        </script>
+                    </div>
+
+
+                <div class="item">
+                    <h4>Co.Keys(object)</h4>
+                    <p>获取指定对象所有属性</p>
+                    <pre>
+var Date = new Date();
+var keys = Co.Keys(Date);
+for(var i=0;i<=keys.length;i++){
+    alert(keys[i]);
+}
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testkeys()'  value="获取Date的所有属性" />
+                        <script type="text/javascript">
+                            function testkeys(){
+                                var d = new Date();
+                                var keys = Co.Keys(d);
+                                for(var i=0;i<keys.length;i++){
+                                    alert(keys[i]);
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+
+
+                <div class="item">
+                    <h4>Co.Values(object)</h4>
+                    <p>获取指定对象所有属性</p>
+                    <pre>
+var Date = new Date();
+var keys = Co.Values(Date);
+for(var i=0;i<=keys.length;i++){
+    alert(keys[i]);
+}
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testvalues()'  value="获取Date的所有属性值" />
+                        <script type="text/javascript">
+                            function testvalues(){
+                                var d = new Date();
+                                var keys = Co.Values(d);
+                                for(var i=0;i<keys.length;i++){
+                                    alert(keys[i]);
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+                
+                 
+                <div class="item">
+                    <h4>Co.Clone(object) </h4>
+                    <p> clone 对象，并返回</p>
+                    <pre>
+var d = new Date();
+var d2 = Co.Clone(d);
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>Co.Round(num,dec)</h4>
+                    <p> 取最近的num ,dec为小数点后位数 默认为0</p>
+                    <pre>
+Co.Round(6.8,0) //  7
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='alert(Co.Dates.Round(6.842,2))'  value="取 6.8 最近的整数" />
+                    </div>
+                </div>
+
+                <div class="item">
+                    <h4>Co.GetRandomInt()</h4>
+                    <p> 获取 10000 以内的随机整数</p>
+                    <pre>
+Co.GetRandomInt() //  
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='alert(Co.GetRandomInt())'  value="取10000以内的随机整数" />
+                    </div>
+                </div>
+
+                <div class="item">
+                    <h4>Weibo.Common.Dates</h4>
+                    <p> Co.Dates.Convert(d) 转指定参数转成日期对象 ，可接受参数为数组，日期，整数，字符串，对象 </p>
+                    <pre>
+var d = Co.Dates.Convert('2011-02-03'); //将字符串格式的日期转成日期对象
+d= Co.Dates.Convert([2011,02,03]);      //将数组格式的日期转成日期对象
+d = Co.Dates.Convert(new Date());       //将日期格式的日期转成日期对象
+d = Co.Dates.Convert(12354755477);      //将整数格式的日期转成日期对象
+                    </pre>
+                    <p> Co.Dates.Compare(d1,d2) a,b两时间对比,时间格式出错时返回 NaN <br>
+                       如果 d1在d2前，-1 <br>
+                       如果 d1==d2, 0 <br> 
+                       如果 d1在d2 之后 ，1
+                    <pre>
+var d1 = new Date();
+var d2 = new Date(2001,12,03);
+var flag = Co.Dates.Compare(d1,d2)； // flag= 1
+                    </pre>
+                    <p> Co.Dates.InRange(d,start,end) 检查时间是否在指定范围， 时间格式出错时返回 NaN </p>
+                    <pre>
+var d = new Date(2011,7,18);
+var start = new Date(2010,12,3);
+var end = new Date(2011,12,3);
+var flag = Co.Dates.InRange(d,start,end)  // flag = true
+                    </pre>
+                    <p>Co.Dates.Now() 获取当前时间戳</p>
+                    <pre>
+Co.Dates.Now() //  1313548135
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='alert(Co.Dates.Now())'  value="获取当前时间戳" />
+                    </div>
+
+                </div>
+
+
+                <div class="item">
+                    <h4>Weibo.Common.Html </h4>
+                    <p> Co.Html.Count(html) 针对 a 标签统计页面可见字数</p>
+                    <pre>
+var html='<a uid="4e51dc11f0e4421ffa000007" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdfasdfasdfasdfasdfasdddddd';
+alert(Co.HtmlCount(html));
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testHtmlCount()'  value="统计页面可见字数" />
+                        <script type="text/javascript">
+                            function testHtmlCount(){
+   var html='<a uid="4e51dc11f0e4421ffa000007" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdfasdfasdfasdfasdfasdddddd';
+                                alert(Co.Html.Count(html));
+                            }
+                        </script>
+                    </div>
+                    <p> ClearTag(html,tag)清除html中 tag 标签，仅保留内容</p>
+                    <pre>
+   var html='<a uid="4e51dc11f0e4421ffa000007" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdfasdfasdfasdfasdfasdddddd';
+   alert(Co.Html.ClearTag(html,"a"));
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testClearTag()'  value="清除html中 a 标签" />
+                        <script type="text/javascript">
+                            function testClearTag(){
+   var html='<a uid="4e51dc11f0e4421ffa000007" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdfasdfasdfasdfasdfasdddddd';
+                                alert(Co.Html.ClearTag(html,"a"));
+                            }
+                        </script>
+                    </div>
+
+                    <p> ReplaceTag(html,tag,attr)清除html中 tag 标签，仅保留标签attr 值，attr未定义时，保留内容</p>
+                    <pre>
+   var html='<a uid="4e51dc11f0e4421ffa000007" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdfasdfasdfasdfasdfasdddddd';
+   alert(Co.Html.ClearTag(html,"a"));
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testReplaceTag()'  value="替换html中 a 标签" />
+                        <script type="text/javascript">
+                            function testReplaceTag(){
+   var html='asdfasdf<a uid="ass" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdd<a uid="4e51dc11f0e4421ffa000007" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdfasdfasdfasdfasdfasdddddd';
+                                alert(Co.Html.ReplaceTag(html,"a","uid"));
+                            }
+                        </script>
+                    </div>
+                </div>
+            <h3>事件委托对象 Weibo.Delegate</h3>
+                <div class="item">
+                    <p>管理对象事件的执行方法组，添加、移除方法、执行方法等</p>
+                    <pre>
+Weibo.Demo = Weibo.Demo || ((function(){
+    var Demo = function(){ this.Init();}
+    Demo.prototype = {
+        this.test:null,
+        Init:function(){
+            this.test = new Weibo.Delegate();
+        }
+    }
+    return Demo;
+})())
+
+var demo = new Weibo.Demo();
+                    </pre>
+                <p>Add(fn,self)添加注册事件方法</p>
+                <pre>
+demo.test.Add(function(){
+    alert("demo.test");
+},demo);
+function testdemo(){
+    alert("test.demo");
+}
+demo.test.Add(testdemo,demo);
+                </pre>
+                <p>One(fn,self) 绑定单个事件</p>
+                <pre>
+demo.test.One(function(){
+    alert("demo.test.One");
+},demo);
+                </pre>
+                <p>Remove(fn) 移除事件方法</p>
+                <pre>
+demo.test.Remove(testdemo);
+                </pre>
+                <p>Call() 调用事件方法</p>
+                <pre>
+demo.test.Call();
+                </pre>
+           </div>
+
+            <h3>架构基础对象扩展方法</h3>
+                <div class="item">
+                    <h4>Date 日期扩展方法</h4>
+                    <p>SetDate(n) 获取当前的+ N小时的日期</p>
+                    <pre>
+var d = new Date();
+d.SetDate(-10);  // 将当前时间提前了10小时
+d.SetDate(10); //将当前时间推后了10小时
+                    </pre>
+
+                    <hp>ToDayLine() 获取当前时间线 当前0点</hp>
+                    <pre>
+var d = new Date(); // 2010-12-03 15:42:36
+d=Co.Dates.Convert("2010-12-03 15:42:36");
+d.ToDayLine() ; //返回当前0点的时间  2010-12-03 0:0:0
+                    </pre>
+
+                    <p>ToWeiboDate() 转成微博所需时间格式 (未完成)</p>
+                    <pre>
+var d = new Date(); // 2010-12-03 15:42:36
+d.ToWeiboDate() ; 
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testpubDate()'  value="获取发表时间格式" />
+                        <script type="text/javascript">
+                            var sd = new Date();
+                            sd=Co.Dates.Convert("2010-12-03 15:02:36");
+                            function testpubDate(){
+                                
+                                setTimeout(showtime(),1000);
+                            }
+                            function showtime(){
+                                alert(sd.ToWeiboDate());
+                            }
+
+
+                        </script>  
+                    </div>
+                </div>
+
+                <div class="item">
+                    <h4>String 字符串扩展方</h4>
+                    <p>Format(arguments) 返回格式化字符串 </p>
+                    <pre>
+"欢迎您:{0}，你的房间号是:{1}".Format("comger","1202") // 欢迎您:comger，你的房间号是:1202
+                    </pre>
+
+                    <p>toArray() 将字符串转成字符数组</p>
+                    <pre>
+var str ="abcdefg";
+str.toArray(); // ["a","b","c","d","e","f","g"]
+                    </pre>
+                    <p>Trim() 清除字符串前后空格</p>
+                    <pre>
+var str =" abcdefg ";
+str.Trim();
+                    </pre>
+                </div>
+
+
+                <div class="item">
+                    <h4>Number 整型扩展方法</h4>
+                    <p>Pad(lenght) 前补0直到符合指定长度，用于数字补0 </p>
+                    <pre>
+var i = 12;
+i.Pad(3) // "012"
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='alert(new Number(12).Pad(3))'  value="补0至3位" />
+                    </div>
+                </div>
+
+                <div class="item">
+                   
+                    <h4>Function 方法类扩展方</h4>
+                     <p>Param() 获取方法参数</p>
+                    <pre>
+function testp(arg,a){
+     alert(arg+this.num);
+}
+var arr = testp.Param(); // ["arg","a"]
+
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testParam()'  value="Function Param" />
+                        <script type="text/javascript">
+                            function testp(arg,a){
+                                alert(this.num+arg);
+                            }
+                            function testParam(){
+                                var arr = testp.Param();
+                                for(var i=0;i<arr.length;i++){
+                                    alert(arr[i]);
+                                }
+                            }
+
+                        </script>              
+                    </div>
+
+                    <p>Bind(arguments) 用另一个函数来封装原始的函数对象，将函数运行时的作用域限定为 thisObj 所指定的对象。 <br>
+译注：该方法返回一个新的函数对象，返回的函数是原函数将其 this 关键字指向 thisObj 后的版本，并且，如果指定了可选的 arg 参数，还会将原函数中的部分或全部参数固定为 args 指定的值。该方法不会修改原函数对象。 
+                    </p>
+                    <pre>
+function add(arg){
+     alert(arg+this.num);
+}
+function demo(){
+    this.num =2;
+}
+function testBind(){
+    var d =  demo();  // 
+    var fnadd = add.Bind(d,3);
+    fnadd(); // 5
+    fnadd(6); // 结果还是5 
+    add(6)； // 结果为 8
+
+    fnadd = add.Bind(d);
+    fnadd(); // error
+    fnadd(3); // 5
+    add(5); // 7
+}
+
+                    </pre>
+                    <div class="test">
+                        <input type="button" onclick='testBind()'  value="Function Bind" /><a href="http://blog.51yip.com/manual/prototype/prototype/api/function/bind.htm" target="_abank">更多信息</a>
+                        <script type="text/javascript">
+                            function add(arg){
+                                alert(this.num+arg);
+                            }
+                            function demo(){
+                                this.num =2;
+                            }
+                            function testBind(){
+                                var a = demo();
+                                var fna = add.Bind(a,3);
+                                //fna =  add.Bind(a);
+                                fna(6);
+                            }
+
+                        </script>              
+                    </div>
+                    <p>BindAsEventListener() </p>
+                    <p>一个专用于事件的 Bind 方法的变体， 它确保事件触发后会将当前事件对象作为第一个参数传递给事件处理函数。</p>
+                    <pre>
+var obj = { name: 'A nice demo' }; 
+function handler(e) { 
+	var tag = Event.element(e).tagName.toLowerCase(); 
+	var data = Array.prototype.slice.call(arguments); 
+	data.shift();
+	alert(this.name + '\nClick on a ' + tag + '\nOther args: ' + data.join(', ')); 
+}
+
+$(function(){
+    $("body").click(function(){
+        handler.BindAsEventListener(obj, 1, 2, 3)
+        // 现在，页面上的任意点击都会显示 obj.name、所点击元素的小写的标签名称以及 "1, 2, 3" 
+    })
+})
+
+                    </pre>
+                    <div class="test">
+                          <a href="http://blog.51yip.com/manual/prototype/prototype/api/function/bindAsEventListener.htm" target="_abank">更多信息</a>      
+                    </div>
+                   
+                </div>
+
+
+                <div class="item">
+                    <h4>Array 扩展方法</h4>
+                    <p>Remove(index,count)  </p>
+                    <p>Remove(key) </p>
+                    <p>IndexOf(value) </p>
+                </div>
+
+            <h3>客户端内存数据管理器 Weibo.StaticObjs as window.So</h3>
+                    
+                <div class="item">
+                    <h4>So.Config(key,val)</h4>
+                    <p>为设置简单的键值，val只能是string ;否则不能固化到cookie,失效时间为 So.Expre,默认为一天 </p>
+                    <pre>
+So.Config("domain","barfoo.com"); 
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>So.Config(object)</h4>
+                    <p>object 为一级字典；同时设置字典的键值。同样值只能使用string </p>
+                    <pre>
+So.Config({
+    domain:"barfoo.com",
+    nickname:'comger'
+}); 
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>So.Config(key)</h4>
+                    <p>获取key 对应的配置值 </p>
+                    <pre>
+var doamin = So.Config("domain")
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>So.Dict(key,val)</h4>
+                    <p>设置字典或按key获取字典值,用法与 So.Config 一致，但值可以接受对象</p>
+                    <pre>
+So.Dict("domain","barfoo.com");
+So.Dict("Config",{
+    widht:"100",
+    height:"100"
+});
+So.Dict("Config") //返回Config 字典对象
+                    </pre>
+                </div>
+
+            <h3>构架UI通用方法 Weibo.UI as window.Ui</h3>
+                <div class="item">
+                    <h4>Ui.InPosition(exp,InExp,x,y) </h4>
+                    <p>将exp 对象，浮动到 InExp 对象的位置，并进行,x ,y 偏移 </p>
+                    <pre>
+Ui.InPosition("#msger","#abd",10,20) // 将id 为"msger"的对象，浮动到 id为“adb”的对象位置，left ＋10，top + 20 
+                    </pre>
+                </div>
+
+            <h3>构架UI基类  Weibo.UI.Base</h3>
+                <div class="item">
+                    <h4>AddTo(exp)</h4>
+                    <p>把控件附加到 exp 元素 </p>
+                    <pre>
+var message = new Weibo.UI.Message();  // Weibo.Ui.Message 继自 Weibo.UI.Base
+                                       // Weibo.Common.Inheritance(Weibo.UI.Base, Message);
+message.AddTo("body"); //添加到页面
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>Show()</h4>
+                    <p>显示控件 </p>
+                    <pre>
+message.Show(); //显示控件
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>Hide()</h4>
+                    <p>隐藏控件 </p>
+                    <pre>
+message.Hide(); //隐藏控件
+                    </pre>
+                </div>
+
+                <div class="item">
+                    <h4>Destroy()</h4>
+                    <p>删除控件 </p>
+                    <pre>
+message.Destroy; //删除控件
+                    </pre>
+                </div>
+
+            <h3>构架数据源类 Weibo.Data.DataSource</h3>
+                <div class="item">
+                    <p>本类要与数据绑定控件配合使用 </p>
+                    <pre>
+        var render = Co.ui.BaseRender();
+        render.DataSource = new Weibo.Data.DataSource("http://www.weibo.com/api/");
+        render.DataBing()  //绑定数据
+        render.DataSource.Load(Params) //重新加载数据
+        
+        // datasource 提供了，以下事件，用于扩展及数据处理
+        Changes:null, //变化中事件，用于预处理数据
+        OnChanging:null, // 变化前事件
+        OnChanged:null,//变化后事件
+        
+        //使用方法如下
+        render.DataSource.Changes.Add(function(e){ //todo })
+        render.DataSource.OnChanging.Add(function(){ //todo })
+        render.DataSource.OnChanged.Add(function(e){ //todo })
+
+        // Load(Params) 加载数据，params 为数据源参数字典，可为空
+                    </pre>
+                </div>
+
+    
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+$(function(){
+
+})
+</script>
