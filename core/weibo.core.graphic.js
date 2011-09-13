@@ -71,13 +71,6 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
 			var _offset = this.Options.Offset = $(exp).offset();
             var self = this;
 
-            //初始化画笔线条样式
-            this.Ctx.prototype = {
-                fillStyle:'#000',
-                strokeStyle:'blue',
-                lineWidth:1
-            }
-
 			$(exp).mousemove(function(e){ // 移动事件支持
 				var m ={ x:(e.clientX + window.pageXOffset-_offset.left), y:(e.clientY + window.pageYOffset-_offset.top)};
                 //var m ={ x:e.clientX,y:e.clientY};                
@@ -319,18 +312,20 @@ Weibo.Graphic.Text = Weibo.Graphic.Text || ((function(){
             var o = this.Opts;
             if(o.font){ //样式设置
                 ctx.font = o.font;
-                if(o.font.baseline)
-                    ctx.textBaseline = o.font.baseline;
-                if(o.font.textAlign)
-                    ctx.textAlign = o.font.textAlign;
             }
+            if(o.baseline)
+                ctx.textBaseline = o.baseline;
+
+            if(o.font.textAlign)
+                ctx.textAlign = o.textAlign;
 
             if(this.IsFill){ //填充还是勾边
-                ctx.fillText(text,o.x,o.y,o.maxWidth)
+                ctx.fillText(o.text,o.x,o.y)
             }else{
-                ctx.strokeText(text,o.x,o.y,o.maxWidth)
+                ctx.strokeText(o.text,o.x,o.y)
             }
-            
+
+            o.width = ctx.measureText(o.text).width;
         }
     },Text.prototype);
     return Text;
