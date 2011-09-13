@@ -285,11 +285,9 @@ Weibo.Graphic.Fences = Weibo.Graphic.Fences || ((function(){
         y,
         text,
         maxWidth,
-        font:{
-            ...
-            textAlign:start|end|left|right|center,
-            textBaseline:alphabetic|top|bottom|middle|handing
-        },
+        font:"",
+        textAlign:start|end|left|right|center,
+        textBaseline:alphabetic|top|bottom|middle|handing,
         styles:{
             
         }
