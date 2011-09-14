@@ -8,10 +8,10 @@ $(function(){
         x:200,
         y:200,
         w:120,
-        h:80,
-        color:"#00ccbb",
+        h:180,
+        color:"#d1e8f9",
         v:{
-            x:30, 
+            x:50, 
             y:20
         }
     });
@@ -24,15 +24,15 @@ $(function(){
         console.log("cube out");
     });
 
-    //canvas.Draw(cube); 
+    canvas.Draw(cube); 
 
     var cylinder = new Weibo.Graphic.Cylinder({
-        x:300,
+        x:700,
         y:200,
         r:80,
         rate:0.45,
-        h:360,
-        color:"#0aaccc"
+        h:180,
+        color:"#d1e8f9"
     });
 
     cylinder.MouseOver.Add(function(){
@@ -50,7 +50,7 @@ $(function(){
         y:200,
         r:80,
         rate:0.45,
-        h:360,
+        h:180,
         color:"#0aaccc"
     }); 
 
@@ -62,6 +62,24 @@ $(function(){
         console.log("cylinder2 out");
     });
 
-     canvas.Draw(cylinder2);
-       
+    canvas.Draw(cylinder2);
+
+    var sector = new Weibo.Graphic.Sector({
+        x:900,
+        y:200,
+        r:80,
+        rate:0.45,
+        h:20,
+        color:"#0aaccc"
+    }); 
+
+    sector.MouseOver.Add(function(){
+        console.log("sector over");
+    });
+
+    sector.MouseOut.Add(function(){
+        console.log("sector out");
+    });
+    
+    canvas.Draw(sector);
 })

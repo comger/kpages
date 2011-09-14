@@ -34,11 +34,12 @@ Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
         Render:function(ctx){
             var o = this.Opts;
             var startcolor = o.color;
-            endcolor= startcolor.replace("#","0x");
-            endcolor = "#"+(parseInt(endcolor)+o.v.x).Pad(6);
-            //endcolor = endcolor.toString(16).replace("0x","#");
-            
-            var grd=ctx.createLinearGradient(o.x,o.y,o.x+o.w,o.y+o.h);
+            var c = new Weibo.Color(startcolor);
+            c.changeS(0.2);
+            c.changeV(-50);
+
+            var endcolor = c.toString();
+            var grd=ctx.createLinearGradient(o.x, o.y, o.x, o.y + o.h);
             grd.addColorStop(0,startcolor);
             grd.addColorStop(1,endcolor);
             ctx.fillStyle=grd;
@@ -46,18 +47,24 @@ Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
  
             //上面
             var top1 = {x:o.x + o.v.x,y:o.y - o.v.y}
-            var top2 = {x:top1.x+o.w,y:top1.y}
+            var top2 = {x:top1.x + o.w,y:top1.y}
             
             var ps = [{x:o.x,y:o.y},{x:top1.x,y:top1.y},{x:top2.x,y:top2.y},{x:o.x+o.w,y:o.y}]
             var _tri = new Weibo.Graphic.Fences({points:ps},true);
-            grd=ctx.createLinearGradient(o.x,o.y,top1.x,top1.y);
+            grd=ctx.createLinearGradient(o.x,o.y,top2.x,top2.y);
             grd.addColorStop(0,endcolor);
             grd.addColorStop(1,startcolor);
             ctx.fillStyle=grd;
             _tri.Render(ctx)
 
+            c.changeS(0.2);
+            c.changeV(-50);
+            var endcolor2 = c.toString();
             var ps2 = [{x:o.x+o.w,y:o.y},{x:top2.x,y:top2.y},{x:top2.x,y:top2.y+o.h},{x:o.x+o.w,y:o.y+o.h}]
             var _tri2 = new Weibo.Graphic.Fences({points:ps2},true);
+            grd=ctx.createLinearGradient(o.x + o.w,o.y,o.x + o.w ,o.y + o.h);
+            grd.addColorStop(0,endcolor);
+            grd.addColorStop(1,endcolor2);
             ctx.fillStyle=grd;
             _tri2.Render(ctx)
 
@@ -67,6 +74,8 @@ Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
     },Cube.prototype)
     return Cube;
 })())
+
+
 
 /**
     Cylinder 圆柱体
@@ -92,52 +101,112 @@ Weibo.Graphic.Cylinder = Weibo.Graphic.Cylinder || ((function(){
         InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
             var o = this.Opts;
             var rh = o.r*o.rate;
-            var flag = 0;
-            var v = {x:m.x+o.x,y:o.y+m.y}
-            if((v.x*v.x/o.r+v.y*v.y/rh)<1)
-                flag ++;//是否在上面的椭圆中
 
-            var points = [Ga.NewPoint(o.x-o.r,o.y),Ga.NewPoint(o.x+o.r,o.y),Ga.NewPoint(o.x+o.r,o.y+o.h),Ga.NewPoint(o.x-o.r,o.y+o.h)]
+            var v = {x:m.x-o.x,y:m.y-o.y}
+            if((v.x*v.x/(o.r*o.r)+v.y*v.y/(rh*rh))<1)
+                return true;
+
+            var points = [Ga.NewPoint(o.x-o.r,o.y),Ga.NewPoint(o.x+o.r,o.y),Ga.NewPoint(o.x+o.r,o.y+o.h),Ga.NewPoint(o.x-o.r,o.y+o.h)];
             if(Ga.InFences(m,points))
-                flag++ //是否在中间的矩形中
+                return true;
 
-            v = {x:m.x+o.x,y:o.y+o.h+m.y}
-            if((v.x*v.x/o.r+v.y*v.y/rh)<1)
-                flag ++;//是否在下面的椭圆中
+            v = {x:m.x-o.x,y:m.y-o.y-o.h}
+            if((v.x*v.x/(o.r*o.r)+v.y*v.y/(rh*rh))<1)
+                return true
 
-            return flag>0
+            return false;
         },
         Render:function(ctx){
             var o = this.Opts;
             var startcolor = o.color;
-            endcolor= startcolor.replace("#","0x");
-            endcolor = "#"+(parseInt(endcolor)+o.h).Pad(6);
-            //endcolor = endcolor.toString(16).replace("0x","#");
+
+            var c = new Weibo.Color(startcolor);
+            c.changeS(0.2);
+            c.changeV(-100);
+
+            var endcolor = c.toString();
+            c.changeS(0.2);
+            c.changeV(-50);
+            var endcolor2 = c.toString();
             
-            var grd=ctx.createLinearGradient(o.x,o.y,o.x+o.r,o.y+o.h);
+            var grd=ctx.createLinearGradient(o.x-o.r,o.y,o.x+o.r,o.y);
             grd.addColorStop(0,startcolor);
             grd.addColorStop(1,endcolor);
 
             ctx.save();
-            ctx.scale(1,o.rate);
+            ctx.scale(1,o.rate); //开始变形
+
             ctx.beginPath();
             ctx.fillStyle=grd;
-
-            ctx.fillRect(o.x-o.r,o.y,o.r*2,o.h); //画矩型
-            ctx.arc(o.x,o.y+o.h, o.r, 0, Math.PI*2, false); //画下面的椭圆
-            ctx.arc(o.x,o.y, o.r, 0, Math.PI*2, false);//画上面的椭圆
+            ctx.fillRect(o.x-o.r,o.y/o.rate,o.r*2,o.h/o.rate); //画矩型，但要还原y轴与高度           
+            ctx.arc(o.x,o.y/o.rate+o.h/o.rate, o.r, 0, Math.PI*2, false); //画下面的椭圆 但要还原y轴与高度 
             ctx.closePath();
             ctx.fill();
-            
 
+            //开始上面的椭圆的渐变色区域
             ctx.beginPath();
-            ctx.strokeStyle ="#cccccc";
-            ctx.arc(o.x,o.y, o.r, 0, Math.PI*2, false);
+            grd=ctx.createLinearGradient(o.x-o.r,o.y/o.rate,o.x+o.r,o.y/o.rate);
+            grd.addColorStop(0,endcolor);
+            grd.addColorStop(1,startcolor);
+            ctx.fillStyle=grd;
+            ctx.arc(o.x,o.y/o.rate, o.r, 0, Math.PI*2, false);//画上面的椭圆，但要还原y轴
             ctx.closePath();
-            ctx.stroke();
+            ctx.fill();
+
             ctx.restore(); //还原变的比率
-            this.Points = [];
         }
     },Cylinder.prototype)
     return Cylinder;
 })())
+
+/**
+    Sector 
+    opts = {
+        x,
+        y,
+        r,
+        h,
+        rate,
+        v,
+        color
+    }
+**/
+Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
+    var Sector = function(opts){ this.Init(opts);}
+    Co.Inheritance(Weibo.Graphic.Base,Sector);
+    Co.extend({
+        Opts:null,
+        Init:function(opts){
+            this.Opts = opts;
+            this.InitMouseEvn();
+        },
+        InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
+            var o = this.Opts;
+
+        },
+        Render:function(ctx){
+            var o = this.Opts;
+            var startcolor = o.color;
+
+            var c = new Weibo.Color(startcolor);
+            c.changeS(0.2);
+            c.changeV(-100);
+                
+            ctx.beginPath();
+            ctx.moveTo(o.x,o.y);
+            ctx.lineTo(o.x-o.r,o.y+o.h);
+            ctx.lineTo(o.x+o.r,o.y+o.h);
+            ctx.closePath();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(o.x-o.r,o.y+o.h);
+            ctx.quadraticCurveTo(o.x,o.y+o.h+(o.r*o.rate*2),o.x+o.r,o.y+o.h);
+            ctx.closePath();
+            ctx.stroke();
+            
+        }
+    },Sector.prototype)
+    return Sector;
+})())
+

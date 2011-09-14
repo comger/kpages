@@ -59,7 +59,7 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
         },
         NewPoint:function(x,y){ //快速创建一个坐标点
             return {x:x,y:y}
-        }
+        },
     }
     window.Ga = Graphic;
     return Graphic;
