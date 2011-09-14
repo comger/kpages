@@ -54,34 +54,11 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
             }
             return count%2!=0;
         },
-        Hex2RGB:function(color){//将16进制颜色转换成rgb
-            color=color.substring(1);  
-            color=color.toLowerCase();  
-            b=new Array();  
-            for(x=0;x<3;x++){  
-                b[0]=color.substr(x*2,2);  
-                b[3]="0123456789abcdef";  
-                b[1]=b[0].substr(0,1);  
-                b[2]=b[0].substr(1,1);  
-                b[20+x]=b[3].indexOf(b[1])*16+b[3].indexOf(b[2]);  
-            }  
-            return "rgb(" +b[20]+","+b[21]+","+b[22]+ ")";  
+        InArc:function(m,lines){ //判断一个点是否在多个圆弧内,算法需要测试
+            
         },
-        RGBToHex:function(rgb){//将rgb转换成16进制颜色
-           var regexp = "/^rgb/(([0-9]{0,3})/,/s([0-9]{0,3})/,/s([0-9]{0,3})/)/g";  
-           var re = rgb.replace(regexp, "$1 $2 $3").split(" ");//利用正则表达式去掉多余的部分   
-           var hexColor = "#"; var hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];   
-           for (var i = 0; i < 3; i++) {   
-                var r = null; var c = re[i];  
-                var hexAr = [];   
-                while (c > 16) {   
-                      r = c % 16;   
-                      c = (c / 16) >> 0;  
-                      hexAr.push(hex[r]);   
-                 } hexAr.push(hex[c]);   
-               hexColor += hexAr.reverse().join('');  
-            }     
-           return hexColor;   
+        NewPoint:function(x,y){ //快速创建一个坐标点
+            return {x:x,y:y}
         }
     }
     window.Ga = Graphic;
@@ -279,6 +256,44 @@ Weibo.Graphic.Arc = Weibo.Graphic.Arc || ((function(){
 
 
 /**
+    Ellipse  
+    opts = {
+        x,
+        y,
+        rw,
+        rh
+    }
+**/
+Weibo.Graphic.Ellipse = Weibo.Graphic.Ellipse || ((function(){
+    var Ellipse = function(opts){ this.Init(opts) }
+    Co.Inheritance(Weibo.Graphic.Base,Ellipse);
+    Co.extend({
+        Opts:null,
+        Init:function(opts){  
+            this.Opts = opts;
+            this.InitMouseEvn();
+        },
+        InRange:function(m){//需要支持Mouse、Click 等事件时，此方法必须实现
+           
+        },
+        Render:function(ctx){
+            var o = this.Opts;
+            var p = {x:o.x+o.rw,y:o.y}
+            ctx.moveTo(p.x,p.y);
+            for(var i=0;i<360;i++){
+                var ii =i* Math.PI/180;
+                var _p = {x:o.x+o.rw*Math.cos(ii),y:o.y+o.rh*Math.sin(ii)};
+                ctx.lineTo(_p.x,_p.y);
+                ctx.stroke();
+            }
+            
+        }
+    },Ellipse.prototype);
+    return Ellipse;
+})())
+
+
+/**
     多边型 Fences
     opts = {
         points:[]
@@ -321,6 +336,7 @@ Weibo.Graphic.Fences = Weibo.Graphic.Fences || ((function(){
     },Fences.prototype);
     return Fences;
 })())
+
 
 
 /**
