@@ -191,7 +191,25 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
             var c = new Weibo.Color(startcolor);
             c.changeS(0.2);
             c.changeV(-100);
+
+            var endcolor = c.toString();
+            c.changeS(0.2);
+            c.changeV(-50);
+
                 
+            grd=ctx.createLinearGradient(o.x-o.r,o.y/o.rate,o.x+o.r,o.y/o.rate);
+            grd.addColorStop(0,endcolor);
+            grd.addColorStop(1,startcolor);
+            ctx.fillStyle=grd;
+
+            ctx.moveTo(o.x-o.r,o.y+o.h);
+            ctx.lineTo(o.x-o.r,o.y+o.h+o.h);
+            
+            ctx.quadraticCurveTo(o.x,o.y+o.h+o.h+(o.r*o.rate),o.x+o.r,o.y+o.h+o.h);
+            ctx.lineTo(o.x+o.r,o.y+o.h);
+            ctx.closePath();
+            ctx.stroke();
+
             ctx.beginPath();
             ctx.moveTo(o.x,o.y);
             ctx.lineTo(o.x-o.r,o.y+o.h);
@@ -201,9 +219,13 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
 
             ctx.beginPath();
             ctx.moveTo(o.x-o.r,o.y+o.h);
-            ctx.quadraticCurveTo(o.x,o.y+o.h+(o.r*o.rate*2),o.x+o.r,o.y+o.h);
+            ctx.quadraticCurveTo(o.x,o.y+o.h+(o.r*o.rate),o.x+o.r,o.y+o.h);
             ctx.closePath();
             ctx.stroke();
+
+
+
+
             
         }
     },Sector.prototype)
