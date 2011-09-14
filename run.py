@@ -12,15 +12,12 @@ class IndexHandler(RequestHandler):
         self.render(os.path.abspath("demo/api.html"))
 
 
-class GaHandler(RequestHandler):
-    def get(self):
-        self.render(os.path.abspath("demo/Graphic.html"))
+
 settings = {
     "static_path" : os.path.join(os.path.dirname(__file__), "static"),
 }
 
 application = Application([
-    (r"/demo/ga", GaHandler),
     (r"/",IndexHandler),
     (r"/(.*)",StaticFileHandler,dict(path = os.path.dirname(__file__)))
 ], **settings)

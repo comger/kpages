@@ -42,7 +42,7 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
                     continue;
                 if(p1.y > Math.max(p3.y,p4.y))
                     continue;
-                if(p3.y == curPoint.y){
+                if(p3.y == curPoint.y && p1.x>p3.x){
                     next= (i+1==points.length)?points[0]:points[i+1];
                     last= (i == 0)?points[points.length - 1]:points[i-1];
                     if((next.y - curPoint.y)*(last.y - curPoint.y)<0)
@@ -53,6 +53,35 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
                     count++;
             }
             return count%2!=0;
+        },
+        Hex2RGB:function(color){//将16进制颜色转换成rgb
+            color=color.substring(1);  
+            color=color.toLowerCase();  
+            b=new Array();  
+            for(x=0;x<3;x++){  
+                b[0]=color.substr(x*2,2);  
+                b[3]="0123456789abcdef";  
+                b[1]=b[0].substr(0,1);  
+                b[2]=b[0].substr(1,1);  
+                b[20+x]=b[3].indexOf(b[1])*16+b[3].indexOf(b[2]);  
+            }  
+            return "rgb(" +b[20]+","+b[21]+","+b[22]+ ")";  
+        },
+        RGBToHex:function(rgb){//将rgb转换成16进制颜色
+           var regexp = "/^rgb/(([0-9]{0,3})/,/s([0-9]{0,3})/,/s([0-9]{0,3})/)/g";  
+           var re = rgb.replace(regexp, "$1 $2 $3").split(" ");//利用正则表达式去掉多余的部分   
+           var hexColor = "#"; var hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];   
+           for (var i = 0; i < 3; i++) {   
+                var r = null; var c = re[i];  
+                var hexAr = [];   
+                while (c > 16) {   
+                      r = c % 16;   
+                      c = (c / 16) >> 0;  
+                      hexAr.push(hex[r]);   
+                 } hexAr.push(hex[c]);   
+               hexColor += hexAr.reverse().join('');  
+            }     
+           return hexColor;   
         }
     }
     window.Ga = Graphic;
@@ -117,9 +146,9 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
 			this.Graphics.push(graphic);
 		},
         SetStyle:function(styles){//设置线条样式，需要重写优化
-            this.Ctx.fillStyle = styles.fillStyle ||  "#000";
-            this.Ctx.strokeStyle = styles.strokeStyle || "blue";
-            this.Ctx.lineWidth = styles.lineWidth || 1;
+            this.Ctx.fillStyle = styles.fillStyle ||  this.Ctx.fillStyle;
+            this.Ctx.strokeStyle = styles.strokeStyle || this.Ctx.strokeStyle;
+            this.Ctx.lineWidth = styles.lineWidth || this.Ctx.lineWidth;
         },
 		Find:function(m){ // find the graph content the m and it's best font of graphics
             var gs = this.Graphics;
@@ -172,12 +201,13 @@ Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
 
 //矩型
 Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
-    var Rect = function(opts){ this.Init(opts);}
+    var Rect = function(opts,fill){ this.Init(opts,fill);}
     Co.Inheritance(Weibo.Graphic.Base,Rect);
     Co.extend({
         Opts:null,
         Init:function(opts){
             this.Opts = opts;
+            this.IsFill = fill;
             this.InitMouseEvn();
         },
         InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
@@ -186,7 +216,11 @@ Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
         },
         Render:function(ctx){
             //todo
-            ctx.fillRect(this.Opts.x,this.Opts.y,this.Opts.w,this.Opts.h);
+            if(this.IsFill){ //填充还是勾边
+                ctx.fillRect(this.Opts.x,this.Opts.y,this.Opts.w,this.Opts.h);
+            }else{
+                ctx.strokeRect(this.Opts.x,this.Opts.y,this.Opts.w,this.Opts.h);
+            }
         }
     },Rect.prototype)
     return Rect;
