@@ -81,5 +81,5 @@ $(function(){
         console.log("sector out");
     });
     
-    canvas.Draw(sector);
+    //canvas.Draw(sector);
 })
