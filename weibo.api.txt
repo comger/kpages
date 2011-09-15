@@ -1,4 +1,4 @@
-构架工具类 Weibo.Common as window.Co
+构架工具类 Weibo.Common as window.Co 
 
     Co.Cookie(key,val,opts) 设置cookie 
 
