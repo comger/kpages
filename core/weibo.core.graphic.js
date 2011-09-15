@@ -182,7 +182,7 @@ Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
     Co.Inheritance(Weibo.Graphic.Base,Rect);
     Co.extend({
         Opts:null,
-        Init:function(opts){
+        Init:function(opts,fill){
             this.Opts = opts;
             this.IsFill = fill;
             this.InitMouseEvn();
