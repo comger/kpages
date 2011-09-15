@@ -167,7 +167,7 @@ Weibo.Graphic.Cylinder = Weibo.Graphic.Cylinder || ((function(){
         r,
         h,
         rate,
-        v,
+        offset,
         color
     }
 **/
@@ -187,31 +187,65 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
         Render:function(ctx){
             var o = this.Opts;
             var startcolor = o.color;
-
+            
             var c = new Weibo.Color(startcolor);
             c.changeS(0.2);
             c.changeV(-100);
-
             var endcolor = c.toString();
-            c.changeS(0.2);
-            c.changeV(-50);
 
-            ctx.translate(o.x,o.y);
-            grd=ctx.createLinearGradient(o.x-o.r,o.y/o.rate,o.x+o.r,o.y/o.rate);
+            a = Ga.NewPoint(o.x+o.r * Math.cos((o.rate+o.offset)*Math.PI/2),o.y+o.r * Math.sin((o.rate+o.offset)*Math.PI/2));
+            b = Ga.NewPoint(o.x+o.r * Math.cos(o.offset*Math.PI/2),o.y+o.r * Math.sin(o.offset*Math.PI/2));
+
+            grd=ctx.createLinearGradient(o.x,o.y,b.x,b.y);
             grd.addColorStop(0,endcolor);
             grd.addColorStop(1,startcolor);
             ctx.fillStyle=grd;
-
-            ctx.beginPath();
-            ctx.moveTo(o.x-o.r,o.y+o.h);
-            ctx.lineTo(o.x-o.r,o.y+o.h+o.h);
             
-            ctx.quadraticCurveTo(o.x,o.y+o.h+o.h+(o.r*o.rate),o.x+o.r,o.y+o.h+o.h);
-            ctx.lineTo(o.x+o.r,o.y+o.h);
-            ctx.lineTo(o.x,o.y-o.h);
-            ctx.quadraticCurveTo(o.x,o.y+o.h+(o.r*o.rate),o.x+o.r,o.y+o.h);
+            //侧面
+            ctx.beginPath();
+            ctx.moveTo(o.x,o.y);
+            ctx.lineTo(o.x,o.y+o.h);
+            ctx.lineTo(a.x,a.y+o.h);
+            ctx.lineTo(a.x,a.y);
             ctx.closePath();
-            ctx.stroke();
+            ctx.fill();
+            
+            //正面
+            grd=ctx.createLinearGradient(o.x,o.y,b.x,b.y);
+            grd.addColorStop(0,endcolor);
+            grd.addColorStop(1,startcolor);
+            ctx.fillStyle=grd;
+            
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(a.x,a.y+o.h);
+            dpoint = Ga.NewPoint(o.x+(o.r+o.h*o.rate) * Math.cos((o.rate/2 +o.offset)*Math.PI/2),o.y+(o.r+o.h*o.rate)* Math.sin((o.rate/2 +o.offset)*Math.PI/2));
+            ctx.quadraticCurveTo(dpoint.x,dpoint.y+o.h,b.x,b.y+o.h);
+            ctx.lineTo(b.x,b.y);
+            ctx.closePath();
+            ctx.fill();
+            
+            //上面
+            c.changeS(0.2);
+            c.changeV(-100);
+            var endcolor2 = c.toString();
+            grd=ctx.createLinearGradient(o.x,o.y,b.x,b.y);
+            grd.addColorStop(0,startcolor);
+            grd.addColorStop(1,endcolor2);
+            ctx.fillStyle=grd;
+            
+            ctx.beginPath();
+            ctx.moveTo(o.x,o.y);
+            ctx.lineTo(a.x,a.y);
+            dpoint = Ga.NewPoint(o.x+(o.r+o.h*o.rate) * Math.cos((o.rate/2 +o.offset)*Math.PI/2),o.y+(o.r+o.h*o.rate)* Math.sin((o.rate/2 +o.offset)*Math.PI/2));
+            ctx.quadraticCurveTo(dpoint.x,dpoint.y,b.x,b.y);
+            ctx.lineTo(o.x,o.y);
+            ctx.closePath();
+            ctx.fill();
+            
+
+            
+
 
         }
     },Sector.prototype)

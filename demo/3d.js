@@ -5,7 +5,7 @@ $(function(){
     var canvas = new Weibo.Graphic.Canvas("#canvas");
     
     var cube = new Weibo.Graphic.Cube({
-        x:200,
+        x:100,
         y:200,
         w:120,
         h:180,
@@ -27,7 +27,7 @@ $(function(){
     canvas.Draw(cube); 
 
     var cylinder = new Weibo.Graphic.Cylinder({
-        x:700,
+        x:600,
         y:200,
         r:80,
         rate:0.45,
@@ -46,7 +46,7 @@ $(function(){
     canvas.Draw(cylinder);
 
     var cylinder2 = new Weibo.Graphic.Cylinder({
-        x:500,
+        x:400,
         y:200,
         r:80,
         rate:0.45,
@@ -65,11 +65,12 @@ $(function(){
     canvas.Draw(cylinder2);
 
     var sector = new Weibo.Graphic.Sector({
-        x:900,
+        x:850,
         y:200,
-        r:80,
-        rate:0.45,
+        r:100,
+        rate:0.333333333333333333,
         h:20,
+        offset:0.4,
         color:"#0aaccc"
     }); 
 
