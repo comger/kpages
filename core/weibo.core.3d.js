@@ -182,7 +182,7 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
         },
         InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
             var o = this.Opts;
-
+            return false;
         },
         Render:function(ctx){
             var o = this.Opts;
@@ -207,21 +207,23 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
             
             ctx.quadraticCurveTo(o.x,o.y+o.h+o.h+(o.r*o.rate),o.x+o.r,o.y+o.h+o.h);
             ctx.lineTo(o.x+o.r,o.y+o.h);
-            ctx.closePath();
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(o.x,o.y);
-            ctx.lineTo(o.x-o.r,o.y+o.h);
-            ctx.lineTo(o.x+o.r,o.y+o.h);
-            ctx.closePath();
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(o.x-o.r,o.y+o.h);
+            ctx.lineTo(o.x,o.y-o.h);
             ctx.quadraticCurveTo(o.x,o.y+o.h+(o.r*o.rate),o.x+o.r,o.y+o.h);
             ctx.closePath();
             ctx.stroke();
+
+            //ctx.beginPath();
+            //ctx.moveTo(o.x,o.y);
+            //ctx.lineTo(o.x-o.r,o.y+o.h);
+            //ctx.lineTo(o.x+o.r,o.y+o.h);
+            //ctx.closePath();
+            //ctx.stroke();
+
+            //ctx.beginPath();
+            //ctx.moveTo(o.x-o.r,o.y+o.h);
+            //ctx.quadraticCurveTo(o.x,o.y+o.h+(o.r*o.rate),o.x+o.r,o.y+o.h);
+            //ctx.closePath();
+            //ctx.stroke();
 
 
 
