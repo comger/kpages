@@ -142,9 +142,6 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
         },
         Restore:function(){//快速画出快照
 
-        },
-        GetMouse:function(e){
-            
         }
 
 	};
@@ -177,6 +174,19 @@ Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
 
 
 //矩型
+/**
+    opts= {
+        x,
+        y,
+        w,
+        h,
+        styles:{
+            fillStyle,
+            strokeStyle,
+            lineWidth
+        }
+    }
+**/
 Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
     var Rect = function(opts,fill){ this.Init(opts,fill);}
     Co.Inheritance(Weibo.Graphic.Base,Rect);
@@ -204,6 +214,14 @@ Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
 })())
 
 //线条
+/**
+    opts = {
+        x,
+        y,
+        endx,
+        endy
+    }
+**/
 Weibo.Graphic.Line = Weibo.Graphic.Line || ((function(){
     var Line = function(opts){ this.Init(opts) }
     Line.prototype = {

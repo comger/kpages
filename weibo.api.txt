@@ -1,5 +1,4 @@
-构架工具类 Weibo.Common as window.Co
-
+构架工具类 Weibo.Common as window.Co 
 
     Co.Cookie(key,val,opts) 设置cookie 
 
@@ -137,8 +136,109 @@
         render.DataSource.OnChanged.Add(function(e){ //todo })
 
     Load(Params) 加载数据，params 为数据源参数字典，可为空
+
     
+图形类库 Weibo.Graphic
+
+    辅助工具类  Weibo.Graphic as window.Ga
+    Ga.GetPointsDis(point1,point2) //获取 point1 和 point2 的 距离
+    Ga.CrossMul(v1,v2) //计算向量叉乘
+    Ga.CheckCross(p1,p2,p3,p4) //判断两条线段是否相交
+    Ga.InFences(curPoint,points)//判断一个点是否在多边图形中
+    Ga.NewPoint(x,y) //快速创建一个坐标点
+
+    图型容器类 Weibo.Graphic.Canvas
+    
+    Draw(graphic)  //画出传入图形
+    Clear() //初始化，清屏
+    Store() //生成快照
+    Restore() // 还原快照
+
+    基础图型约束类 Weibo.Graphic.Base
+    从此类继承出来的图形具有 Mouseover,MouseOut ,Click 等事件，支持对图形操作
+    事件添加方法
+    var rect = Weibo.Graphic.Rect({...})
+    rect.MouseOver.Add(function(e){
+        //todo
+    })
+
+    图形类库清单
+    矩型 Weibo.Graphic.Rect
+    opts= {
+        x,
+        y,
+        w,
+        h,
+        styles:{
+            fillStyle,
+            strokeStyle,
+            lineWidth
+        }
+    }
+
+    线条 Weibo.Graphic.Line
+    opts = {
+        x,
+        y,
+        endx,
+        endy
+    }
+
+    圆型 Weibo.Graphic.Arc
+    opts={
+        x:100,圆点x坐标
+        y:100, 圆点y坐标
+        r:50,半径
+        w：0
+    }
+
+    多边型 Weibo.Graphic.Fences
+    opts = {
+        points:[]
+        style,
+        fill
+    }
+
+    文字 Weibo.Graphic.Text
+    opts = {
+        x,
+        y,
+        text,
+        maxWidth,
+        font:"",
+        textAlign:start|end|left|right|center,
+        textBaseline:alphabetic|top|bottom|middle|handing,
+        styles:{
+            
+        }
+    }
 
 
+    立方体 Weibo.Graphic.Cube
+    opts = {
+        x,
+        y,
+        w,
+        h,
+        v, //立方向量
+        color,
+        styles:{
+        }
+    }
+
+     圆柱体 Weibo.Graphic.Cylinder
+     opts = {
+        x,
+        y,
+        r,
+        h,
+        color,
+        styles:{
+        }
+    }
+    
+    
+    
+    
     
     
