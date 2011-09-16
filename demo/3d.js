@@ -25,6 +25,8 @@ $(function(){
     });
 
     canvas.Draw(cube); 
+    
+
 
     var cylinder = new Weibo.Graphic.Cylinder({
         x:600,
@@ -83,4 +85,5 @@ $(function(){
     });
     
     canvas.Draw(sector);
+
 })
