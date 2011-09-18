@@ -127,7 +127,8 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
 		},
 		Draw:function(graphic,index){//画传入的图型
             this.SetStyle(graphic.Opts.styles || {})
-			graphic.Render(this.Ctx);
+            if(graphic.Render)
+				graphic.Render(this.Ctx);
             this.Ctx.save();
             this.OldGraphics = this.Graphics;
             if(index){
@@ -173,10 +174,13 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
     return Canvas;
 })());
 
+
 //基础图型约束 
 Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
     var Base =function(){}
     Base.prototype= {
+        Width:0,
+        Height:0,
         MouseOver:null,
         MouseOut:null,
         Mousedown:null,
@@ -199,6 +203,34 @@ Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
         }
     }
     return Base;
+})())
+
+/**
+ 多图形对象容器
+**/
+Weibo.Graphic.Sprite = Weibo.Graphic.Sprite || ((function(){
+    var Sprite = function(opts){ this.Init(opts);}
+    Co.Inheritance(Weibo.Graphic.Base,Sprite);
+    Co.extend({
+        Opts:null,
+        Childs:[],
+        Init:function(opts,fill){
+            this.Opts = opts;
+            this.InitMouseEvn();
+        },
+        InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
+
+        },
+        Append:function(graphic){ //添加子对象
+        	this.Width = Math.max(this.Width,graphic.Width);
+        	this.Height = Math.max(this.Height,graphic.Height);
+        	this.Childs.push(graphic);
+        },
+        ReMove:function(graphic){//移除
+        
+        }
+    },Sprite.prototype)
+    return Sprite;
 })())
 
 
@@ -232,6 +264,8 @@ Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
         },
         Render:function(ctx){
             //todo
+            this.Width = this.Opts.w;
+            this.Height = this.Opts.h;
             if(this.IsFill){ //填充还是勾边
                 ctx.fillRect(this.Opts.x,this.Opts.y,this.Opts.w,this.Opts.h);
             }else{
@@ -262,6 +296,8 @@ Weibo.Graphic.Line = Weibo.Graphic.Line || ((function(){
             ctx.lineTo(this.Opts.endx,this.Opts.endy);
             ctx.closePath();
             ctx.stroke();
+            this.Width = this.Opts.endx - this.Opts.x;
+            this.Height = this.Opts.endy - this.Opts.y;
         }
     }
     return Line;
@@ -290,7 +326,7 @@ Weibo.Graphic.Arc = Weibo.Graphic.Arc || ((function(){
             var dis = Ga.GetPointsDis(m,{x:this.Opts.x,y:this.Opts.y});
             return dis<=this.Opts.r
         },
-        Render:function(ctx){
+        Render:function(ctx){//todo 不以 x,y 为圆点；以x+r,y 为圆点  ？？ 
             var o = this.Opts;
             ctx.beginPath();
             ctx.arc(o.x,o.y,o.r,o.w,Math.PI*2,true);
@@ -300,45 +336,6 @@ Weibo.Graphic.Arc = Weibo.Graphic.Arc || ((function(){
     },Arc.prototype);
     return Arc;
 })())
-
-
-/**
-    Ellipse  
-    opts = {
-        x,
-        y,
-        rw,
-        rh
-    }
-**/
-Weibo.Graphic.Ellipse = Weibo.Graphic.Ellipse || ((function(){
-    var Ellipse = function(opts){ this.Init(opts) }
-    Co.Inheritance(Weibo.Graphic.Base,Ellipse);
-    Co.extend({
-        Opts:null,
-        Init:function(opts){  
-            this.Opts = opts;
-            this.InitMouseEvn();
-        },
-        InRange:function(m){//需要支持Mouse、Click 等事件时，此方法必须实现
-           
-        },
-        Render:function(ctx){
-            var o = this.Opts;
-            var p = {x:o.x+o.rw,y:o.y}
-            ctx.moveTo(p.x,p.y);
-            for(var i=0;i<360;i++){
-                var ii =i* Math.PI/180;
-                var _p = {x:o.x+o.rw*Math.cos(ii),y:o.y+o.rh*Math.sin(ii)};
-                ctx.lineTo(_p.x,_p.y);
-                ctx.stroke();
-            }
-            
-        }
-    },Ellipse.prototype);
-    return Ellipse;
-})())
-
 
 /**
     多边型 Fences
@@ -372,7 +369,6 @@ Weibo.Graphic.Fences = Weibo.Graphic.Fences || ((function(){
                 var _tempPoint = o.points[i];
                 ctx.lineTo(_tempPoint.x,_tempPoint.y);
             }          
-            //ctx.lineTo(beginPoint.x,beginPoint.y);
             if(this.IsFill){ //填充还是勾边
                 ctx.fill();
             }else{
