@@ -244,9 +244,6 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
             ctx.fill();
             
 
-            
-
-
         }
     },Sector.prototype)
     return Sector;

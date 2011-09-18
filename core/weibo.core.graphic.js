@@ -60,6 +60,9 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
         NewPoint:function(x,y){ //快速创建一个坐标点
             return {x:x,y:y}
         },
+        GetMPoint:function(e){ //获取当前Mouse 坐标
+        	return { x:(e.clientX + window.pageXOffset-_offset.left), y:(e.clientY + window.pageYOffset-_offset.top)};
+        }
     }
     window.Ga = Graphic;
     return Graphic;
@@ -89,9 +92,7 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
             var self = this;
 
 			$(exp).mousemove(function(e){ // 移动事件支持
-				var m ={ x:(e.clientX + window.pageXOffset-_offset.left), y:(e.clientY + window.pageYOffset-_offset.top)};
-                //var m ={ x:e.clientX,y:e.clientY};                
-                //console.log(m);
+				var m = Ga.GetMPoint(e);
                 if(self.CurGrgph == null){ //如果当前没有匹配图型，开始搜索，如果搜索到，设置当前图型，并执行当前图型的进入事件
                     self.CurGrgph = self.Find(m);
                     if(self.CurGrgph)
@@ -104,23 +105,47 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
                     self.CurGrgph = null;
                 }
 			});
+			
+			$(exp).Mousedown(function(e){
+                var m =Ga.GetMPoint(e);
+                if(self.CurGrgph)
+                       self.CurGrgph.Mousedown.Call(e);
+			});
+			
+			
+			$(exp).Mouseup(function(e){
+                var m =Ga.GetMPoint(e);
+                if(self.CurGrgph)
+                       self.CurGrgph.Mouseup.Call(e);
+			});
 
             $(exp).click(function(e){ //点击事件
-                var m ={ x:e.clientX, y:e.clientY};
-                if(self.CurGrgph == null){ //如果当前没有匹配图型，开始搜索，如果搜索到，设置当前图型，并执行当前图型的进入事件
-                    self.CurGrgph = self.Find(m);
-                    if(self.CurGrgph)
-                        self.CurGrgph.Click.Call(e);
-                } 
+                var m =Ga.GetMPoint(e);
+                if(self.CurGrgph)
+                       self.CurGrgph.Click.Call(e);
             });
 		},
-		Draw:function(graphic){//画传入的图型
+		Draw:function(graphic,index){//画传入的图型
             this.SetStyle(graphic.Opts.styles || {})
 			graphic.Render(this.Ctx);
             this.Ctx.save();
             this.OldGraphics = this.Graphics;
-            graphic.Index = this.Graphics.length;
-			this.Graphics.push(graphic);
+            if(index){
+            	graphic.Index = index;
+            	this.Graphics.splice(index, 0, graphic);
+            }else{
+		        graphic.Index = this.Graphics.length;
+				this.Graphics.push(graphic);
+            }
+
+		},
+		AutoDraw:function(){//重绘
+			Co.Map((function(item){
+				item.Render(this.Ctx);
+			}).Bind(this),this.Graphics);
+		}
+		Remove:function(graphic){ //移除对象
+			this.Graphics.splice(graphic.Index, 1);	
 		},
         SetStyle:function(styles){//设置线条样式，需要重写优化
             this.Ctx.fillStyle = styles.fillStyle ||  this.Ctx.fillStyle;
@@ -154,6 +179,8 @@ Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
     Base.prototype= {
         MouseOver:null,
         MouseOut:null,
+        Mousedown:null,
+        Mouseup:null,
         Click:null,
         Starting:null,
         Drawing:null,
@@ -162,6 +189,8 @@ Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
             this.MouseOver = new W.Delegate();
             this.MouseOut = new W.Delegate();
             this.Click = new W.Delegate();
+            this.Mousedown = new W.Delegate();
+            this.Mouseup = new W.Delegate();
         },
         InitDrawEvn:function(){
             this.Starting = new W.Delegate();
