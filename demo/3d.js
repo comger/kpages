@@ -68,7 +68,7 @@ $(function(){
         x:850,
         y:200,
         r:100,
-        rate:0.333333333333333333,
+        rate:0.3,
         h:20,
         offset:0.4,
         color:"#0aaccc"
