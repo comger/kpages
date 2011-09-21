@@ -19,6 +19,11 @@ $(function(){
     cube.MouseOver.Add(function(){
         console.log("cube over");
     });
+    
+    cube.Click.Add(function(){
+        alert("cube click");
+    });
+
 
     cube.MouseOut.Add(function(){
         console.log("cube out");
