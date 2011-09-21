@@ -19,12 +19,19 @@ $(function(){
     cube.MouseOver.Add(function(){
         console.log("cube over");
     });
+    
+    cube.MouseOver(function(){
+        console.log("cube over");
+    });
+
 
     cube.MouseOut.Add(function(){
         console.log("cube out");
     });
 
     canvas.Draw(cube); 
+    
+
 
     var cylinder = new Weibo.Graphic.Cylinder({
         x:600,
@@ -83,4 +90,5 @@ $(function(){
     });
     
     canvas.Draw(sector);
+
 })

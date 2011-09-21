@@ -263,34 +263,7 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
             ctx.closePath();
             ctx.stroke();
             
-            for(var i=0;i<o.h;i+10){
-            ctx.moveTo(0,i);
-            ctx.arc(0,i,o.r,0.3,0,true);
-            }
-            
-         
-            
-            
-//            ctx.beginPath();
-//            ctx.moveTo(0,0);
-//            ctx.lineTo(0,o.h);
-//            ctx.lineTo(a.x,a.y+o.h);
-//            ctx.lineTo(a.x,a.y);
-//            ctx.closePath();
-//            ctx.stroke();
-//            
-//            ctx.beginPath();
-//            ctx.moveTo(0,o.h);
-//            ctx.arc(0,o.h,o.r,0.3,0,true);
 
-//            ctx.moveTo(b.x,b.y);
-//            ctx.lineTo(b.x,b.y+o.h);
-//            ctx.closePath();
-//            ctx.stroke();
-//            
-//            ctx.restore();
-            
-            
 
         }
     },Sector.prototype)

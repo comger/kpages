@@ -16,14 +16,12 @@ var Weibo = Weibo || { Version:'dev' };
 Weibo.Common = Weibo.Common || ((function(){
     
     var Common  = {
-        // 拷贝对象继承,两参数必须为对象
-        extend: function(base, obj) {
+        extend: function(base, obj) { // 拷贝对象继承,两参数必须为对象
             for (var i in base) {
                 obj[i] = base[i];}
             return obj;
         },
-        //把base的原型复制给obj,并返回 （原型继承），两参数为类型
-        Inheritance: function(base, obj) {
+        Inheritance: function(base, obj) { //把base的原型复制给obj,并返回 （原型继承），两参数为类型
             for (var i in base.prototype) {
                 obj.prototype[i] = base.prototype[i];}
             return obj;
@@ -43,8 +41,7 @@ Weibo.Common = Weibo.Common || ((function(){
         Clone:function(object){ 
             return $.extend({}, object);
         },
-        // cookie 操作，读、取
-        Cookie:function(name,value,opts){
+        Cookie:function(name,value,opts){ // cookie 操作，读、取
             if(jQuery.cookie !=null && typeof(jQuery.cookie) == "function"){
                 return jQuery.cookie(name,value,opts); 
             }else{// to do somethings
@@ -71,9 +68,7 @@ Weibo.Common = Weibo.Common || ((function(){
         LocalStorage:function(key,val){
             // to do
         },
-        // 是否为html5 支持浏览器
-        // write html5_flag_cookie when first visited
-        IsHtml5:function(){
+        IsHtml5:function(){ // 是否为html5 支持浏览器
             return false;
         },
         LoadScript:function(src){
@@ -148,8 +143,6 @@ Weibo.Common = Weibo.Common || ((function(){
     };
     
     //注册页面简易操作符 Weibo.Common.extend(a,b) = Co.extend(a,b)
-    //Weibo.Common.Method = M
-    //Weibo = W
     window.Co = Common; 
     window.W = Weibo;
     return Common;
@@ -634,9 +627,5 @@ Weibo.StaticObjs = Weibo.StaticObjs || ((function(){
     };
     return StaticObjs;
 })())
-
-
-
-
 
 
