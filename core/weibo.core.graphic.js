@@ -59,9 +59,6 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
         },
         NewPoint:function(x,y){ //快速创建一个坐标点
             return {x:x,y:y}
-        },
-        GetMPoint:function(e){ //获取当前Mouse 坐标
-        	return { x:(e.clientX + window.pageXOffset-_offset.left), y:(e.clientY + window.pageYOffset-_offset.top)};
         }
     }
     window.Ga = Graphic;
@@ -92,7 +89,7 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
             var self = this;
 
 			$(exp).mousemove(function(e){ // 移动事件支持
-				var m = Ga.GetMPoint(e);
+				var m = self.GetMPoint(e);
                 if(self.CurGrgph == null){ //如果当前没有匹配图型，开始搜索，如果搜索到，设置当前图型，并执行当前图型的进入事件
                     self.CurGrgph = self.Find(m);
                     if(self.CurGrgph)
@@ -106,21 +103,21 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
                 }
 			});
 			
-			$(exp).Mousedown(function(e){
-                var m =Ga.GetMPoint(e);
+			$(exp).mousedown(function(e){
+                var m =self.GetMPoint(e);
                 if(self.CurGrgph)
                        self.CurGrgph.Mousedown.Call(e);
 			});
 			
 			
-			$(exp).Mouseup(function(e){
-                var m =Ga.GetMPoint(e);
+			$(exp).mouseup(function(e){
+                var m =self.GetMPoint(e);
                 if(self.CurGrgph)
                        self.CurGrgph.Mouseup.Call(e);
 			});
 
             $(exp).click(function(e){ //点击事件
-                var m =Ga.GetMPoint(e);
+                var m =self.GetMPoint(e);
                 if(self.CurGrgph)
                        self.CurGrgph.Click.Call(e);
             });
@@ -144,7 +141,7 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
 			Co.Map((function(item){
 				item.Render(this.Ctx);
 			}).Bind(this),this.Graphics);
-		}
+		},
 		Remove:function(graphic){ //移除对象
 			this.Graphics.splice(graphic.Index, 1);	
 		},
@@ -168,6 +165,10 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
         },
         Restore:function(){//快速画出快照
 
+        },
+        GetMPoint:function(e){ //获取当前Mouse 坐标
+        	var _offset = this.Canvas.offset();
+        	return { x:(e.clientX + window.pageXOffset-_offset.left), y:(e.clientY + window.pageYOffset-_offset.top)};
         }
 
 	};
