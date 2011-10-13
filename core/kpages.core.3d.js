@@ -19,9 +19,9 @@
         }
     }
 **/
-Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
+Kpages.Graphic.Cube = Kpages.Graphic.Cube || ((function(){
     var Cube = function(opts){ this.Init(opts);}
-    Co.Inheritance(Weibo.Graphic.Base,Cube);
+    Co.Inheritance(Kpages.Graphic.Base,Cube);
     Co.extend({
         Opts:null,
         Init:function(opts){
@@ -34,7 +34,7 @@ Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
         Render:function(ctx){
             var o = this.Opts;
             var startcolor = o.color;
-            var c = new Weibo.Color(startcolor);
+            var c = new Kpages.Color(startcolor);
             c.changeS(0.2);
             c.changeV(-50);
 
@@ -50,7 +50,7 @@ Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
             var top2 = {x:top1.x + o.w,y:top1.y}
             
             var ps = [{x:o.x,y:o.y},{x:top1.x,y:top1.y},{x:top2.x,y:top2.y},{x:o.x+o.w,y:o.y}]
-            var _tri = new Weibo.Graphic.Fences({points:ps},true);
+            var _tri = new Kpages.Graphic.Fences({points:ps},true);
             grd=ctx.createLinearGradient(o.x,o.y,top2.x,top2.y);
             grd.addColorStop(0,endcolor);
             grd.addColorStop(1,startcolor);
@@ -61,7 +61,7 @@ Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
             c.changeV(-50);
             var endcolor2 = c.toString();
             var ps2 = [{x:o.x+o.w,y:o.y},{x:top2.x,y:top2.y},{x:top2.x,y:top2.y+o.h},{x:o.x+o.w,y:o.y+o.h}]
-            var _tri2 = new Weibo.Graphic.Fences({points:ps2},true);
+            var _tri2 = new Kpages.Graphic.Fences({points:ps2},true);
             grd=ctx.createLinearGradient(o.x + o.w,o.y,o.x + o.w ,o.y + o.h);
             grd.addColorStop(0,endcolor);
             grd.addColorStop(1,endcolor2);
@@ -89,9 +89,9 @@ Weibo.Graphic.Cube = Weibo.Graphic.Cube || ((function(){
         }
     }
 **/
-Weibo.Graphic.Cylinder = Weibo.Graphic.Cylinder || ((function(){
+Kpages.Graphic.Cylinder = Kpages.Graphic.Cylinder || ((function(){
     var Cylinder = function(opts){ this.Init(opts);}
-    Co.Inheritance(Weibo.Graphic.Base,Cylinder);
+    Co.Inheritance(Kpages.Graphic.Base,Cylinder);
     Co.extend({
         Opts:null,
         Init:function(opts){
@@ -120,7 +120,7 @@ Weibo.Graphic.Cylinder = Weibo.Graphic.Cylinder || ((function(){
             var o = this.Opts;
             var startcolor = o.color;
 
-            var c = new Weibo.Color(startcolor);
+            var c = new Kpages.Color(startcolor);
             c.changeS(0.2);
             c.changeV(-100);
 
@@ -171,9 +171,9 @@ Weibo.Graphic.Cylinder = Weibo.Graphic.Cylinder || ((function(){
         color
     }
 **/
-Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
+Kpages.Graphic.Sector = Kpages.Graphic.Sector || ((function(){
     var Sector = function(opts){ this.Init(opts);}
-    Co.Inheritance(Weibo.Graphic.Base,Sector);
+    Co.Inheritance(Kpages.Graphic.Base,Sector);
     Co.extend({
         Opts:null,
         Init:function(opts){
@@ -188,7 +188,7 @@ Weibo.Graphic.Sector = Weibo.Graphic.Sector || ((function(){
             var o = this.Opts;
             var startcolor = o.color;
             
-            var c = new Weibo.Color(startcolor);
+            var c = new Kpages.Color(startcolor);
             c.changeS(0.2);
             c.changeV(-100);
             var endcolor = c.toString();

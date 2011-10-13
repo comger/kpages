@@ -3,10 +3,10 @@
    Author: llq<llq17501@gmail.com>
    */
 $(function(){
-    var canvas = new Weibo.Graphic.Canvas("#canvas");
+    var canvas = new Kpages.Graphic.Canvas("#canvas");
 
     for(var i=0;i<50;i++){
-        _l1 = new Weibo.Graphic.Line({
+        _l1 = new Kpages.Graphic.Line({
             x:0,
             y:i*10,
             endx:500,
@@ -18,7 +18,7 @@ $(function(){
         });
         canvas.Draw(_l1);
 
-        _l2 = new Weibo.Graphic.Line({
+        _l2 = new Kpages.Graphic.Line({
             x:i*10,
             y:0,
             endx:i*10,
@@ -33,7 +33,7 @@ $(function(){
     }
 
 
-    var rect1 = new Weibo.Graphic.Rect({
+    var rect1 = new Kpages.Graphic.Rect({
             x:100,
             y:120,
             w:100,
@@ -55,7 +55,7 @@ $(function(){
 
     canvas.Draw(rect1);
 
-    var rect2 = new Weibo.Graphic.Rect({
+    var rect2 = new Kpages.Graphic.Rect({
             x:380,
             y:110,
             w:100,
@@ -72,7 +72,7 @@ $(function(){
 
     canvas.Draw(rect2);
     
-    var line1 = new Weibo.Graphic.Line({
+    var line1 = new Kpages.Graphic.Line({
         x:0,
         y:0,
         endx:500,
@@ -80,7 +80,7 @@ $(function(){
     });
 
     canvas.Draw(line1);
-    var line2 = new Weibo.Graphic.Line({
+    var line2 = new Kpages.Graphic.Line({
         x:0,
         y:0,
         endx:000,
@@ -89,7 +89,7 @@ $(function(){
     
     canvas.Draw(line2);
 
-    var arc = new Weibo.Graphic.Arc({
+    var arc = new Kpages.Graphic.Arc({
         x:500,
         y:250,
         r:50,
@@ -105,7 +105,7 @@ $(function(){
     })
 
 
-    var arc2 = new Weibo.Graphic.Arc({
+    var arc2 = new Kpages.Graphic.Arc({
         x:500,
         y:500,
         r:50,
@@ -124,7 +124,7 @@ $(function(){
     canvas.Draw(arc2);
 
     var ps = [{x:400,y:400},{x:400,y:600},{x:300,y:500}];
-    var tri = new Weibo.Graphic.Fences({
+    var tri = new Kpages.Graphic.Fences({
         points:ps
     });
 
@@ -140,7 +140,7 @@ $(function(){
     })
 
     var ps2 = [{x:400,y:400},{x:400,y:600},{x:500,y:500}];
-    var tri2 = new Weibo.Graphic.Fences({
+    var tri2 = new Kpages.Graphic.Fences({
         points:ps2
     });
 
@@ -155,7 +155,7 @@ $(function(){
 
 
     var ps3 = [{x:200,y:200},{x:300,y:200},{x:250,y:250}];
-    var tri3 = new Weibo.Graphic.Fences({
+    var tri3 = new Kpages.Graphic.Fences({
         points:ps3
     });
 
@@ -173,7 +173,7 @@ $(function(){
     canvas.Draw(tri3); 
 
 
-    var text1 =new Weibo.Graphic.Text({
+    var text1 =new Kpages.Graphic.Text({
         x:500,
         y:100,
         text:"我爱北京天安门",
