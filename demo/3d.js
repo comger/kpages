@@ -2,9 +2,9 @@
    
 **/
 $(function(){
-    var canvas = new Weibo.Graphic.Canvas("#canvas");
+    var canvas = new Kpages.Graphic.Canvas("#canvas");
     
-    var cube = new Weibo.Graphic.Cube({
+    var cube = new Kpages.Graphic.Cube({
         x:100,
         y:200,
         w:120,
@@ -35,7 +35,7 @@ $(function(){
     
 
 
-    var cylinder = new Weibo.Graphic.Cylinder({
+    var cylinder = new Kpages.Graphic.Cylinder({
         x:600,
         y:200,
         r:80,
@@ -54,7 +54,7 @@ $(function(){
 
     canvas.Draw(cylinder);
 
-    var cylinder2 = new Weibo.Graphic.Cylinder({
+    var cylinder2 = new Kpages.Graphic.Cylinder({
         x:400,
         y:200,
         r:80,
@@ -73,7 +73,7 @@ $(function(){
 
     canvas.Draw(cylinder2);
 
-    var sector = new Weibo.Graphic.Sector({
+    var sector = new Kpages.Graphic.Sector({
         x:850,
         y:200,
         r:100,

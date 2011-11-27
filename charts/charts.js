@@ -1,10 +1,10 @@
 /**
- web charts by html5 canvas and Weibo.Graphic.js
+ web charts by html5 canvas and Kpages.Graphic.js
  author comger
 **/
 
 //图表工具类
-Weibo.Charts = Weibo.Charts || ((function(){
+Kpages.Charts = Kpages.Charts || ((function(){
     var Charts = {
         
     }
@@ -14,7 +14,7 @@ Weibo.Charts = Weibo.Charts || ((function(){
 })())
 
 //图表基类，约束类
-Weibo.Charts.Base = Weibo.Charts.Base || ((function(){
+Kpages.Charts.Base = Kpages.Charts.Base || ((function(){
     var Base = function(){ }
     Base.prototype = {
         Width:0,
@@ -44,7 +44,7 @@ Weibo.Charts.Base = Weibo.Charts.Base || ((function(){
     }
  }
 **/
-Weibo.Charts.Curve = Weibo.Charts.Curve || ((function(){
+Kpages.Charts.Curve = Kpages.Charts.Curve || ((function(){
     var Curve = function(opts){ this.Init(opts) }
     Curve.prototype = {
         

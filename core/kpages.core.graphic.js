@@ -7,7 +7,7 @@
 **/
 
 //图形的基本功能
-Weibo.Graphic = Weibo.Graphic || ((function(){
+Kpages.Graphic = Kpages.Graphic || ((function(){
     var Graphic = {
         GetPointsDis:function(point1,point2){ //获取 point1 和 point2 的 距离
             var dx = point1.x - point2.x;
@@ -69,7 +69,7 @@ Weibo.Graphic = Weibo.Graphic || ((function(){
  功能清单
     Clear() 清空容器
 **/
-Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
+Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
     var Canvas = function(exp){ this.Init(exp) };
 	Canvas.prototype = {
 		Options:{
@@ -177,7 +177,7 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
 
 
 //基础图型约束 
-Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
+Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
     var Base =function(){}
     Base.prototype= {
         Width:0,
@@ -216,9 +216,9 @@ Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
 /**
  多图形对象容器
 **/
-Weibo.Graphic.Sprite = Weibo.Graphic.Sprite || ((function(){
+Kpages.Graphic.Sprite = Kpages.Graphic.Sprite || ((function(){
     var Sprite = function(opts){ this.Init(opts);}
-    Co.Inheritance(Weibo.Graphic.Base,Sprite);
+    Co.Inheritance(Kpages.Graphic.Base,Sprite);
     Co.extend({
         Opts:null,
         Childs:[],
@@ -256,9 +256,9 @@ Weibo.Graphic.Sprite = Weibo.Graphic.Sprite || ((function(){
         }
     }
 **/
-Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
+Kpages.Graphic.Rect = Kpages.Graphic.Rect || ((function(){
     var Rect = function(opts,fill){ this.Init(opts,fill);}
-    Co.Inheritance(Weibo.Graphic.Base,Rect);
+    Co.Inheritance(Kpages.Graphic.Base,Rect);
     Co.extend({
         Opts:null,
         Init:function(opts,fill){
@@ -293,7 +293,7 @@ Weibo.Graphic.Rect = Weibo.Graphic.Rect || ((function(){
         endy
     }
 **/
-Weibo.Graphic.Line = Weibo.Graphic.Line || ((function(){
+Kpages.Graphic.Line = Kpages.Graphic.Line || ((function(){
     var Line = function(opts){ this.Init(opts) }
     Line.prototype = {
         Opts:null,
@@ -321,9 +321,9 @@ Weibo.Graphic.Line = Weibo.Graphic.Line || ((function(){
         w：0
     }
 **/
-Weibo.Graphic.Arc = Weibo.Graphic.Arc || ((function(){
+Kpages.Graphic.Arc = Kpages.Graphic.Arc || ((function(){
     var Arc = function(opts){ this.Init(opts) }
-    Co.Inheritance(Weibo.Graphic.Base,Arc);
+    Co.Inheritance(Kpages.Graphic.Base,Arc);
     Co.extend({
         Opts:null,
         Init:function(opts){  
@@ -353,9 +353,9 @@ Weibo.Graphic.Arc = Weibo.Graphic.Arc || ((function(){
         fill
     }
 **/
-Weibo.Graphic.Fences = Weibo.Graphic.Fences || ((function(){
+Kpages.Graphic.Fences = Kpages.Graphic.Fences || ((function(){
     var Fences = function(opts,fill){ this.Init(opts,fill) }
-    Co.Inheritance(Weibo.Graphic.Base,Fences);
+    Co.Inheritance(Kpages.Graphic.Base,Fences);
     Co.extend({
         Opts:null,
         IsFill:true,
@@ -405,9 +405,9 @@ Weibo.Graphic.Fences = Weibo.Graphic.Fences || ((function(){
         }
     }
 **/
-Weibo.Graphic.Text = Weibo.Graphic.Text || ((function(){
+Kpages.Graphic.Text = Kpages.Graphic.Text || ((function(){
     var Text = function(opts,fill){ this.Init(opts,fill) }
-    Co.Inheritance(Weibo.Graphic.Base,Text);
+    Co.Inheritance(Kpages.Graphic.Base,Text);
     Co.extend({
         Opts:null,
         IsFill:true,

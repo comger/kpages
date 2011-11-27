@@ -1,5 +1,5 @@
 /**
- weibo jquery 标准接口
+ Kpages jquery 标准接口
 
     author      : comger 
     createdate  : 2011-08-10
@@ -7,13 +7,13 @@
         
 **/
 
-var Weibo = Weibo || { Version:'dev' };
+var Kpages = Kpages || { Version:'dev' };
 
 
 /**
  工具类
  cookie，浏览器，验证，数据转换等**/
-Weibo.Common = Weibo.Common || ((function(){
+Kpages.Common = Kpages.Common || ((function(){
     
     var Common  = {
         extend: function(base, obj) { // 拷贝对象继承,两参数必须为对象
@@ -142,14 +142,14 @@ Weibo.Common = Weibo.Common || ((function(){
         }
     };
     
-    //注册页面简易操作符 Weibo.Common.extend(a,b) = Co.extend(a,b)
+    //注册页面简易操作符 Kpages.Common.extend(a,b) = Co.extend(a,b)
     window.Co = Common; 
-    window.W = Weibo;
+    window.W = Kpages;
     return Common;
 })());
 
 //Co.Dates 工具库时期相关扩展类
-Weibo.Common.Dates ={
+Kpages.Common.Dates ={
         Convert:function(d) {//转指定参数转成日期对象 ，可接受参数为数组，日期，整数，字符串，对象
             return (
                 d.constructor === Date ? d :
@@ -185,7 +185,7 @@ Weibo.Common.Dates ={
 
 
 //Co.Html html 工具库相关扩展类
-Weibo.Common.Html ={
+Kpages.Common.Html ={
         Count:function(html){//针对 a 标签统计页面可见字数
             var _div = $("<div>").append(html);
             var count=0;
@@ -232,7 +232,7 @@ Weibo.Common.Html ={
 }
 
 //Co.Files 工具库文件相关扩展类
-Weibo.Common.Files = {
+Kpages.Common.Files = {
         FormatSizes:function(size){ //获取友好的size 表达 eg 102400 byte ==> 10 KB
             var byteSize = Math.round(size / 1024 * 100) * .01;
 		    var suffix = 'KB';
@@ -249,7 +249,7 @@ Weibo.Common.Files = {
 /**
 事件委托
 **/
-Weibo.Delegate = Weibo.Delegate || ((function() {
+Kpages.Delegate = Kpages.Delegate || ((function() {
     var Delegate = function() { this.Init();}
     Delegate.prototype = {
         fns: [],
@@ -292,9 +292,9 @@ Weibo.Delegate = Weibo.Delegate || ((function() {
 })());
 
 /**
- weibo ui 通用方法
+ Kpages ui 通用方法
 **/
-Weibo.UI = Weibo.UI || ((function(){
+Kpages.UI = Kpages.UI || ((function(){
     var UI ={
         InPosition:function(exp,InExp,x,y){  //将exp 对象，浮动到 InExp 对象的位置，并进行,x ,y 偏移
             var offset = $(InExp).offset();
@@ -303,15 +303,15 @@ Weibo.UI = Weibo.UI || ((function(){
             if(offset!=null){
             left = offset.left + x ;
             top = offset.top + y;}
-            $(exp).addClass("weibo-floatDiv");
+            $(exp).addClass("Kpages-floatDiv");
             $(exp).css({ left: left, top: top });
         },
         MoveTo:function(exp,left,top){ //将exp 对象，浮动到 left ,top 的位置
-            $(exp).addClass("weibo-floatDiv");
+            $(exp).addClass("Kpages-floatDiv");
             $(exp).css({ left: left, top: top });
         },
         InCenter:function(exp){//将exp 对象，浮动到页面中心
-            $(exp).addClass("weibo-floatDiv");
+            $(exp).addClass("Kpages-floatDiv");
             var left = $(window).width()/2-$(exp).width()/2;
             var top = $(document).scrollTop() + $(window).height()/2 -$(exp).height()/2;
             $(exp).css({ left: left, top: top });
@@ -341,7 +341,7 @@ Weibo.UI = Weibo.UI || ((function(){
 
 /**
  UI 基类，实现基本显示,附加，隐藏及回收**/
-Weibo.UI.Base = Weibo.UI.Base ||((function(){
+Kpages.UI.Base = Kpages.UI.Base ||((function(){
     var Base = function(){}
     Base.prototype = {
         Element: null,
@@ -412,7 +412,7 @@ Co.extend({
     TimeSpan:function(){ //获取时间戳
         return Math.floor(+this / 1000);
     },
-    ToWeiboDate:function(){ //转成微博所需时间格式
+    ToKpagesDate:function(){ //转成微博所需时间格式
         var t = Co.Dates.Now() - this.TimeSpan();
         if (t < 60) return t + '秒前';
         if (t < 3600) return Co.Round( t / 60, 0) + '分钟前';
@@ -475,9 +475,9 @@ Co.extend({
   数据交互类
 **/
 
-Weibo.Data = Weibo.Data ||{};
+Kpages.Data = Kpages.Data ||{};
 //数据源类
-Weibo.Data.DataSource = Weibo.Data.DataSource || ((function(){
+Kpages.Data.DataSource = Kpages.Data.DataSource || ((function(){
     var Datasource = function(url){ this.Init(url);}
     Datasource.prototype = {
         Params: {}, //参数
@@ -518,9 +518,9 @@ Weibo.Data.DataSource = Weibo.Data.DataSource || ((function(){
 })())
 
 //定时加载的数据源
-Weibo.Data.TimingDataSource = Weibo.Data.TimingDataSource ||((function(){
+Kpages.Data.TimingDataSource = Kpages.Data.TimingDataSource ||((function(){
     var TimingDataSource = function(url) { this.Init_(url);}
-    Co.Inheritance(Weibo.Data.DataSource, TimingDataSource);
+    Co.Inheritance(Kpages.Data.DataSource, TimingDataSource);
     Co.extend({
             Time: 60, //定时载入时间（秒）
             _t: null,
@@ -548,7 +548,7 @@ Weibo.Data.TimingDataSource = Weibo.Data.TimingDataSource ||((function(){
 })())
 
 //数据输出基类
-Weibo.Data.BaseRender = Weibo.Data.BaseRender || ((function(){
+Kpages.Data.BaseRender = Kpages.Data.BaseRender || ((function(){
     var BaseRender = function(){}
     BaseRender.prototype = {
         Self:{
@@ -589,11 +589,11 @@ Weibo.Data.BaseRender = Weibo.Data.BaseRender || ((function(){
     客户端内存数据管理器，为页面提供静态数据，允许固化数据
     页面刷新时，数据初始化
 **/
-Weibo.StaticObjs = Weibo.StaticObjs || ((function(){
+Kpages.StaticObjs = Kpages.StaticObjs || ((function(){
     var StaticObjs = function(){ this.Init()}
     StaticObjs.prototype = {
         LConfig:{
-            domain:'weibo.com', //当前域
+            domain:'Kpages.com', //当前域
             skin:null, //当前皮肤
             uid:null, //当前用户ID
             nickname:null

@@ -1,10 +1,10 @@
 /**
-    Weibo.Core.Color 类 颜色处理
+    Kpages.Core.Color 类 颜色处理
     author      : llq 
     createdate  : 2011-09-14
     History  
 **/
-Weibo.Color = Weibo.Color ||((function(){
+Kpages.Color = Kpages.Color ||((function(){
     var _Color = function(color){ this.Init(color)}
     var _TYPE_RGB = "rgb",
         _TYPE_HSV = "hsv",
