@@ -93,12 +93,12 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
                 if(self.CurGrgph == null){ //如果当前没有匹配图型，开始搜索，如果搜索到，设置当前图型，并执行当前图型的进入事件
                     self.CurGrgph = self.Find(m);
                     if(self.CurGrgph)
-                        self.CurGrgph.MouseOver.Call(e);
+                        self.CurGrgph.over.Call(e);
                 }         
 
                 //如果有当前图型，并且光标不在当前图片上，执行离开事件，并清空当前图型
                 if(self.CurGrgph && !self.CurGrgph.InRange(m)){
-                    self.CurGrgph.MouseOut.Call(e);
+                    self.CurGrgph.out.Call(e);
                     self.CurGrgph = null;
                 }
 			});
@@ -106,20 +106,20 @@ Weibo.Graphic.Canvas = Weibo.Graphic.Canvas || ((function(){
 			$(exp).mousedown(function(e){
                 var m =self.GetMPoint(e);
                 if(self.CurGrgph)
-                       self.CurGrgph.Mousedown.Call(e);
+                       self.CurGrgph.down.Call(e);
 			});
 			
 			
 			$(exp).mouseup(function(e){
                 var m =self.GetMPoint(e);
                 if(self.CurGrgph)
-                       self.CurGrgph.Mouseup.Call(e);
+                       self.CurGrgph.up.Call(e);
 			});
 
             $(exp).click(function(e){ //点击事件
                 var m =self.GetMPoint(e);
                 if(self.CurGrgph)
-                       self.CurGrgph.Click.Call(e);
+                       self.CurGrgph._click.Call(e);
             });
 		},
 		Draw:function(graphic,index){//画传入的图型
@@ -182,25 +182,32 @@ Weibo.Graphic.Base = Weibo.Graphic.Base || ((function(){
     Base.prototype= {
         Width:0,
         Height:0,
-        MouseOver:null,
-        MouseOut:null,
-        Mousedown:null,
-        Mouseup:null,
-        Click:null,
-        Starting:null,
-        Drawing:null,
-        Stop:null,
+        MouseEvn:["over","out","_click","down","up"],
+        DrawEvn:["starting","drawing","stop"],
         InitMouseEvn:function(){
-            this.MouseOver = new W.Delegate();
-            this.MouseOut = new W.Delegate();
-            this.Click = new W.Delegate();
-            this.Mousedown = new W.Delegate();
-            this.Mouseup = new W.Delegate();
+            for(var i=0;i<this.MouseEvn.length;i++){
+                evn = this.MouseEvn[i];
+                if(this[evn]==null){
+                    this[evn] = new W.Delegate();
+                    var self = this;
+                    (function(evn){
+                        self["mouse"+evn] = function(fn){ self[evn].Add(fn);};
+                    })(evn);
+                }
+            }
+            this["click"] = this["mouse_click"];
         },
         InitDrawEvn:function(){
-            this.Starting = new W.Delegate();
-            this.Drawing = new W.Delegate();
-            this.Stop = new W.Delegate();
+            for(var i=0;i<this.DrawEvn.length;i++){
+                evn = this.DrawEvn[i];
+                if(this[evn]==null){
+                    this[evn] = new W.Delegate();
+                    var self = this;
+                    (function(evn){
+                        self["on"+evn] = function(fn){ self[evn].Add(fn);};
+                    })(evn);
+                }
+            }
         }
     }
     return Base;
@@ -227,7 +234,7 @@ Weibo.Graphic.Sprite = Weibo.Graphic.Sprite || ((function(){
         	this.Height = Math.max(this.Height,graphic.Height);
         	this.Childs.push(graphic);
         },
-        ReMove:function(graphic){//移除
+        Remove:function(graphic){//移除
         
         }
     },Sprite.prototype)

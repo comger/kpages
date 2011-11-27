@@ -15,17 +15,19 @@ $(function(){
             y:20
         }
     });
-
-    cube.MouseOver.Add(function(){
-        console.log("cube over");
+   
+    cube.mouseover(function(){
+        console.log("cube over ha ha");
     });
     
-    cube.Click.Add(function(){
-        alert("cube click");
+
+    cube.click(function(){
+        console.log("cube click");
+
     });
 
 
-    cube.MouseOut.Add(function(){
+    cube.mouseout(function(){
         console.log("cube out");
     });
 
@@ -42,11 +44,11 @@ $(function(){
         color:"#d1e8f9"
     });
 
-    cylinder.MouseOver.Add(function(){
+    cylinder.mouseover(function(){
         console.log("cylinder over");
     });
 
-    cylinder.MouseOut.Add(function(){
+    cylinder.mouseout(function(){
         console.log("cylinder out");
     });
 
@@ -61,11 +63,11 @@ $(function(){
         color:"#0aaccc"
     }); 
 
-    cylinder2.MouseOver.Add(function(){
+    cylinder2.mouseover(function(){
         console.log("cylinder2 over");
     });
 
-    cylinder2.MouseOut.Add(function(){
+    cylinder2.mouseout(function(){
         console.log("cylinder2 out");
     });
 
@@ -75,17 +77,17 @@ $(function(){
         x:850,
         y:200,
         r:100,
-        rate:0.333333333333333333,
+        rate:0.3,
         h:20,
         offset:0.4,
         color:"#0aaccc"
     }); 
 
-    sector.MouseOver.Add(function(){
+    sector.mouseover(function(){
         console.log("sector over");
     });
 
-    sector.MouseOut.Add(function(){
+    sector.mouseout(function(){
         console.log("sector out");
     });
     
