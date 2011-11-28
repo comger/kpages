@@ -239,9 +239,8 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
                 }
             }
         },
-        unBind:function(delegate,fn){//解除对事件的委托
-        	delegate = delegate.replace("mouse","");
-        	this[delegate].Remove(fn);
+        reSize:function(n){//缩放比例,n 为缩放的比例
+            //todo
         }
     }
     return Base;

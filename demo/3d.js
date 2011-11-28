@@ -56,24 +56,5 @@ $(function(){
     canvas.DragEnable(cylinder2);
     canvas.Draw(cylinder2);
 
-    var sector = new Kpages.Graphic.Sector({
-        x:850,
-        y:200,
-        r:100,
-        rate:0.3,
-        h:20,
-        offset:0.4,
-        color:"#0aaccc"
-    }); 
-
-    sector.mouseover(function(){
-        console.log("sector over");
-    });
-
-    sector.mouseout(function(){
-        console.log("sector out");
-    });
-    
-    canvas.Draw(sector);
 
 })
