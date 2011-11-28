@@ -196,7 +196,17 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
             function mouseUp(){
                 $(document).unbind('mousemove',mouseMove).unbind('mouseup',mouseUp);
             }
-        }
+        },
+        SaveToImage:function(){//保存为图像数据格式
+        	return this.Ctx.canvas.toDataURL();
+        },
+        SaveToDataFile:function(){//系列化保存为字典格式
+        	var _json={};
+        	Co.Map(function(grap){
+        		_json[""+grap.Index]=grap.Opts;
+        	},this.Graphics)
+        	return $.toJSON(_json);
+        },
 	};
     return Canvas;
 })());
@@ -262,34 +272,6 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
         }
     }
     return Base;
-})())
-
-/**
- 多图形对象容器
-**/
-Kpages.Graphic.Sprite = Kpages.Graphic.Sprite || ((function(){
-    var Sprite = function(opts){ this.Init(opts);}
-    Co.Inheritance(Kpages.Graphic.Base,Sprite);
-    Co.extend({
-        Opts:null,
-        Childs:[],
-        Init:function(opts,fill){
-            this.Opts = opts;
-            this.InitMouseEvn();
-        },
-        InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
-
-        },
-        Append:function(graphic){ //添加子对象
-        	this.Width = Math.max(this.Width,graphic.Width);
-        	this.Height = Math.max(this.Height,graphic.Height);
-        	this.Childs.push(graphic);
-        },
-        Remove:function(graphic){//移除
-        
-        }
-    },Sprite.prototype)
-    return Sprite;
 })())
 
 

@@ -29,8 +29,6 @@ $(function(){
 	
     canvas.Draw(cube); 
     
-    
-
 
     var cylinder = new Kpages.Graphic.Cylinder({
         x:600,
@@ -74,7 +72,15 @@ $(function(){
         
         canvas.DragEnable(cld);
         canvas.Draw(cld);
-    })
+    });
+    
+    $("#bnsaveImage").click(function(){
+    	var imgdata = canvas.SaveToImage();
+    	console.log(imgdata);
+    	var img = $("<img>")
+    	img.attr("src",imgdata);
+    	$("body").append(img)
+    });
 
 
 })
