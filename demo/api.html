@@ -24,7 +24,7 @@
 <body>
     <div class="wrap">
         <div class="box">
-            <h3>构架工具类 Weibo.Common as window.Co</h3>
+            <h3>构架工具类 Kpages.Common as window.Co</h3>
                 <div class="item">
                     <h4>Co.Cookie </h4>
                     <p>方法与jquery.cookie 的使用方法一致</p>
@@ -96,8 +96,8 @@ Co.LoadScript("http://www.xxx.com/xxx.js") //动态加载 script
                     <h4>Co.Inheritance(base,obj) </h4>
                     <p> 把base的原型复制给obj,并返回 （原型继承） </p>
                     <pre>
-    Weibo.Common.Inheritance(Weibo.UI.Base, Message);
-    //此时 Message 除本身的之外，还拥有了 Weibo.UI.Base 的方法和属性
+    Kpages.Common.Inheritance(Kpages.UI.Base, Message);
+    //此时 Message 除本身的之外，还拥有了 Kpages.UI.Base 的方法和属性
                     </pre>
                 </div>
 
@@ -295,7 +295,7 @@ Co.GetRandomInt() //
                 </div>
 
                 <div class="item">
-                    <h4>Weibo.Common.Dates</h4>
+                    <h4>Kpages.Common.Dates</h4>
                     <p> Co.Dates.Convert(d) 转指定参数转成日期对象 ，可接受参数为数组，日期，整数，字符串，对象 </p>
                     <pre>
 var d = Co.Dates.Convert('2011-02-03'); //将字符串格式的日期转成日期对象
@@ -331,7 +331,7 @@ Co.Dates.Now() //  1313548135
 
 
                 <div class="item">
-                    <h4>Weibo.Common.Html </h4>
+                    <h4>Kpages.Common.Html </h4>
                     <p> Co.Html.Count(html) 针对 a 标签统计页面可见字数</p>
                     <pre>
 var html='<a uid="4e51dc11f0e4421ffa000007" class="CardRemind" href="/person/4e51dc11f0e4421ffa000007">@[llq]</a>:asdfasdfasdfasdfasdfasdfasdddddd';
@@ -376,22 +376,22 @@ alert(Co.HtmlCount(html));
                         </script>
                     </div>
                 </div>
-            <h3>事件委托对象 Weibo.Delegate</h3>
+            <h3>事件委托对象 Kpages.Delegate</h3>
                 <div class="item">
                     <p>管理对象事件的执行方法组，添加、移除方法、执行方法等</p>
                     <pre>
-Weibo.Demo = Weibo.Demo || ((function(){
+Kpages.Demo = Kpages.Demo || ((function(){
     var Demo = function(){ this.Init();}
     Demo.prototype = {
         this.test:null,
         Init:function(){
-            this.test = new Weibo.Delegate();
+            this.test = new Kpages.Delegate();
         }
     }
     return Demo;
 })())
 
-var demo = new Weibo.Demo();
+var demo = new Kpages.Demo();
                     </pre>
                 <p>Add(fn,self)添加注册事件方法</p>
                 <pre>
@@ -436,10 +436,10 @@ d=Co.Dates.Convert("2010-12-03 15:42:36");
 d.ToDayLine() ; //返回当前0点的时间  2010-12-03 0:0:0
                     </pre>
 
-                    <p>ToWeiboDate() 转成微博所需时间格式 (未完成)</p>
+                    <p>ToKpagesDate() 转成微博所需时间格式 (未完成)</p>
                     <pre>
 var d = new Date(); // 2010-12-03 15:42:36
-d.ToWeiboDate() ; 
+d.ToKpagesDate() ; 
                     </pre>
                     <div class="test">
                         <input type="button" onclick='testpubDate()'  value="获取发表时间格式" />
@@ -451,7 +451,7 @@ d.ToWeiboDate() ;
                                 setTimeout(showtime(),1000);
                             }
                             function showtime(){
-                                alert(sd.ToWeiboDate());
+                                alert(sd.ToKpagesDate());
                             }
 
 
@@ -593,7 +593,7 @@ $(function(){
                     <p>IndexOf(value) </p>
                 </div>
 
-            <h3>客户端内存数据管理器 Weibo.StaticObjs as window.So</h3>
+            <h3>客户端内存数据管理器 Kpages.StaticObjs as window.So</h3>
                     
                 <div class="item">
                     <h4>So.Config(key,val)</h4>
@@ -635,7 +635,7 @@ So.Dict("Config") //返回Config 字典对象
                     </pre>
                 </div>
 
-            <h3>构架UI通用方法 Weibo.UI as window.Ui</h3>
+            <h3>构架UI通用方法 Kpages.UI as window.Ui</h3>
                 <div class="item">
                     <h4>Ui.InPosition(exp,InExp,x,y) </h4>
                     <p>将exp 对象，浮动到 InExp 对象的位置，并进行,x ,y 偏移 </p>
@@ -644,13 +644,13 @@ Ui.InPosition("#msger","#abd",10,20) // 将id 为"msger"的对象，浮动到 id
                     </pre>
                 </div>
 
-            <h3>构架UI基类  Weibo.UI.Base</h3>
+            <h3>构架UI基类  Kpages.UI.Base</h3>
                 <div class="item">
                     <h4>AddTo(exp)</h4>
                     <p>把控件附加到 exp 元素 </p>
                     <pre>
-var message = new Weibo.UI.Message();  // Weibo.Ui.Message 继自 Weibo.UI.Base
-                                       // Weibo.Common.Inheritance(Weibo.UI.Base, Message);
+var message = new Kpages.UI.Message();  // Kpages.Ui.Message 继自 Kpages.UI.Base
+                                       // Kpages.Common.Inheritance(Kpages.UI.Base, Message);
 message.AddTo("body"); //添加到页面
                     </pre>
                 </div>
@@ -679,12 +679,12 @@ message.Destroy; //删除控件
                     </pre>
                 </div>
 
-            <h3>构架数据源类 Weibo.Data.DataSource</h3>
+            <h3>构架数据源类 Kpages.Data.DataSource</h3>
                 <div class="item">
                     <p>本类要与数据绑定控件配合使用 </p>
                     <pre>
         var render = Co.ui.BaseRender();
-        render.DataSource = new Weibo.Data.DataSource("http://www.weibo.com/api/");
+        render.DataSource = new Kpages.Data.DataSource("http://www.Kpages.com/api/");
         render.DataBing()  //绑定数据
         render.DataSource.Load(Params) //重新加载数据
         
