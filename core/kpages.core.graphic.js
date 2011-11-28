@@ -3,7 +3,6 @@
     author      : comger 
     createdate  : 2011-08-10
     History 
-        
 **/
 
 //图形的基本功能
@@ -64,6 +63,7 @@ Kpages.Graphic = Kpages.Graphic || ((function(){
     window.Ga = Graphic;
     return Graphic;
 })());
+
 /**
  图型容器类
  功能清单
@@ -79,7 +79,7 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
 		OldGraphics:[],
 		Ctx:null,
         Offset:null,
-        CurGrgph:null, //光标所在的图形
+        CurGraphic:null, //光标所在的图形
         EndPos:null, // 图型结束点
         Canvas:null,
 		Init:function(exp){
@@ -90,37 +90,43 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
 
 			$(exp).mousemove(function(e){ // 移动事件支持
 				var m = self.GetMPoint(e);
-                if(self.CurGrgph == null){ //如果当前没有匹配图型，开始搜索，如果搜索到，设置当前图型，并执行当前图型的进入事件
-                    self.CurGrgph = self.Find(m);
-                    if(self.CurGrgph)
-                        self.CurGrgph.over.Call(e);
+                if(self.CurGraphic == null){ 
+                //如果当前没有匹配图型，开始搜索，如果搜索到，设置当前图型，并执行当前图型的进入事件
+                    self.CurGraphic = self.Find(m);
+                    if(self.CurGraphic){
+                        self.CurGraphic.over.Call(e);
+                    }
                 }         
 
                 //如果有当前图型，并且光标不在当前图片上，执行离开事件，并清空当前图型
-                if(self.CurGrgph && !self.CurGrgph.InRange(m)){
-                    self.CurGrgph.out.Call(e);
-                    self.CurGrgph = null;
+                if(self.CurGraphic && !self.CurGraphic.InRange(m)){
+                    self.CurGraphic.out.Call(e);
+                    self.CurGraphic = null;
                 }
 			});
 			
 			$(exp).mousedown(function(e){
                 var m =self.GetMPoint(e);
-                if(self.CurGrgph)
-                       self.CurGrgph.down.Call(e);
+                if(self.CurGraphic){
+                       self.CurGraphic.down.Call(e);
+                }
 			});
 			
 			
 			$(exp).mouseup(function(e){
                 var m =self.GetMPoint(e);
-                if(self.CurGrgph)
-                       self.CurGrgph.up.Call(e);
+                if(self.CurGraphic){
+                       self.CurGraphic.up.Call(e);
+                }
 			});
 
             $(exp).click(function(e){ //点击事件
                 var m =self.GetMPoint(e);
-                if(self.CurGrgph)
-                       self.CurGrgph._click.Call(e);
+                if(self.CurGraphic){
+                       self.CurGraphic._click.Call(e);
+                 }
             });
+            
 		},
 		Draw:function(graphic,index){//画传入的图型
             this.SetStyle(graphic.Opts.styles || {})
@@ -135,9 +141,13 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
 		        graphic.Index = this.Graphics.length;
 				this.Graphics.push(graphic);
             }
+            
+            //绑定在Canvas对象上
+            graphic.ctx = this;
 
 		},
 		AutoDraw:function(){//重绘
+			this.Clear();
 			Co.Map((function(item){
 				item.Render(this.Ctx);
 			}).Bind(this),this.Graphics);
@@ -158,6 +168,7 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
             return null;
 		},
         Clear:function(){//clear the canvas 
+        	this.Ctx.setTransform(1, 0, 0, 1, 0, 0);//?? 关键
             this.Ctx.clearRect(0, 0, this.Canvas.width(), this.Canvas.height());
         },
         Store:function(graphic){ // 生成返回快照,排除传入的graphic
@@ -184,7 +195,7 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
         Height:0,
         MouseEvn:["over","out","_click","down","up"],
         DrawEvn:["starting","drawing","stop"],
-        InitMouseEvn:function(){
+        InitMouseEvn:function(){//初始化Mouse事件 "over","out","click","down","up"
             for(var i=0;i<this.MouseEvn.length;i++){
                 evn = this.MouseEvn[i];
                 if(this[evn]==null){
@@ -197,7 +208,7 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
             }
             this["click"] = this["mouse_click"];
         },
-        InitDrawEvn:function(){
+        InitDrawEvn:function(){//初始化画图事件，开始，正在画，结束
             for(var i=0;i<this.DrawEvn.length;i++){
                 evn = this.DrawEvn[i];
                 if(this[evn]==null){
@@ -208,6 +219,10 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
                     })(evn);
                 }
             }
+        },
+        unBind:function(delegate,fn){//解除对事件的委托
+        	delegate = delegate.replace("mouse","");
+        	this[delegate].Remove(fn);
         }
     }
     return Base;

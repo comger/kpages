@@ -1,5 +1,5 @@
 /**
-   
+   3d Demo
 **/
 $(function(){
     var canvas = new Kpages.Graphic.Canvas("#canvas");
@@ -16,20 +16,18 @@ $(function(){
         }
     });
    
-    cube.mouseover(function(){
-        console.log("cube over ha ha");
-    });
-    
+
     cube.click(function(){
-        console.log("cube click");
+    	cube.Opts.y = 300;
+    	canvas.AutoDraw();
     });
-
-
-    cube.mouseout(function(){
-        console.log("cube out");
-    });
-
+	
+	function mouseMove(e){
+		
+	}
+	
     canvas.Draw(cube); 
+    
     
 
 
@@ -47,7 +45,8 @@ $(function(){
     });
 
     cylinder.mouseout(function(){
-        console.log("cylinder out");
+    	
+        console.log(cylinder.Index);
     });
 
     canvas.Draw(cylinder);
