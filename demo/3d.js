@@ -19,12 +19,12 @@ $(function(){
 
     cube.click(function(){
     	cube.Opts.y = 300;
+        cube.Opts.w = 150;
+        cube.Opts.h = 200;
     	canvas.AutoDraw();
     });
 	
-	function mouseMove(e){
-		
-	}
+    canvas.DragEnable(cube);
 	
     canvas.Draw(cube); 
     
@@ -40,15 +40,8 @@ $(function(){
         color:"#d1e8f9"
     });
 
-    cylinder.mouseover(function(){
-        console.log("cylinder over");
-    });
-
-    cylinder.mouseout(function(){
-    	
-        console.log(cylinder.Index);
-    });
-
+    
+    canvas.DragEnable(cylinder);
     canvas.Draw(cylinder);
 
     var cylinder2 = new Kpages.Graphic.Cylinder({
@@ -60,14 +53,7 @@ $(function(){
         color:"#0aaccc"
     }); 
 
-    cylinder2.mouseover(function(){
-        console.log("cylinder2 over");
-    });
-
-    cylinder2.mouseout(function(){
-        console.log("cylinder2 out");
-    });
-
+    canvas.DragEnable(cylinder2);
     canvas.Draw(cylinder2);
 
     var sector = new Kpages.Graphic.Sector({

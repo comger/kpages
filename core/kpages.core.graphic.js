@@ -180,8 +180,27 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
         GetMPoint:function(e){ //获取当前Mouse 坐标
         	var _offset = this.Canvas.offset();
         	return { x:(e.clientX + window.pageXOffset-_offset.left), y:(e.clientY + window.pageYOffset-_offset.top)};
-        }
+        },
+        DragEnable:function(graphic){//设置对象可拖放
+            ctx = this;
+            x = y = 0;
+            graphic.mousedown(function(e){
+                x = e.clientX - graphic.Opts.x;
+                y = e.clientY - graphic.Opts.y;
+                $(document).bind('mousemove',mouseMove).bind('mouseup',mouseUp);
+                    
+            })
 
+            function mouseMove(e){
+                graphic.Opts.y = e.clientY - y;
+                graphic.Opts.x = e.clientX - x;
+                ctx.AutoDraw();
+            }
+            
+            function mouseUp(){
+                $(document).unbind('mousemove',mouseMove).unbind('mouseup',mouseUp);
+            }
+        }
 	};
     return Canvas;
 })());
