@@ -1,5 +1,2 @@
-.weibo-floatDiv{ position: absolute; z-index: 999999; }
-.faceItemPicbgT{ width:450px;height:170px;list-style-type:none;background:url(/static/images/tips_bj.png) }
-.faceItemPicbgT ul{}
-.faceItemPicbgT li{ width:450px;list-style-type:none; display:inline;padding:0px 2px}
-.faceItemPicbgT li img{border:none}
+#canvas_tips { position: absolute; z-index: 999999; }
+

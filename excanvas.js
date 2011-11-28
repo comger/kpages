@@ -157,14 +157,23 @@ if (!document.createElement('canvas').getContext) {
         if (attrs.width && attrs.width.specified) {
           // TODO: use runtimeStyle and coordsize
           // el.getContext().setWidth_(attrs.width.nodeValue);
-          el.style.width = attrs.width.nodeValue + 'px';
+            if (attrs.width.nodeValue.indexOf("px")==-1){
+                el.style.width = attrs.width.nodeValue + 'px';
+            }else{
+                el.style.width = attrs.width.nodeValue;
+            }
         } else {
           el.width = el.clientWidth;
         }
         if (attrs.height && attrs.height.specified) {
           // TODO: use runtimeStyle and coordsize
           // el.getContext().setHeight_(attrs.height.nodeValue);
-          el.style.height = attrs.height.nodeValue + 'px';
+          if (attrs.height.nodeValue.indexOf("px")==-1){
+                el.style.height = attrs.height.nodeValue + 'px';
+            }else{
+                el.style.height = attrs.height.nodeValue;
+            }
+
         } else {
           el.height = el.clientHeight;
         }
@@ -180,13 +189,21 @@ if (!document.createElement('canvas').getContext) {
     switch (e.propertyName) {
       case 'width':
         el.getContext().clearRect();
-        el.style.width = el.attributes.width.nodeValue + 'px';
+        if(el.attributes.width.nodeValue.indexOf("px")==-1){
+            el.style.width = el.attributes.width.nodeValue + 'px';}
+        else{
+            el.style.width = el.attributes.width.nodeValue ;
+        }
         // In IE8 this does not trigger onresize.
         el.firstChild.style.width =  el.clientWidth + 'px';
         break;
       case 'height':
         el.getContext().clearRect();
-        el.style.height = el.attributes.height.nodeValue + 'px';
+        if(el.attributes.height.nodeValue.indexOf("px")==-1){
+            el.style.height = el.attributes.height.nodeValue + 'px';
+        }else{
+            el.style.height = el.attributes.height.nodeValue ;
+        }
         el.firstChild.style.height = el.clientHeight + 'px';
         break;
     }

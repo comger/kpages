@@ -185,7 +185,6 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
                 x = e.clientX - graphic.Opts.x;
                 y = e.clientY - graphic.Opts.y;
                 $(document).bind('mousemove',mouseMove).bind('mouseup',mouseUp);
-                    
             })
 
             function mouseMove(e){
@@ -223,6 +222,7 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
                 }
             }
             this["click"] = this["mouse_click"];
+            
         },
         InitDrawEvn:function(){//初始化画图事件，开始，正在画，结束
             for(var i=0;i<this.DrawEvn.length;i++){
@@ -238,6 +238,27 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
         },
         reSize:function(n){//缩放比例,n 为缩放的比例
             //todo
+        },
+        setTips:function(str){//设置tips 
+            var tips = $("#canvas_tips");
+            self = this;
+            self.Opts.alt = str;
+            if($(tips).size()==0){
+                tips = $("<div id='canvas_tips'>")
+                tips.attr("style","position: absolute; z-index: 999999;")
+                $("body").append(tips);
+            }
+
+            self.mouseover((function(e){
+                $(tips).css("top",this.Opts.y-10 + 'px');
+                $(tips).css("left", this.Opts.x +10 + 'px');
+                tips.html(this.Opts.alt);
+                tips.show();
+            }).Bind(self))
+
+            self.mouseout(function(e){
+                tips.hide()
+            })
         }
     }
     return Base;
@@ -295,6 +316,9 @@ Kpages.Graphic.Rect = Kpages.Graphic.Rect || ((function(){
             this.Opts = opts;
             this.IsFill = fill;
             this.InitMouseEvn();
+            if (opts.alt){
+                this.setTips(opts.alt)
+            }
         },
         InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
             var o = this.Opts;
