@@ -53,9 +53,6 @@ Kpages.Graphic = Kpages.Graphic || ((function(){
             }
             return count%2!=0;
         },
-        InArc:function(m,lines){ //判断一个点是否在多个圆弧内,算法需要测试
-            
-        },
         NewPoint:function(x,y){ //快速创建一个坐标点
             return {x:x,y:y}
         }
