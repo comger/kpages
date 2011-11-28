@@ -48,23 +48,6 @@ Kpages.Common = Kpages.Common || ((function(){
                 return false;
             }
         },
-        CookieStartWith:function(key,keyflag){
-            var _cookies = {};
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    var kv = cookie.split('=');
-                    if(kv[0].indexOf(key)==0){
-                        if(keyflag){
-                            _cookies[kv[0].replace(key,"")]=kv[1]
-                        }else{
-                            _cookies[kv[0]]=kv[1]}
-                    }
-                }
-            }
-            return _cookies;
-        },
         LocalStorage:function(key,val){
             // to do
         },
@@ -333,7 +316,35 @@ Kpages.UI = Kpages.UI || ((function(){
                 range.moveStart('character', pos); 
                 range.select(); 
            }
-        }
+        },
+		BindDrag:function(el,dragel){ //绑定元素，使其可拖动
+			el=el[0];
+			var els = el.style,x = y = 0;
+
+			$(el).mousedown(function(e){
+				//按下元素后，计算当前鼠标位置
+				x = e.clientX - el.offsetLeft;
+				y = e.clientY - el.offsetTop;
+				//IE下捕捉焦点
+				el.setCapture && el.setCapture();
+				//绑定事件
+				$(document).bind('mousemove',mouseMove).bind('mouseup',mouseUp);
+			});
+
+			//移动事件
+			function mouseMove(e){
+				//宇宙超级无敌运算中...
+				els.top  = e.clientY - y + 'px';
+				els.left = e.clientX - x + 'px';
+			}
+			//停止事件
+			function mouseUp(){
+				//IE下释放焦点
+				el.releaseCapture && el.releaseCapture();
+				//卸载事件
+				$(document).unbind('mousemove',mouseMove).unbind('mouseup',mouseUp);
+			}
+		}
     };
     window.Ui = UI;
     return UI;
@@ -627,5 +638,57 @@ Kpages.StaticObjs = Kpages.StaticObjs || ((function(){
     };
     return StaticObjs;
 })())
+
+/**
+ Url 操作
+        get(key,url)    //返回请求参数值
+		解析URL地址
+		myURL.file;     // = 'index.html'  	
+		myURL.hash;     // = 'top'  	
+		myURL.host;     // = 'abc.com'  	
+		myURL.query;    // = '?id=255&m=hello'  	
+		myURL.params;   // = Object = { id: 255, m: hello }  	
+		myURL.path;     // = '/dir/index.html'  	
+		myURL.segments; // = Array = ['dir', 'index.html']  	
+		myURL.port;     // = '8080'  	
+		myURL.protocol; // = 'http'  	
+		myURL.source;   // = 'http://abc.com:8080/dir/index.html?id=255&m=hello#top' 
+**/
+
+/**
+  Browser
+  Browser.name
+  Browser.version
+  Browser.uga
+  Browser.lang
+  Browser.mobile
+**/
+
+/**
+Validate, //验证模块
+    Validate.Array( object ),
+    Validate.Function( object ),
+    Validate.Object( object ),
+    Validate.Date( object ),
+    Validate.Number( object ),
+    Validate.String( object ),
+    Validate.Defined( object ),
+    Validate.Empty( object ),
+    Validate.Boolean( object ),
+    Validate.Window( object ),
+    Validate.Document( object ),
+    Validate.Element( object ),
+    Validate.Chinese( string[, all] ),
+    Validate.Safe( string ),
+    Validate.Email( string ),
+    Validate.URL( string ),
+    Validate.IP( string ),
+    Validate.ID( string ),
+    Validate.Password( string ),
+    Validate.Color( string ),
+    Validate.Phone( string ),
+    Validate.Mobile( string )
+**/
+
 
 
