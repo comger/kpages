@@ -206,7 +206,7 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
         		_json[""+grap.Index]=grap.Opts;
         	},this.Graphics)
         	return $.toJSON(_json);
-        },
+        }
 	};
     return Canvas;
 })());
@@ -218,6 +218,7 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
     Base.prototype= {
         Width:0,
         Height:0,
+        Childs:[],
         MouseEvn:["over","out","_click","down","up"],
         DrawEvn:["starting","drawing","stop"],
         InitMouseEvn:function(){//初始化Mouse事件 "over","out","click","down","up"
@@ -269,6 +270,25 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
             self.mouseout(function(e){
                 tips.hide()
             })
+        }，
+        AddGraphic:function(graphic){//添加子图形
+        	graphic.Opts.x += this.Opts.x;
+        	graphic.Opts.y += this.OPts.y;
+		    graphic.Index = this.Childs.length;
+			this.Childs.push(graphic);
+        },
+        GetChilds:function(){//获取所有子图
+        	lst = [];
+        	function _loads(graphic){
+		    	Co.Map(function(item){
+		    		lst.push(item);
+		    		_loads(item);
+		    	},graphic.Childs);
+        	}
+        	
+        	_loads(this);
+			
+			return lst;
         }
     }
     return Base;

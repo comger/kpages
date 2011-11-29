@@ -15,6 +15,9 @@ Kpages.Graphic.Uml = Kpages.Graphic.Uml || ((function(){
 			ctx.lineTo(p2.x,p2.y);
 			ctx.closePath();
 			ctx.stroke();
+        },
+        text:function(ctx,str){
+        	//ctx.strokeText(pro,this.Opts.x+5,offsetTop+15);
         }
     },Uml.prototype)
     return Uml;
