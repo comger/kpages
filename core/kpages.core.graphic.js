@@ -270,7 +270,7 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
             self.mouseout(function(e){
                 tips.hide()
             })
-        }，
+        },
         AddGraphic:function(graphic){//添加子图形
         	graphic.Opts.x += this.Opts.x;
         	graphic.Opts.y += this.OPts.y;
