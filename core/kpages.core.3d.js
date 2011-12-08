@@ -26,7 +26,6 @@ Kpages.Graphic.Cube = Kpages.Graphic.Cube || ((function(){
         Opts:null,
         Init:function(opts){
             this.Opts = opts;
-            this.InitMouseEvn();
         },
         InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
             return Ga.InFences(m,this.Points);
@@ -69,7 +68,8 @@ Kpages.Graphic.Cube = Kpages.Graphic.Cube || ((function(){
             _tri2.Render(ctx)
 
             this.Points = [{x:o.x,y:o.y},{x:top1.x,y:top1.y},{x:top2.x,y:top2.y},{x:top2.x,y:top2.y+o.h},{x:o.x+o.w,y:o.y+o.h},{x:o.x,y:o.y+o.h}];
-            
+            this.Width = this.Opts.w;
+            this.Height = this.Opts.h;
         }
     },Cube.prototype)
     return Cube;
@@ -154,6 +154,7 @@ Kpages.Graphic.Cylinder = Kpages.Graphic.Cylinder || ((function(){
             ctx.fill();
 
             ctx.restore(); //还原变的比率
+            this.Width = this.Opts.r;
         }
     },Cylinder.prototype)
     return Cylinder;

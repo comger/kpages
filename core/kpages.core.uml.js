@@ -55,9 +55,11 @@ Kpages.Graphic.GaClass = Kpages.Graphic.GaClass ||((function(){
     Co.extend({
     	Opts:null,
     	line_height:26,
+        Width:0,
+        Height:0,
 		Init:function(opts){
-			opts.w = 200;
-			opts.h = ($(opts.data.propertys).size()+$(opts.data.methods).size()+1)*this.line_height;
+			this.Width = opts.w = 200;
+			this.Height = opts.h = ($(opts.data.propertys).size()+$(opts.data.methods).size()+1)*this.line_height;
 			this.Opts = opts;	
 			this.InitMouseEvn();
 		},

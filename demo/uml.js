@@ -24,10 +24,12 @@ $(function(){
 				]
 			}
 	});
-		
-	canvas.DragEnable(gacls);
-	canvas.Draw(gacls)
 	
+    gacls.setTips("sasassa11");
+	canvas.DragEnable(gacls);
+	canvas.Draw(gacls);
+
+
 	var gacls2 = new Kpages.Graphic.GaClass({
 			x:400,
 			y:100,
@@ -48,6 +50,8 @@ $(function(){
 				]
 			}
 	})
+
+    gacls2.setTips("sasassa22");
 	canvas.DragEnable(gacls2);
 	canvas.Draw(gacls2)
 

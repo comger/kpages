@@ -15,6 +15,9 @@ $(function(){
             y:20
         }
     });
+	
+    canvas.Draw(cube); 
+
    
     cube.setTips("ha ha ha ha ha ");
 
@@ -26,8 +29,6 @@ $(function(){
     });
 	
     canvas.DragEnable(cube);
-	
-    canvas.Draw(cube); 
     
 
     var cylinder = new Kpages.Graphic.Cylinder({

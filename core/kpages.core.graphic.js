@@ -127,8 +127,15 @@ Kpages.Graphic.Canvas = Kpages.Graphic.Canvas || ((function(){
 		},
 		Draw:function(graphic,index){//画传入的图型
             this.SetStyle(graphic.Opts.styles || {})
-            if(graphic.Render)
+            if(graphic.Render){
+                graphic.ctx = this.Ctx;
+                graphic.offset = this.Canvas.offset();
+                graphic.InitMouseEvn();
+                graphic.InitDrawEvn();
 				graphic.Render(this.Ctx);
+                graphic.stop.Call();
+                
+            }
             this.Ctx.save();
             this.OldGraphics = this.Graphics;
             if(index){
@@ -246,23 +253,33 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
                     })(evn);
                 }
             }
+
+            this.onstop((this.enableTips).Bind(this));
+            this.onstop((this.enableResize).Bind(this));
         },
-        reSize:function(n){//缩放比例,n 为缩放的比例
-            //todo
+        reSize:function(w,h){
+            this.Opts.w = w;
+            this.Opts.h = h ;
+            this.Width = w;
+            this.Height = h;
+            this.ctx.AutoDraw();
+
         },
         setTips:function(str){//设置tips 
+            this.Opts.alt = str;
+        },
+        enableTips:function(){
             var tips = $("#canvas_tips");
             self = this;
-            self.Opts.alt = str;
             if($(tips).size()==0){
-                tips = $("<div id='canvas_tips'>")
-                tips.attr("style","position: absolute; z-index: 999999;")
+                tips = $("<div id='canvas_tips'>");
+                tips.attr("style","position: absolute; z-index: 999999;");
                 $("body").append(tips);
             }
 
             self.mouseover((function(e){
-                $(tips).css("top",this.Opts.y-10 + 'px');
-                $(tips).css("left", this.Opts.x +10 + 'px');
+                $(tips).css("top",this.Opts.y-10+ this.offset.top + 'px');
+                $(tips).css("left", this.Opts.x +10 + this.offset.left+ 'px');
                 tips.html(this.Opts.alt);
                 tips.show();
             }).Bind(self))
@@ -289,6 +306,77 @@ Kpages.Graphic.Base = Kpages.Graphic.Base || ((function(){
         	_loads(this);
 			
 			return lst;
+        },
+        enableResize:function(){
+            var self = this;
+            
+            function newHandler(id,x,y,parent){
+                h = $("<div id='{0}'>".Format(id));
+                h.addClass("grahandler floatDiv");
+                $(h).css({ left: x, top: y,width:"10px", height:"10px" });
+                parent.append(h);     
+                
+                return h;
+            }            
+            
+            function moveHandler(obj){
+                var x = obj.Opts.x + obj.offset.left;
+                var y = obj.Opts.y + obj.offset.top;
+
+                $("#_left_top").css({left: x-5, top: y-5});
+                $("#_left_bottom").css({left: x-5, top: y+obj.Height-5});
+                $("#_right_top").css({left: x+obj.Width-5, top: y-5});
+                $("#_right_bottom").css({left: x+obj.Width-5, top: y+obj.Height-5});
+            }
+
+
+
+            if ($(".grahandler").size()==0){
+                var x = this.Opts.x + this.offset.left;
+                var y = this.Opts.y + this.offset.top;
+
+                //newHandler("_left_top",x-5,y-5,$("body")).hide();
+                //newHandler("_left_bottom",x-5,y+this.Height-5,$("body")).hide();
+                //newHandler("_right_top",x+this.Width-5,y-5,$("body")).hide();
+                var h = newHandler("_right_bottom",x+this.Width-5,y+this.Height-5,$("body")).hide();
+
+                h.mousedown(function(e){
+                    $(this).attr("l",e.clientX).attr("w",self.Width);
+                    $(this).attr("t",e.clientY).attr("h",self.Height);
+                    $(document).bind('mousemove',mouseMove).bind('mouseup',mouseUp);
+                })
+
+                function mouseMove(e){
+                    Ui.BindDrag(h);
+                    var h_h =  parseInt($(h).attr("h")) + e.clientY - parseInt($(h).attr("t"));
+                    var h_w =  parseInt($(h).attr("w")) + e.clientX - parseInt($(h).attr("l"));
+                    Ga.CurGraphic.reSize(h_w,h_h);
+                }
+                
+                function mouseUp(){
+                    $(document).unbind('mousemove',mouseMove).unbind('mouseup',mouseUp);
+                }
+
+            }
+            
+            self.click((function(){ 
+                moveHandler(this);
+                $(".grahandler").show();
+                this.out.Remove();  
+            }).Bind(self));
+
+            self.mouseover((function(){ 
+                moveHandler(this);
+                Ga.CurGraphic = this; //?在Ga里注册当前缩放对象
+                $(".grahandler").show();
+                this.mouseout((function(){ $(".grahandler").hide()}).Bind(this)); 
+            }).Bind(self));
+
+        },
+        move:function(x,y){//移动到指定位置
+            this.Opts.x = x;
+            this.Opts.y = y;
+            this.ctx.AutoDraw();
         }
     }
     return Base;
@@ -318,9 +406,6 @@ Kpages.Graphic.Rect = Kpages.Graphic.Rect || ((function(){
             this.Opts = opts;
             this.IsFill = fill;
             this.InitMouseEvn();
-            if (opts.alt){
-                this.setTips(opts.alt)
-            }
         },
         InRange:function(m){ //需要支持Mouse、Click 等事件时，此方法必须实现
             var o = this.Opts;
@@ -396,6 +481,8 @@ Kpages.Graphic.Arc = Kpages.Graphic.Arc || ((function(){
             ctx.arc(o.x,o.y,o.r,o.w,Math.PI*2,true);
             ctx.closePath();
             ctx.stroke();
+            this.Width = this.Opx.r;
+            this.Height = 0;
         }
     },Arc.prototype);
     return Arc;

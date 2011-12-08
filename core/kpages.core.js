@@ -286,15 +286,15 @@ Kpages.UI = Kpages.UI || ((function(){
             if(offset!=null){
             left = offset.left + x ;
             top = offset.top + y;}
-            $(exp).addClass("Kpages-floatDiv");
+            $(exp).addClass("floatDiv");
             $(exp).css({ left: left, top: top });
         },
         MoveTo:function(exp,left,top){ //将exp 对象，浮动到 left ,top 的位置
-            $(exp).addClass("Kpages-floatDiv");
+            $(exp).addClass("floatDiv");
             $(exp).css({ left: left, top: top });
         },
         InCenter:function(exp){//将exp 对象，浮动到页面中心
-            $(exp).addClass("Kpages-floatDiv");
+            $(exp).addClass("floatDiv");
             var left = $(window).width()/2-$(exp).width()/2;
             var top = $(document).scrollTop() + $(window).height()/2 -$(exp).height()/2;
             $(exp).css({ left: left, top: top });
