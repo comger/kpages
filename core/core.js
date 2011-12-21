@@ -29,7 +29,56 @@ Function.prototype.inheritance = function(base,extend){
         }else{
             this.prototype[n] = extend[n];}
     }
+}
 
+/**
+  Kpages core 面向对象模拟扩展
+  Demo
+	var DemoClass = Class({
+		opts:{
+			id:"a1",
+			width:20
+		},
+		print:function(){
+			console.log("this's democlass print");
+		}
+	})
+
+	var SpClass = Class(DemoClass,{
+		opts:{
+			height:30
+		},
+		init:function(opts){
+			$.extend(this.opts,opts);
+		},
+		printObj:function(obj){
+			console.log(this.opts);
+		}
+	})
+**/
+window.Class = Kpages.Class =function(a,b){
+	var cls = function(){ this.__init__.apply(this, arguments)}
+	cls.prototype = {
+		__id:undefined,
+		__init__:function(){
+			if(this.init){ this.init.apply(this,arguments);}
+		}
+	}
+	
+	function _extend(c1,c2){//针对对象属性继承覆盖与扩展
+		if(typeof c1 == 'object' && typeof c2 != 'undefined'){ 
+			$.extend(c1,c2);
+		}else{ c1 = c2; }
+		return c1;
+	}
+	
+	if(b){
+		for(i in a.prototype){ cls.prototype[i] = _extend(cls.prototype[i],a.prototype[i])}
+		for(i in b){ cls.prototype[i] = _extend(cls.prototype[i],b[i])}
+	}else{
+		$.extend(cls.prototype,a);
+	}
+	return cls;
 }
 
 //事件委托
