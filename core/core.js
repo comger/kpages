@@ -14,7 +14,7 @@ Object.prototype.extend = function(base){
     $.extend(this,base)
 }
 
-//复制原型,扩展原型
+//复制原型,扩展原型 implement
 Function.prototype.inheritance = function(base,extend){
     for (var i in base.prototype) { 
         if(typeof base.prototype[i] == 'object' && (typeof this.prototype[i] != 'undefined')){
@@ -330,6 +330,8 @@ Kpages.Validate = {
 		return /^[1][0-9]{10}$/.test(str);
 	}
 }
+
 window.Val = Kpages.Validate;
+
 
 
