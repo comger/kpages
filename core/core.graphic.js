@@ -63,79 +63,63 @@ Ga.Utility = {
 }
 
 //虚类，提供鼠标事件、鼠标事件委托及效果；需要与可视的图形配合使用
-Ga.MouseArea = Ga.MouseArea || ((function(){
-    var ma = function(){}
-    
-    ma.prototype = {
-        enabled:false,
-        hoverEnabled:false,
-        dragActive:false,
-        dragTarget:null,
-        dragMaximumX:0,
-        dragMaximumY:0,
-        dragMinimumX:0,
-        dragMinimumY:0,
-        acceptedButtons:function(btn){},
-        containsMouse:function(point)(),
-        onCanceled:function(e)
-        onClicked:function(e)
-        onDoubleClicked:function(e)
-        onEntered:function(e)
-        onExited:function(e)
-        onPositionChanged:function(e)
-        onPressAndHold:function(e)
-        onPressed:function(e)
-        onReleased:function(e)
-    }
-    return ma;
-      
-})());
+Ga.MouseArea = Class({
+    enabled:false,
+    hoverEnabled:false,
+    dragActive:false,
+    dragTarget:null,
+    dragMaximumX:0,
+    dragMaximumY:0,
+    dragMinimumX:0,
+    dragMinimumY:0,
+    acceptedButtons:function(btn){},
+    containsMouse:function(point)(),
+    onCanceled:function(e),
+    onClicked:function(e),
+    onDoubleClicked:function(e),
+    onEntered:function(e),
+    onExited:function(e),
+    onPositionChanged:function(e),
+    onPressAndHold:function(e),
+    onPressed:function(e),
+    onReleased:function(e)
+})
 
 //Graphic 图形基础类型
-Ga.Item = Ga.Item || ((function(){
-    var item = function(){}
-    item.prototype = {
-        opts:{
-            x:0,
-            y:0,
-            z:0,
-            width:0,
-            height:0,
-            opacity:0,
-            scale:0,
-            state:"ready",
-            visible:false,
-            parent:null
-        },
-        mouseArea:null,
-        
-    }
-    return item;
-})())
+Ga.Item = Class({
+    opts:{
+        x:0,
+        y:0,
+        z:0,
+        width:0,
+        height:0,
+        opacity:0,
+        scale:0,
+        state:"ready",
+        visible:false,
+        parent:null
+    },
+    mouseArea:null
+})
 
 
 /**
     图库
 **/
-Ga.Rect = Ga.Rect || ((function(){
-    var rect = function(opts){ this.init(opts);}
-    rect.inheritance(Ga.Item,{
-        opts:{
-            borderColor:"#cccccc",
-            borderWidth:1,
-            color:"#cccccc",
-            gradient:null,
-            radius:0,
-            smooth:true
-        },
-        init:function(opts){ 
-            this.opts.extend(opts);
-        },
-        render:function(){
-            console.log(this.opts);
-        }
-    })
-    
-    return rect;
-})())
+Ga.Rect = Class(Ga.Item,{
+    opts:{
+        borderColor:"#cccccc",
+        borderWidth:1,
+        color:"#cccccc",
+        gradient:null,
+        radius:0,
+        smooth:true
+    },
+    init:function(opts){ 
+        this.opts.extend(opts);
+    },
+    render:function(){
+        console.log(this.opts);
+    }
+})
 

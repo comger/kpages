@@ -10,25 +10,7 @@ var Kpages = Kpages || { Version:'dev' };
 
 //复制对象属性，扩展对象
 Object.prototype.extend = function(base){
-    //for (var i in base) { this[i] = base[i];}
-    $.extend(this,base)
-}
-
-//复制原型,扩展原型 implement
-Function.prototype.inheritance = function(base,extend){
-    for (var i in base.prototype) { 
-        if(typeof base.prototype[i] == 'object' && (typeof this.prototype[i] != 'undefined')){
-            $.extend(this.prototype[i],base.prototype[i])
-        }else{
-            this.prototype[i] = base.prototype[i];}
-    }
-
-    for(var n in extend){ 
-        if(typeof extend[n] == 'object' && (typeof this.prototype[n] != 'undefined')){
-            $.extend(this.prototype[n],extend[n])
-        }else{
-            this.prototype[n] = extend[n];}
-    }
+    $.extend(this,base);
 }
 
 /**
@@ -160,6 +142,9 @@ Kpages.Utility = {
     },
     getRandomInt:function(max){ //获取 max 以内的随机整数
         return this.Round(Math.random() * max);
+    },
+    extend:function(a,b){
+    	a = $.extend(a,b);
     }
 }
 
@@ -219,7 +204,7 @@ Uti.File = {
 **/
 
 //扩展String
-String.prototype.extend({
+Uti.extend(String.prototype,{
     toArray: function() {//将字符串转成字符数组
         return this.toString().split('');
     },
@@ -232,9 +217,9 @@ String.prototype.extend({
     trim:function(){
         return this.replace(/^\s+/, '').replace(/\s+$/, '');
     }
-});
+})
 
-Number.prototype.extend({
+Uti.extend(Number.prototype,{
     pad:function(length){ //前补0直到符合指定长度，用于数字补0
         if (!length) 
             length = 2;
@@ -244,9 +229,9 @@ Number.prototype.extend({
         }
         return str;
     }
-});
+})
 
-Date.prototype.extend({
+Uti.extend(Date.prototype,{
     dateFromNow:function(n){ //获取当前的+ N小时的日期
         var cur = new Date();
         cur.setHours(cur.getHours()+n);
@@ -262,10 +247,9 @@ Date.prototype.extend({
         if (t < 86400) return Co.Round( t / 3600, 0) + '小时前';
         return "{0}月{1}日 {2}:{3}".Format(this.getMonth()+1,this.getDate(),this.getHours().Pad(2),this.getMinutes().Pad(2));
     }
-});
+})
 
-
-Function.prototype.extend({
+Uti.extend(Function.prototype,{
     bind:function(){ //将一方法绑定在指定的对象上，在方法调用时，可执行所绑定的所绑定对象的方法计算
         var __method = this, args = Array.prototype.slice.call(arguments), object = args.shift();
         return function() {
@@ -276,9 +260,9 @@ Function.prototype.extend({
        var names = this.toString().match(/^[\s\(]*function[^(]*\((.*?)\)/)[1].replace(/ /gm, '').split(',');
        return names.length == 1 && !names[0] ? [] : names;
     }
-});
+})
 
-Array.prototype.extend({
+Uti.extend(Array.prototype,{
     remove:function(index,count){ //移除index 开始的指定个数，默认个数为1
         if(count){
             if (isNaN(index) || index > this.length)
@@ -303,7 +287,7 @@ Array.prototype.extend({
         }
         return NaN;
     }
-});
+})
 
 //验证对象
 Kpages.Validate = {

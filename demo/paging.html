@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>core.js api demo</title>
-    <link href="../core/skin/defualt.css" rel="stylesheet" type="text/css" />
+    <link href="../core/skin/default.css" rel="stylesheet" type="text/css" />
     <script src="../jquery-1.4.4.min.js" type="text/javascript"></script>
     <script src="../core/core.js"></script>
     <script src="../core/core.ui.js"></script>
@@ -12,15 +12,21 @@
 </head>
 <body>
 	<p>this is paging demo</p>
+	<div id="tests">sadfasdf asdfkljsalkdfja ks<br>adsfkjafhajskd</div>
 </body>
 </html>
 <script>
-	var pager = new Kpages.Ui.Paging;
-	pager.render({total:100});
+	var pager = new Ui.Paging({
+		total:12,
+	});
 	pager.addTo($("body"));
-	pager.show();
 	
-	var msg =new Kpages.Ui.Message();
-	msg.show("system info", "this is a system info", [], "300");
-	msg.show();
+	pager.onChange(function(index){
+		console.log(index);
+	})
+	
+	var dailog = new Ui.Dailog({
+		invokeElementId:"tests"
+	});
+	
 </script>
