@@ -8,33 +8,75 @@
 
 var Kpages = Kpages || { Version:'dev' };
 
-//复制对象属性，扩展对象
-Object.prototype.extend = function(base){
-    //for (var i in base) { this[i] = base[i];}
-    $.extend(this,base);
-    return this;
+
+/**
+  Kpages core 面向对象模拟扩展
+  Demo
+	var DemoClass = Class({
+		opts:{
+			id:"a1",
+			width:20
+		},
+		print:function(){
+			console.log("this's democlass print");
+		}
+	})
+
+	var SpClass = Class(DemoClass,{
+		opts:{
+			height:30
+		},
+		init:function(opts){
+			$.extend(this.opts,opts);
+		},
+		printObj:function(obj){
+			console.log(this.opts);
+		}
+	})
+	
+	SpClass.extend(BaseClass) 或 SpClass.extend({})
+	
+**/
+window.Class = Kpages.Class =function(a,b){
+	var cls = function(){ this.__init__.apply(this, arguments)}
+	cls.__type = "Class";
+	cls.prototype = {
+		__id:undefined,
+		__init__:function(){
+			if(this.init){ this.init.apply(this,arguments);}
+		}
+	}
+	
+	cls.extend = function(a){//类型继承或扩展
+	    if(typeof a == "function"){
+	        for(i in a.prototype){ this.prototype[i] = _extend(this.prototype[i],a.prototype[i])}
+	        for(i in a){ this[i] = _extend(this[i],a[i])}
+	        this.__parentClass = a;
+	    }else if(typeof a == "object"){
+	        for(i in a){ this.prototype[i] = _extend(this.prototype[i],a[i])}
+	    }else{
+	        throw new Error('argument is required ! and typeof argument must be Class(function)');
+	    }
+	}
+	
+	cls.private = function(a){
+	    if(typeof a == "object")
+	        for(i in a){ this[i] = _extend(this[i],a[i])}
+	}
+	
+	function _extend(c1,c2){//针对对象属性继承覆盖与扩展
+		if(typeof c1 == 'object' && typeof c2 != 'undefined'){ 
+			$.extend(c1,c2);
+		}else{ c1 = c2; }
+		return c1;
+	}
+	
+    cls.extend(a);
+    if(b){cls.extend(b);}
+	return cls;
+
 }
 
-//复制原型,扩展原型 implement
-Function.prototype.inheritance = function(base,extend){
-    for (var i in base.prototype) { 
-        if(typeof base.prototype[i] == 'object' && (typeof this.prototype[i] != 'undefined')){
-            $.extend(this.prototype[i],base.prototype[i])
-        }else{
-            this.prototype[i] = base.prototype[i];}
-    }
-    
-    if(extend){
-        for(var n in extend){ 
-            if(typeof extend[n] == 'object' && (typeof this.prototype[n] != 'undefined')){
-                $.extend(this.prototype[n],extend[n])
-            }else{
-                this.prototype[n] = extend[n];}
-        }
-    }
-
-    return this;
-}
 
 //事件委托
 Kpages.Delegate = Kpages.Delegate || ((function() {
@@ -115,6 +157,9 @@ Kpages.Utility = {
     },
     getRandomInt:function(max){ //获取 max 以内的随机整数
         return this.Round(Math.random() * max);
+    },
+    extend:function(a,b){
+    	a = $.extend(a,b);
     }
 }
 
@@ -174,7 +219,7 @@ Uti.File = {
 **/
 
 //扩展String
-String.prototype.extend({
+Uti.extend(String.prototype,{
     toArray: function() {//将字符串转成字符数组
         return this.toString().split('');
     },
@@ -187,9 +232,9 @@ String.prototype.extend({
     trim:function(){
         return this.replace(/^\s+/, '').replace(/\s+$/, '');
     }
-});
+})
 
-Number.prototype.extend({
+Uti.extend(Number.prototype,{
     pad:function(length){ //前补0直到符合指定长度，用于数字补0
         if (!length) 
             length = 2;
@@ -199,9 +244,9 @@ Number.prototype.extend({
         }
         return str;
     }
-});
+})
 
-Date.prototype.extend({
+Uti.extend(Date.prototype,{
     dateFromNow:function(n){ //获取当前的+ N小时的日期
         var cur = new Date();
         cur.setHours(cur.getHours()+n);
@@ -217,10 +262,9 @@ Date.prototype.extend({
         if (t < 86400) return Co.Round( t / 3600, 0) + '小时前';
         return "{0}月{1}日 {2}:{3}".Format(this.getMonth()+1,this.getDate(),this.getHours().Pad(2),this.getMinutes().Pad(2));
     }
-});
+})
 
-
-Function.prototype.extend({
+Uti.extend(Function.prototype,{
     bind:function(){ //将一方法绑定在指定的对象上，在方法调用时，可执行所绑定的所绑定对象的方法计算
         var __method = this, args = Array.prototype.slice.call(arguments), object = args.shift();
         return function() {
@@ -231,9 +275,9 @@ Function.prototype.extend({
        var names = this.toString().match(/^[\s\(]*function[^(]*\((.*?)\)/)[1].replace(/ /gm, '').split(',');
        return names.length == 1 && !names[0] ? [] : names;
     }
-});
+})
 
-Array.prototype.extend({
+Uti.extend(Array.prototype,{
     remove:function(index,count){ //移除index 开始的指定个数，默认个数为1
         if(count){
             if (isNaN(index) || index > this.length)
@@ -258,7 +302,7 @@ Array.prototype.extend({
         }
         return NaN;
     }
-});
+})
 
 //验证对象
 Kpages.Validate = {
