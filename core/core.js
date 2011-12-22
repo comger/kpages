@@ -11,7 +11,8 @@ var Kpages = Kpages || { Version:'dev' };
 //复制对象属性，扩展对象
 Object.prototype.extend = function(base){
     //for (var i in base) { this[i] = base[i];}
-    $.extend(this,base)
+    $.extend(this,base);
+    return this;
 }
 
 //复制原型,扩展原型 implement
@@ -22,14 +23,17 @@ Function.prototype.inheritance = function(base,extend){
         }else{
             this.prototype[i] = base.prototype[i];}
     }
-
-    for(var n in extend){ 
-        if(typeof extend[n] == 'object' && (typeof this.prototype[n] != 'undefined')){
-            $.extend(this.prototype[n],extend[n])
-        }else{
-            this.prototype[n] = extend[n];}
+    
+    if(extend){
+        for(var n in extend){ 
+            if(typeof extend[n] == 'object' && (typeof this.prototype[n] != 'undefined')){
+                $.extend(this.prototype[n],extend[n])
+            }else{
+                this.prototype[n] = extend[n];}
+        }
     }
 
+    return this;
 }
 
 //事件委托
