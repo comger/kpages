@@ -8,6 +8,5 @@ var index = {
     }
 }
 
-Uti.setRouter(index.home, '/home');
 
 exports.module = index;

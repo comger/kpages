@@ -13,6 +13,9 @@ __conf__.ACTION_DIR.forEach(function(dir){
     modules =  modules.concat(Uti.getModule(Uti.root_path+dir));
 });
 
+var handlers = [];
+
+
 
 http.createServer(function (req, res) {
    res.writeHead(200, {'Content-Type': 'text/plain'});
