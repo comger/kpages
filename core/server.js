@@ -38,6 +38,7 @@ var Uti = {
     urlError:function(req,res,e){
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.write("error:"+e);
+        console.log('error:'+e)
         res.end();
     }
 }
@@ -67,7 +68,11 @@ function start(){
                     try{
                         return h.fn(req,res);
                     }catch(e){
-                        Uti.urlError(req,res,e);
+                        if(__conf__.DEBUG){
+                            Uti.urlError(req,res,e);
+                        }else{
+                            //TODO
+                        }
                     }
                     
             }

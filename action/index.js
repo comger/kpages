@@ -8,7 +8,7 @@ var index = {
     },
     about:function(req, res){
         res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.write("this's about");
+        res.writdde("this's about");
         res.end();
     }
 }
