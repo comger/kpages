@@ -3,7 +3,8 @@
  *
  **/
 var setting = {
-    'PORT':18210,
+    'DEBUG':true,
+    'PORT':18200,
     'ACTION_DIR':['action']
 }
 

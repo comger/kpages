@@ -5,12 +5,12 @@
 
 var http = require('http');
 var url = require('url');
+var fs = require('fs');
 
 __conf__ = {
     PORT:18200,
     ACTION_DIR:'action'
 }
-var fs = require('fs');
 
 var Uti = {
     root_path:process.argv[1].substr(0,process.argv[1].lastIndexOf("/")+1),
@@ -19,7 +19,7 @@ var Uti = {
         files.forEach(function(file){
             var pathname = dir+'/'+file
              , stat = fs.lstatSync(pathname);
-            if (!stat.isDirectory() && file.indexOf("~")<0){
+            if (!stat.isDirectory() && file.lastIndexOf(".js")==(file.length-3)){
                res.push(pathname.replace(Uti.root_path,'./').replace('.js',''));
             }
        });
@@ -41,6 +41,7 @@ var Uti = {
     urlError:function(req,res,e){
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.write("error:"+e);
+        console.log('error:'+e)
         res.end();
     }
 }
@@ -56,7 +57,8 @@ function start(){
     }catch(e){
         console.log(e)
     }
-
+    
+    console.log("run server is debug:"+ __conf__.DEBUG);
     console.log("run server at port:"+ __conf__.PORT);
     console.log("run server at path:"+ Uti.root_path);
 
@@ -80,7 +82,11 @@ function start(){
                     try{
                         return h.fn(req,res);
                     }catch(e){
-                        Uti.urlError(req,res,e);
+                        if(__conf__.DEBUG){
+                            Uti.urlError(req,res,e);
+                        }else{
+                            //TODO
+                        }
                     }
                     
             }
