@@ -5,9 +5,10 @@
 
 var http = require('http');
 var url = require('url');
+var fs = require('fs');
 
 __conf__ = require('../setting').setting;
-var fs = require('fs');
+
 
 var Uti = {
     root_path:process.argv[1].substr(0,process.argv[1].lastIndexOf("/")+1),
@@ -16,7 +17,7 @@ var Uti = {
         files.forEach(function(file){
             var pathname = dir+'/'+file
              , stat = fs.lstatSync(pathname);
-            if (!stat.isDirectory() && file.indexOf("~")<0){
+            if (!stat.isDirectory() && file.lastIndexOf(".js")==(file.length-3)){
                res.push(pathname.replace(Uti.root_path,'./').replace('.js',''));
             }
        });
@@ -45,6 +46,7 @@ var Uti = {
 
 
 function start(){
+    console.log("run server is debug:"+ __conf__.DEBUG);
     console.log("run server at port:"+ __conf__.PORT);
     console.log("run server at path:"+ Uti.root_path);
 
@@ -56,24 +58,23 @@ function start(){
     var handlers = [];
     modules.forEach(function(m){
         handlers = handlers.concat(require("."+m).module);
-    })
+    });
     console.log(handlers);
     
     http.createServer(function (req, res) {
-       res.writeHead(200, {'Content-Type': 'text/plain'});
        console.log(req.url);
        var pathname = url.parse(req.url).pathname;
        handlers.forEach(function(h){
             if(Uti.isInRouter(pathname,h.key)){
-                    try{
-                        return h.fn(req,res);
-                    }catch(e){
-                        if(__conf__.DEBUG){
-                            Uti.urlError(req,res,e);
-                        }else{
-                            //TODO
-                        }
+                try{
+                    return h.fn(req,res);
+                }catch(e){
+                    if(__conf__.DEBUG){
+                        Uti.urlError(req,res,e);
+                    }else{
+                        //TODO
                     }
+                }
                     
             }
        })
