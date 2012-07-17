@@ -7,8 +7,10 @@ var http = require('http');
 var url = require('url');
 var fs = require('fs');
 
-__conf__ = require('../setting').setting;
-
+__conf__ = {
+    PORT:18200,
+    ACTION_DIR:'action'
+}
 
 var Uti = {
     root_path:process.argv[1].substr(0,process.argv[1].lastIndexOf("/")+1),
@@ -46,6 +48,16 @@ var Uti = {
 
 
 function start(){
+
+    try{
+        var setting = require('../setting').setting;
+        for(name in setting){
+            __conf__[name] = setting[name];
+        }
+    }catch(e){
+        console.log(e)
+    }
+    
     console.log("run server is debug:"+ __conf__.DEBUG);
     console.log("run server at port:"+ __conf__.PORT);
     console.log("run server at path:"+ Uti.root_path);
