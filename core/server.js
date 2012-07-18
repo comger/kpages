@@ -5,6 +5,9 @@
 
 var http = require('http');
 var url = require('url');
+var mongo = require("mongodb");
+var _redis = require("redis");
+var events = require("events");
 var fs = require('fs');
 
 __conf__ = {
@@ -46,6 +49,25 @@ var Uti = {
     }
 }
 
+//应用程序上下文
+var Context = {
+    _getMongoDb:function(db_name, db_host){ //支持mongo
+        var _host = db_host || __conf__.DB_HOST;
+        var _port = 27017;
+        var host_arr = _host.split(":");
+        if(host_arr.length>1){
+            _host = host_arr[0];
+            _port = host_arr[1];
+        }
+        
+        var _name = db_name || __conf__.DB_NAME;
+        var products_emitter = new events.EventEmitter();
+        return new mongo.Db(_name, new mongo.Server(_host, _port, {}), {});
+    },
+    _getRedis:function(host){
+        return _redis.createClient();
+    }
+}
 
 function start(){
 
@@ -79,7 +101,12 @@ function start(){
        handlers.forEach(function(h){
             if(Uti.isInRouter(pathname,h.key)){
                 try{
-                    return h.fn(req,res);
+                    with(Context){
+                        getdb = _getMongoDb;
+                        getRedis = _getRedis;
+                        return h.fn(req,res);
+                    }
+                    
                 }catch(e){
                     if(__conf__.DEBUG){
                         Uti.urlError(req,res,e);
@@ -98,3 +125,4 @@ function start(){
 
 exports.start = start;
 exports.Uti = Uti;
+exports.Context = Context;

@@ -3,6 +3,8 @@
  *
  **/
 var setting = {
+    'DB_HOST':'localhost:27017',
+    'DB_NAME':'mcm',
     'DEBUG':true,
     'PORT':18200,
     'ACTION_DIR':['action']
