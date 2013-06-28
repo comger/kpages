@@ -11,6 +11,8 @@
 # 服务器监听端口
 PORT = 8088
 
+# 数据库超时时间
+SOCK_TIMEOUT = 10
 
 # SESSION 过期时间(秒)
 SESSION_EXPIRE = 60 * 10
@@ -37,7 +39,7 @@ COOKIE_SECRET = "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo="
 XSRF_COOKIES = False
 
 # 缓存服务器
-CACHE_SERVERS = "localhost"
+CACHE_HOST = "localhost"
 
 # 数据库服务器
 DB_HOST = "localhost"

@@ -25,7 +25,7 @@ class LogicContext(object):
         self._thread_local.contexts.append(self)
         return self
     
-    def __exist__(self):
+    def __exit__(self,exc_type, exc_value, trackback):
         self._thread_local.contexts.remove(self)
         if self._db_conn:
             self._db_conn.disconnect()
@@ -49,4 +49,5 @@ class LogicContext(object):
 
 
 get_context = LogicContext.get_context
+
 __all__ = [ "LogicContext", "get_context"]
