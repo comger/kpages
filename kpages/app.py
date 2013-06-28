@@ -11,7 +11,7 @@ from router import load_handlers
 from utility import refresh_config
 
 def run():
-    refresh_config('setting.py.txt')
+    refresh_config('setting.py')
     print 
     print 'ConfigParams:'
     for k,v in __conf__.__dict__.items():
