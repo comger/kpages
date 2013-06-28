@@ -17,18 +17,24 @@ def run():
     for k,v in __conf__.__dict__.items():
         if not k.startswith('__'):
             print "  {0:<20} : {1}".format(k, v)
+    
+    dirs = __conf__.ACTION_DIR
+    if isinstance(__conf__.ACTION_DIR, str):dirs = (__conf__.ACTION_DIR,)
 
-    handlers = load_handlers('restful')
+    handlers = []
+    for path in dirs:
+        handlers.extend(load_handlers(path))
+    
     print 
-    print 'UrlHandlers'
+    print "UrlHandlers:"
     for h in handlers:
         print h
 
     
 
-    settings = {'debug':__conf__.DEBUG}
+    settings = {"debug":__conf__.DEBUG}
     app = tornado.web.Application(handlers,**settings)
     app.listen(__conf__.PORT)
     tornado.ioloop.IOLoop.instance().start()
 
-
+__all__ = ["run"]

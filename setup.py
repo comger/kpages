@@ -34,8 +34,7 @@ distutils.core.setup(
     name="kpages",
     version=version,
     packages = ["kpages"],
-    package_data = {
-        },
+    package_data = {},
     author="comger",
     author_email="comger@gmail.com",
     url="http://weibo.com/comger",

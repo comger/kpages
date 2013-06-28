@@ -21,19 +21,20 @@ DEBUG = True
 # 是否启动压缩
 GZIP = True
 
+# 指定RequestHandler 所在目录
+ACTION_DIR = ("action",)
+
 # 静态目录名
 STATIC_DIR_NAME = "static"
 
 # 模板目录名
 TEMPLATE_DIR_NAME = "template"
 
-
 # COOKIE 加密
 COOKIE_SECRET = "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo="
 
 # COOKIE 安全
 XSRF_COOKIES = False
-
 
 # 缓存服务器
 CACHE_SERVERS = "localhost"

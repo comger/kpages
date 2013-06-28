@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding:utf-8 -*- 
 """
     author comger@gmail.com
@@ -21,7 +20,7 @@ def refresh_config(*args):
         demo: refresh_config('setting.py.txt','cacheconfig.py.txt')
         use like : __conf__.DB_HOST 
     '''
-    if not args:args = ('setting.py.txt',)
+    if not args:args = ("setting.py.txt",)
     
     dct = {}
     import settings
@@ -37,4 +36,4 @@ def refresh_config(*args):
 
     __builtin__.__conf__ = module
 
-
+__all__ = ["not_empty","refresh_config"]
