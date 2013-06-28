@@ -1,8 +1,6 @@
 
-kpages.js
+kpages
 
-this's mini server for nodejs.
+this's mini helper for tornado 
 
-1. 快速创建请求响应
-2. 简单的地址路由设置
 
