@@ -5,6 +5,7 @@
 import os
 import __builtin__
 from types import ModuleType
+from bson.objectid import ObjectId
 
 #merge f with current path
 app_path = lambda f:os.path.join(os.getcwd(),f)
@@ -36,4 +37,15 @@ def refresh_config(*args):
 
     __builtin__.__conf__ = module
 
-__all__ = ["not_empty","refresh_config"]
+
+def mongo_conv(d):
+    if isinstance(d, (unicode, ObjectId)):
+        return str(d)
+    elif isinstance(d, (list, tuple)):
+        return [mongo_conv(x) for x in d]
+    elif isinstance(d, dict):
+        return dict([(mongo_conv(k), mongo_conv(v)) for k, v in d.items()])
+    else:
+        return d
+
+__all__ = ["app_path","not_empty","refresh_config","mongo_conv"]

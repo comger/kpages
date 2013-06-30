@@ -55,3 +55,6 @@ def load_handlers(handler_dir = 'action'):
     handlers.sort(cmp = cmp, key = lambda x: x[1])
 
     return [(pattern, handler) for pattern, _, handler in handlers]
+
+
+__all__ = ["url","load_handlers"]

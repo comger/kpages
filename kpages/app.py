@@ -8,7 +8,7 @@ import tornado.ioloop
 
 from router import load_handlers
 
-from utility import refresh_config
+from utility import refresh_config,app_path
 
 def run():
     refresh_config('setting.py')
@@ -32,7 +32,12 @@ def run():
 
     
 
-    settings = {"debug":__conf__.DEBUG}
+    settings = {"debug":__conf__.DEBUG,
+            "static_path":app_path(__conf__.STATIC_DIR_NAME),
+            "template_path":app_path(__conf__.TEMPLATE_DIR_NAME),
+            "gzip":__conf__.GZIP,
+            "cookie_secret":__conf__.COOKIE_SECRET,
+            "xsrf_cookies":__conf__.XSRF_COOKIES}
     app = tornado.web.Application(handlers,**settings)
     app.listen(__conf__.PORT)
     tornado.ioloop.IOLoop.instance().start()

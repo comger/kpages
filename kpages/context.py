@@ -8,6 +8,13 @@ from threading import local
 
 from redis import Redis
 from pymongo import Connection
+from tornado.web import RequestHandler
+
+class ContextHandler(RequestHandler):
+    def _execute(self, transforms, *args, **kwargs):
+        with LogicContext():
+            super(ContextHandler, self)._execute(transforms, *args, **kwargs)
+
 
 class LogicContext(object):
     """
@@ -41,7 +48,9 @@ class LogicContext(object):
 
         if not self._db_conn:
             self._db_conn = Connection(host = self._db_host, network_timeout= __conf__.SOCK_TIMEOUT)
-    
+        
+        return self._db_conn[name]
+
     @classmethod
     def get_context(cls):
         return hasattr(cls._thread_local, "contexts") and cls._thread_local.contexts and \
@@ -50,4 +59,4 @@ class LogicContext(object):
 
 get_context = LogicContext.get_context
 
-__all__ = [ "LogicContext", "get_context"]
+__all__ = ["ContextHandler","LogicContext", "get_context"]
