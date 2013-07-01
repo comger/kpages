@@ -10,7 +10,7 @@ from router import load_handlers
 
 from utility import refresh_config,app_path
 
-def run():
+def run(**kwargs):
     refresh_config('setting.py')
     print 
     print 'ConfigParams:'
@@ -18,12 +18,7 @@ def run():
         if not k.startswith('__'):
             print "  {0:<20} : {1}".format(k, v)
     
-    dirs = __conf__.ACTION_DIR
-    if isinstance(__conf__.ACTION_DIR, str):dirs = (__conf__.ACTION_DIR,)
-
-    handlers = []
-    for path in dirs:
-        handlers.extend(load_handlers(path))
+    handlers = load_handlers(__conf__.ACTION_DIR)
     
     print 
     print "UrlHandlers:"
@@ -38,6 +33,7 @@ def run():
             "gzip":__conf__.GZIP,
             "cookie_secret":__conf__.COOKIE_SECRET,
             "xsrf_cookies":__conf__.XSRF_COOKIES}
+
     app = tornado.web.Application(handlers,**settings)
     app.listen(__conf__.PORT)
     tornado.ioloop.IOLoop.instance().start()

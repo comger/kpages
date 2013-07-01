@@ -26,12 +26,22 @@ def url(pattern, order = 0):
         assert(issubclass(handler, tornado.web.RequestHandler))
         if not hasattr(handler, "__urls__") or not handler.__urls__: handler.__urls__ = []
         handler.__urls__.append((pattern, order))
-
         return handler
 
     return actual
 
+
 def load_handlers(handler_dir = 'action'):
+    dirs = handler_dir
+    if isinstance(handler_dir, str):dirs = (handler_dir,)
+    handlers = []
+    for path in dirs:
+        handlers.extend(_load_handlers(path))
+
+    return handlers
+
+
+def _load_handlers(handler_dir = 'action'):
     '''
         加载指定目录的RequestHandler
         Load handler_dir's Handler
