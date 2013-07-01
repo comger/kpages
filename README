@@ -1,13 +1,14 @@
-
 kpages
-==================
+======
+
 kpages is mini helper for tornado
 
 router
------------------------------------
+------
 
 restful/index.py(add @url to class , kpages will route url to this handler)
-----------
+---------------------------------------------------------------------------
+
 from kpages import url
 
 @url(r'/',0)
@@ -18,14 +19,15 @@ class HomeHandler(RequestHandler):
 
 
 setting.py(config for tornado and you app, use __conf__.xxxx to get you config value )
----------
+--------------------------------------------------------------------------------------
+
 ACTION_DIR = 'restful'
 DEBUG = True
 PORT= 8989
 
 
 app.py
-----------
+------
 from kpages import run
 
 if __name__ == '__main__':
