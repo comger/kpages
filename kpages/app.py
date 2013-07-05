@@ -8,9 +8,10 @@ import tornado.ioloop
 
 from router import load_handlers
 
-from utility import refresh_config,app_path
+from utility import refresh_config,app_path,set_default_encoding
 
 def run(**kwargs):
+    set_default_encoding()
     refresh_config('setting.py')
     print 
     print 'ConfigParams:'

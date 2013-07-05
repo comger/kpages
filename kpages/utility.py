@@ -48,4 +48,12 @@ def mongo_conv(d):
     else:
         return d
 
-__all__ = ["app_path","not_empty","refresh_config","mongo_conv"]
+
+def set_default_encoding():
+    import sys, locale
+    reload(sys)
+
+    lang, coding = locale.getdefaultlocale()
+    sys.setdefaultencoding(coding)
+
+__all__ = ["app_path","not_empty","refresh_config","mongo_conv","set_default_encoding"]
