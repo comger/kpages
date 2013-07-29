@@ -54,6 +54,9 @@ def set_default_encoding():
     reload(sys)
 
     lang, coding = locale.getdefaultlocale()
+    if not coding:
+        coding = 'utf-8'
+
     sys.setdefaultencoding(coding)
 
 __all__ = ["app_path","not_empty","refresh_config","mongo_conv","set_default_encoding"]
