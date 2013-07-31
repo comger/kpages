@@ -52,3 +52,18 @@ from kpages import ContextHandler
 class DemoHandler(ContextHandler):
     def get(self):
         db = get_context().get_mongo('dbname')
+
+
+test commend
+------------
+python app.py --test test_city.DemoCase.testprint :test testprint method
+python app.py --test test_city.DemoCase           :test methods in DemoCase class
+python app.py --test test_city                    :test methods in test_city.py
+python app.py --test all                          :test methods in app's __conf__.UTEST_DIR
+
+pro commend
+------------
+python app.py --pro test_city.DemoCase.testprint :profile testprint method
+python app.py --pro test_city.DemoCase           :profile methods in DemoCase class
+python app.py --pro test_city                    :profile methods in test_city.py
+python app.py --pro all                          :profile methods in app's __conf__.UTEST_DIR

@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "0.3.dev"
+version = "0.4.dev"
 
 with open('README') as f:
     long_description = f.read()
@@ -39,7 +39,7 @@ distutils.core.setup(
     author_email="comger@gmail.com",
     url="http://weibo.com/comger",
     license="http://www.apache.org/licenses/LICENSE-2.0",
-    description="kpages is helper for you web app ,active on tornado, pymongo,redis",
+    description="kpages is helper for you web app ,active on tornado, pymongo,redis,unittest,profile",
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
