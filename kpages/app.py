@@ -6,13 +6,25 @@
 import tornado.web
 import tornado.ioloop
 
+from optparse import OptionParser, OptionGroup
 from router import load_handlers
-
+from context import LogicContext
 from utility import refresh_config,app_path,set_default_encoding
+from utest import run_test,pro_test
 
-def run(**kwargs):
-    set_default_encoding()
-    refresh_config('setting.py')
+
+def _get_opt():
+    parser = OptionParser("%prog [options]", version="%prog v0.9")
+    parser.add_option("--test", dest = "test", default = None,help = "utest module")
+    parser.add_option("--pro", dest = "pro", default = None,help = "profile for method")
+    
+    parser.add_option("--debug", dest = "debug", action = "store_true", default = None, help = "Debug mode.")
+    parser.add_option("--ndebug", dest = "debug", action = "store_false", help = "No Debug mode.")
+
+    return parser.parse_args()
+
+
+def _run(*argv):
     print 
     print 'ConfigParams:'
     for k,v in __conf__.__dict__.items():
@@ -26,8 +38,6 @@ def run(**kwargs):
     for h in handlers:
         print h
 
-    
-
     settings = {"debug":__conf__.DEBUG,
             "static_path":app_path(__conf__.STATIC_DIR_NAME),
             "template_path":app_path(__conf__.TEMPLATE_DIR_NAME),
@@ -38,5 +48,20 @@ def run(**kwargs):
     app = tornado.web.Application(handlers,**settings)
     app.listen(__conf__.PORT)
     tornado.ioloop.IOLoop.instance().start()
+
+def run(*argv):
+    set_default_encoding()
+    refresh_config('setting.py')
+    opts, args = _get_opt()
+    if opts.test is not None:
+        m = opts.test
+        if m == 'all':m=None
+        with LogicContext():
+            run_test(m)
+    elif opts.pro is not None:
+        with LogicContext():
+            pro_test(opts.pro)
+    else:
+        _run()
 
 __all__ = ["run"]
