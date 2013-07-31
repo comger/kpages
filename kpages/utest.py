@@ -35,18 +35,22 @@ def load_testsuites(module=None):
     return _suites
 
 def run_test(line=None):
-    ls = line.strip().split('.')
-    module = ls[0]
-    suites = load_testsuites(module)
-    _suite = []
-    if len(ls)==2:
-        for key in suites.keys():
-            if key.startswith('utest.{0}.{1}'.format(ls[0],ls[1])):
-                _suite.append(suites[key])
-    elif len(ls)==3:
-        _suite = suites.get('utest.'+line)
-    elif len(ls)==1:
-        _suite = suites.values()
+    _suites = []
+    if line is None:
+        suites = load_testsuites()
+        _suites = suites.values()
+    else:
+        ls = line.strip().split('.')
+        module = ls[0]
+        suites = load_testsuites(module)
+        if len(ls)==2:
+            for key in suites.keys():
+                if key.startswith('utest.{0}.{1}'.format(ls[0],ls[1])):
+                    _suite.append(suites[key])
+        elif len(ls)==3:
+            _suite = suites.get('utest.'+line)
+        elif len(ls)==1:
+            _suite = suites.values()
 
     print "Unittest:"
     print _suite
