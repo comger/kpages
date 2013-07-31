@@ -62,6 +62,6 @@ def run(*argv):
         with LogicContext():
             pro_test(opts.pro)
     else:
-        run()
+        _run()
 
 __all__ = ["run"]
