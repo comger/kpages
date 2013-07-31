@@ -26,6 +26,9 @@ GZIP = True
 # 指定RequestHandler 所在目录
 ACTION_DIR = ("action",)
 
+# 指定TestCase 所在目录
+UTEST_DIR = "utest"
+
 # 静态目录名
 STATIC_DIR_NAME = "static"
 
