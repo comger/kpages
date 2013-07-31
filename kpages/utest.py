@@ -36,7 +36,7 @@ def load_testsuites(module=None):
 
 def run_test(line=None):
     _suites = []
-    if line is None:
+    if not line:
         suites = load_testsuites()
         _suites = suites.values()
     else:
@@ -46,15 +46,15 @@ def run_test(line=None):
         if len(ls)==2:
             for key in suites.keys():
                 if key.startswith('utest.{0}.{1}'.format(ls[0],ls[1])):
-                    _suite.append(suites[key])
+                    _suites.append(suites[key])
         elif len(ls)==3:
-            _suite = suites.get('utest.'+line)
+            _suites = suites.get('utest.'+line)
         elif len(ls)==1:
-            _suite = suites.values()
+            _suites = suites.values()
 
     print "Unittest:"
-    print _suite
-    TextTestRunner().run(TestSuite(_suite))
+    print _suites
+    TextTestRunner().run(TestSuite(_suites))
 
 def pro_test(m):
     def _run():
