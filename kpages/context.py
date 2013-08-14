@@ -30,6 +30,7 @@ class LogicContext(object):
     def __enter__(self):
         if not hasattr(self._thread_local, "contexts"): self._thread_local.contexts = []
         self._thread_local.contexts.append(self)
+        print 'append context'
         return self
     
     def __exit__(self,exc_type, exc_value, trackback):
@@ -45,14 +46,17 @@ class LogicContext(object):
 
     def get_mongo(self,name=None):
         name = name or __conf__.DB_NAME
-
         if not self._db_conn:
             self._db_conn = Connection(host = self._db_host, network_timeout= __conf__.SOCK_TIMEOUT)
-        
+
         return self._db_conn[name]
+    
+    def session(self,key,val=None,expire = None):
+        pass
 
     @classmethod
     def get_context(cls):
+        print cls._thread_local.contexts
         return hasattr(cls._thread_local, "contexts") and cls._thread_local.contexts and \
             cls._thread_local.contexts[-1] or None
 
