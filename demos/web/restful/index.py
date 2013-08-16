@@ -6,13 +6,15 @@
 import tornado
 
 from tornado import gen
-from kpages import url,ContextHandler,LogicContext,get_context
+from kpages import url,ContextHandler,LogicContext,get_context,service_async
 
 @url(r"/")
 class IndexHandler(ContextHandler):
     def get(self):
         print self.session('demokey',dict(abcdeed='deee',dd='dssd'))
 
+        with LogicContext():
+            service_async('','demofun',dict(data='sasa'))
         print self.session('demokey')
         self.write('hi kpages')
 

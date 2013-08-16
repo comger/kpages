@@ -38,11 +38,11 @@ def not_empty(*args):
     if not all(args):
         raise ValueError("Argument must be not None/Null/Zero/Empty!")
 
-def refresh_config(*args):
+def reflesh_config(*args):
     '''
         刷新当前环境配置 保存到__builtin__
         *args:相对目录的文件列表
-        demo: refresh_config('setting.py.txt','cacheconfig.py.txt')
+        demo: reflesh_config('setting.py.txt','cacheconfig.py.txt')
         use like : __conf__.DB_HOST 
     '''
     if not args:args = ("setting.py.txt",)
@@ -83,4 +83,4 @@ def set_default_encoding():
 
     sys.setdefaultencoding(coding)
 
-__all__ = ["app_path","not_empty","refresh_config","mongo_conv","set_default_encoding","get_modules","get_members"]
+__all__ = ["app_path","not_empty","reflesh_config","mongo_conv","set_default_encoding","get_modules","get_members"]

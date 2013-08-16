@@ -26,6 +26,9 @@ GZIP = True
 # 指定RequestHandler 所在目录
 ACTION_DIR = ("action",)
 
+# 指定任务（srvcmd）所在目录
+JOB_DIR = "logic"
+
 # 指定TestCase 所在目录
 UTEST_DIR = "utest"
 
@@ -50,4 +53,4 @@ DB_HOST = "localhost"
 # 数据库名
 DB_NAME = "test"
 
-
+SERVICE_CHANNEL = "channel1"
