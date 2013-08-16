@@ -18,9 +18,6 @@ def _get_opt():
     parser.add_option("--test", dest = "test", default = None,help = "utest module")
     parser.add_option("--pro", dest = "pro", default = None,help = "profile for method")
     
-    parser.add_option("--debug", dest = "debug", action = "store_true", default = None, help = "Debug mode.")
-    parser.add_option("--ndebug", dest = "debug", action = "store_false", help = "No Debug mode.")
-
     return parser.parse_args()
 
 

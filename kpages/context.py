@@ -4,16 +4,27 @@
     logic context for db, cache 
     db is mongodb,cache is redis
 """
+import os
+import time
 from threading import local
+from hashlib import sha1
 
 from redis import Redis
 from pymongo import Connection
 from tornado.web import RequestHandler
 
+session_id = lambda :sha1('%s%s'%(os.urandom(16),time.time())).hexdigest()
+
 class ContextHandler(RequestHandler):
     def _execute(self, transforms, *args, **kwargs):
         with LogicContext():
             super(ContextHandler, self)._execute(transforms, *args, **kwargs)
+
+    def session(self,key,val=None):
+        _id = self.get_secure_cookie('session_id',None)
+        if not _id:
+            self.set_secure_cookie('session_id',session_id())
+        return get_context().session(_id,key,val)
 
 
 class LogicContext(object):
@@ -26,11 +37,11 @@ class LogicContext(object):
         self._cache_host = cache_host or __conf__.CACHE_HOST
         self._db_host = db_host or __conf__.DB_HOST
         self._db_conn = None
+        self._session = None
 
     def __enter__(self):
         if not hasattr(self._thread_local, "contexts"): self._thread_local.contexts = []
         self._thread_local.contexts.append(self)
-        print 'append context'
         return self
     
     def __exit__(self,exc_type, exc_value, trackback):
@@ -51,12 +62,20 @@ class LogicContext(object):
 
         return self._db_conn[name]
     
-    def session(self,key,val=None,expire = None):
-        pass
+    def session(self,_id,key,val=None,expire = None):
+        if not self._session:
+            self._session = self.get_mongo('session')['session']
 
+        dt = self._session.find_one(dict(_id=_id)) or {}
+        if not val: return dt.get('data',{}).get(key)
+        
+        if dt:
+            self._session.update(dict(_id=_id),{'$set':{'data.'+key:val}})
+        else:
+            self._session.insert(dict(_id=_id,data=dict(key=val)))
+                
     @classmethod
     def get_context(cls):
-        print cls._thread_local.contexts
         return hasattr(cls._thread_local, "contexts") and cls._thread_local.contexts and \
             cls._thread_local.contexts[-1] or None
 

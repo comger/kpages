@@ -4,7 +4,11 @@
     author comger@gmail.com
 """
 import sys
-from kpages.app import run
+
+from kpages import run
+from tornado.options import define
+
+
 
 if __name__ == "__main__":
     run(*sys.argv)
