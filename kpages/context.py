@@ -12,6 +12,11 @@ from hashlib import sha1
 from redis import Redis
 from pymongo import Connection
 from tornado.web import RequestHandler
+try:
+    import motor
+except:
+    print 'can not import motor '
+
 
 session_id = lambda :sha1('%s%s'%(os.urandom(16),time.time())).hexdigest()
 
@@ -37,6 +42,7 @@ class LogicContext(object):
         self._cache_host = cache_host or __conf__.CACHE_HOST
         self._db_host = db_host or __conf__.DB_HOST
         self._db_conn = None
+        self._sync_db = None
         self._session = None
 
     def __enter__(self):
@@ -61,6 +67,15 @@ class LogicContext(object):
             self._db_conn = Connection(host = self._db_host, network_timeout= __conf__.SOCK_TIMEOUT)
 
         return self._db_conn[name]
+
+    def get_aync_mongo(self,name=None):
+        """ 非阻塞的pympongo 支持，需要安装motor """
+        name = name or __conf__.DB_NAME
+        if not self._sync_db:
+            client = motor.MotorClient(host = self._db_host).open_sync()
+            self._sync_db = client[name]
+
+        return self._sync_db
     
     def session(self,_id,key,val=None,expire = None):
         if not self._session:
@@ -73,7 +88,10 @@ class LogicContext(object):
             self._session.update(dict(_id=_id),{'$set':{'data.'+key:val}})
         else:
             self._session.insert(dict(_id=_id,data=dict(key=val)))
-                
+        return val
+
+
+
     @classmethod
     def get_context(cls):
         return hasattr(cls._thread_local, "contexts") and cls._thread_local.contexts and \

@@ -3,6 +3,9 @@
     index action
     author comger@gmail.com
 """
+import tornado
+
+from tornado import gen
 from kpages import url,ContextHandler,LogicContext,get_context
 
 @url(r"/")
@@ -12,3 +15,13 @@ class IndexHandler(ContextHandler):
 
         print self.session('demokey')
         self.write('hi kpages')
+
+@url(r'/list')
+class ListHandler(ContextHandler):
+    ''' demo for motor pymongo '''
+    @gen.coroutine
+    def get(self):
+        ses = get_context().get_aync_mongo('session')['session']
+        lst = yield ses.find().to_list(100)
+        print lst
+        self.write('ok')
