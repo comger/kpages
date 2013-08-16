@@ -39,7 +39,7 @@ distutils.core.setup(
     author_email="comger@gmail.com",
     url="http://weibo.com/comger",
     license="http://www.apache.org/licenses/LICENSE-2.0",
-    description="kpages is helper for you web app、redis mq,active on tornado, pymongo,redis,unittest,profile",
+    description="kpages is api-centric web application framework for the Tornado and Mongodb",
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
@@ -52,6 +52,8 @@ distutils.core.setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         ],
     long_description=long_description,
+    install_requires=['pymongo >= 2.5.1','tornado >= 3.1','greenlet >= 0.4.0',],
+    keywords=["mongo", "mongodb", "pymongo", "gridfs", "profile", "motor", "tornado","redis","session","router"],
     setup_requires=['msgpack-python','pymongo','redis','termcolor','motor'],
     **kwargs
 )
