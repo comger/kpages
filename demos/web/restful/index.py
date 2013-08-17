@@ -11,6 +11,8 @@ from kpages import url,ContextHandler,LogicContext,get_context,service_async
 @url(r"/")
 class IndexHandler(ContextHandler):
     def get(self):
+        #import pdb;pdb.set_trace()
+
         print self.session('demokey',dict(abcdeed='deee',dd='dssd'))
 
         with LogicContext():

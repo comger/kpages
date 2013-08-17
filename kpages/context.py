@@ -17,7 +17,6 @@ try:
 except:
     print 'can not import motor '
 
-
 session_id = lambda :sha1('%s%s'%(os.urandom(16),time.time())).hexdigest()
 
 class ContextHandler(RequestHandler):
@@ -25,12 +24,13 @@ class ContextHandler(RequestHandler):
         with LogicContext():
             super(ContextHandler, self)._execute(transforms, *args, **kwargs)
 
-    def session(self,key,val=None):
+    def session(self,key,val=None,is_redis=False):
         _id = self.get_secure_cookie('session_id',None)
         if not _id:
-            self.set_secure_cookie('session_id',session_id())
-        return get_context().session(_id,key,val)
+            _id = session_id()
+            self.set_secure_cookie('session_id',_id)
 
+        return get_context().redis_session(_id,key,val) if is_redis else get_context().session(_id,key,val)
 
 class LogicContext(object):
     """
@@ -62,18 +62,15 @@ class LogicContext(object):
         return cache
 
     def get_mongo(self,name=None):
-        name = name or __conf__.DB_NAME
         if not self._db_conn:
-            self._db_conn = Connection(host = self._db_host, network_timeout= __conf__.SOCK_TIMEOUT)
+            self._db_conn = Connection(host = __conf__.DB_HOST, network_timeout= __conf__.SOCK_TIMEOUT)
 
         return self._db_conn[name]
 
     def get_aync_mongo(self,name=None):
         """ 非阻塞的pympongo 支持，需要安装motor """
-        name = name or __conf__.DB_NAME
         if not self._sync_db:
-            client = motor.MotorClient(host = self._db_host).open_sync()
-            self._sync_db = client[name]
+            self._sync_db = motor.MotorClient(host = __conf__.DB_HOST).open_sync()[name]
 
         return self._sync_db
     
@@ -85,12 +82,13 @@ class LogicContext(object):
         if not val: return dt.get('data',{}).get(key)
         
         if dt:
-            self._session.update(dict(_id=_id),{'$set':{'data.'+key:val}})
+           self._session.update(dict(_id=_id),{'$set':{'data.'+key:val}})
         else:
             self._session.insert(dict(_id=_id,data=dict(key=val)))
         return val
 
-
+    def redis_session(self,_id,key,val=None):
+        return self.get_redis().hget(_id,key) if val else self.get_redis().hset(_id,key,val)
 
     @classmethod
     def get_context(cls):
