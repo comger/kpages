@@ -16,7 +16,7 @@ class IndexHandler(ContextHandler):
         print self.session('demokey',dict(abcdeed='deee',dd='dssd'))
 
         with LogicContext():
-            service_async('','demofun',dict(data='sasa'))
+            service_async('demofun',dict(data='sasa'))
         print self.session('demokey')
         self.write('hi kpages')
 

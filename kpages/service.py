@@ -68,9 +68,12 @@ class Pack(object):
         """
             将消息队列中的数据解包
         """
-        pack = loads(data)
-        return pack["cmd"], pack["data"]
-
+        try:
+            print 'unpack data:',data
+            pack = loads(data)
+            return pack["cmd"], pack["data"]
+        except:
+            return 'undefined cmd',None
 
     @classmethod
     def async_send_pack(cls,cmd, data, channel = None):
