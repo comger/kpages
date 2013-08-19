@@ -13,11 +13,14 @@ class IndexHandler(ContextHandler):
     def get(self):
         #import pdb;pdb.set_trace()
 
-        print self.session('demokey',dict(abcdeed='deee',dd='dssd'))
-
+        self.session('demokey',dict(abcdeed='deee',dd='dssd'))
+        self.session('sakey','saval')
+        self.session('sakey1','saval')
+        self.session('sakey2','saval')
+        print self.session('demokey')
+        print self.session('sakey')
         with LogicContext():
             service_async('demofun',dict(data='sasa'))
-        print self.session('demokey')
         self.write('hi kpages')
 
 @url(r'/list')

@@ -24,13 +24,13 @@ class ContextHandler(RequestHandler):
         with LogicContext():
             super(ContextHandler, self)._execute(transforms, *args, **kwargs)
 
-    def session(self,key,val=None,is_redis=False):
+    def session(self,key,val=None):
         _id = self.get_secure_cookie('session_id',None)
         if not _id:
             _id = session_id()
             self.set_secure_cookie('session_id',_id)
 
-        return get_context().redis_session(_id,key,val) if is_redis else get_context().session(_id,key,val)
+        return get_context().redis_session(_id,key,val) if __conf__.REDIS_SESSION else get_context().session(_id,key,val)
 
 class LogicContext(object):
     """
@@ -51,6 +51,9 @@ class LogicContext(object):
         return self
     
     def __exit__(self,exc_type, exc_value, trackback):
+        if self._session:
+            self._session.update(dict(_id=self._session_id),{'$set': {'data':self._session_val}})
+        
         self._thread_local.contexts.remove(self)
         if self._db_conn:
             self._db_conn.disconnect()
@@ -77,16 +80,14 @@ class LogicContext(object):
     def session(self,_id,key,val=None,expire = None):
         if not self._session:
             self._session = self.get_mongo('session')['session']
+            self._session_val = (self._session.find_one(dict(_id=_id)) or {}).get('data',{})
+            self._session_id = _id
 
-        dt = self._session.find_one(dict(_id=_id)) or {}
-        if not val: return dt.get('data',{}).get(key)
+        if not val: return self._session_val.get(key)
+        if not self._session_val:self._session.insert(dict(_id=_id,data=dict(key=val)))
         
-        if dt:
-           self._session.update(dict(_id=_id),{'$set':{'data.'+key:val}})
-        else:
-            self._session.insert(dict(_id=_id,data=dict(key=val)))
-        return val
-
+        self._session_val[key]=val
+        
     def redis_session(self,_id,key,val=None):
         return self.get_redis().hget(_id,key) if val else self.get_redis().hset(_id,key,val)
 

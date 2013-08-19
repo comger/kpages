@@ -27,7 +27,7 @@ kwargs = {}
 
 version = "0.5.2.dev"
 
-with open('README') as f:
+with open('README.md') as f:
     long_description = f.read()
 
 distutils.core.setup(

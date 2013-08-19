@@ -17,6 +17,9 @@ SOCK_TIMEOUT = 10
 # SESSION 过期时间(秒)
 SESSION_EXPIRE = 60 * 10
 
+#是否使用redis ression
+REDIS_SESSION = False
+
 # 是否启动调试模式
 DEBUG = True
 
