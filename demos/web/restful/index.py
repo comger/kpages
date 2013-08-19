@@ -6,7 +6,7 @@
 import tornado
 
 from tornado import gen
-from kpages import url,ContextHandler,LogicContext,get_context
+from kpages import url,ContextHandler,LogicContext,get_context,service_async
 
 @url(r"/")
 class IndexHandler(ContextHandler):
@@ -23,5 +23,8 @@ class ListHandler(ContextHandler):
     def get(self):
         ses = get_context().get_aync_mongo('session')['session']
         lst = yield ses.find().to_list(100)
-        print lst
+        data = dict(data = lst)
+        with LogicContext(): 
+            service_async('demofun',data)
+
         self.write('ok')

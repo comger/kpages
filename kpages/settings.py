@@ -50,4 +50,4 @@ DB_HOST = "localhost"
 # 数据库名
 DB_NAME = "test"
 
-
+SERVICE_CHANNEL = "channel1"
