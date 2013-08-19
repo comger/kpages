@@ -26,6 +26,9 @@ GZIP = True
 # 指定RequestHandler 所在目录
 ACTION_DIR = ("action",)
 
+# 指定任务（srvcmd）所在目录
+JOB_DIR = "logic"
+
 # 指定TestCase 所在目录
 UTEST_DIR = "utest"
 

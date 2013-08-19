@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "0.4.3.dev"
+version = "0.5.2.dev"
 
 with open('README') as f:
     long_description = f.read()
@@ -37,9 +37,9 @@ distutils.core.setup(
     package_data = {},
     author="comger",
     author_email="comger@gmail.com",
-    url="http://weibo.com/comger",
+    url="http://github.com/comger/kpages",
     license="http://www.apache.org/licenses/LICENSE-2.0",
-    description="kpages is helper for you web app ,active on tornado, pymongo,redis,unittest,profile",
+    description="kpages is api-centric web application framework for the Tornado and Mongodb",
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
@@ -52,5 +52,8 @@ distutils.core.setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         ],
     long_description=long_description,
+    keywords=["mongo", "mongodb", "pymongo", "gridfs", "profile", "motor", "tornado","redis","session","router"],
+    #install_requires=['pymongo >= 2.5.1','tornado >= 3.1','greenlet >= 0.4.0',],
+    setup_requires=['msgpack-python','motor','pymongo','redis','termcolor','greenlet','tornado'],
     **kwargs
 )

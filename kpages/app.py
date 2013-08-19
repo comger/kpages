@@ -9,7 +9,7 @@ import tornado.ioloop
 from optparse import OptionParser, OptionGroup
 from router import load_handlers
 from context import LogicContext
-from utility import refresh_config,app_path,set_default_encoding
+from utility import reflesh_config,app_path,set_default_encoding
 from utest import run_test,pro_test
 
 
@@ -48,7 +48,7 @@ def _run(*argv):
 
 def run(*argv):
     set_default_encoding()
-    refresh_config('setting.py')
+    reflesh_config('setting.py')
     opts, args = _get_opt()
     if opts.test is not None:
         m = opts.test

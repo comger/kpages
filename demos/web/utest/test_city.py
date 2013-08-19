@@ -4,7 +4,7 @@
 """
 import json
 from pyquery import PyQuery as pyq
-from kpages import LogicContext,refresh_config
+from kpages import LogicContext,reflesh_config
 from logic.city import add
 from logic.utility import m_page
 from unittest import TestCase
@@ -47,7 +47,7 @@ class DemoCase(TestCase):
 
 if __name__ == '__main__':
     case = CityCate()
-    refresh_config('setting.py')
+    reflesh_config('setting.py')
     with LogicContext():
         case.test_add()
 
