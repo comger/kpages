@@ -4,7 +4,7 @@
 
 ######基于Tornado的开发包，提供地址路由、配置、测试、性能分析、数据库及内存连接上下文管理等，如果你想用Tornado提供一些高性能的服务接口，这会给你很大的帮助的。
 
-##outer
+##router
 
 restful/index.py(add @url to class , kpages will route url to this handler)
 ```
