@@ -62,3 +62,5 @@ def pro_test(m):
 
     profile.runctx("_run()",globals(),locals())
 
+
+__all__ = ['run_test','pro_test']

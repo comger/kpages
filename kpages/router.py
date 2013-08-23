@@ -51,7 +51,7 @@ def _load_handlers(handler_dir = 'action'):
     '''
     path = os.path.join(os.getcwd(), handler_dir)
     py_filter = lambda f:fnmatch(f, '*.py') and not f.startswith('__')
-    member_filter = lambda m:isinstance(m, type) and issubclass(m, tornado.web.RequestHandler) and hasattr(m, '__urls__') and m.__urls__
+    member_filter = lambda m:isinstance(m, type) and hasattr(m, '__urls__') and m.__urls__
 
     names = [os.path.splitext(n)[0] for n in os.listdir(path) if py_filter(n)]
     modules = [__import__("{0}.{1}".format(handler_dir, n)).__dict__[n] for n in names]

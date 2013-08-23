@@ -1,5 +1,7 @@
 *.py[cod]
 
+*/nohup.out
+*/dump.rdb
 # C extensions
 *.so
 
