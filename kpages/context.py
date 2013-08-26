@@ -65,6 +65,7 @@ class LogicContext(object):
         return cache
 
     def get_mongo(self,name=None):
+        name = name or __conf__.DB_NAME
         if not self._db_conn:
             self._db_conn = Connection(host = __conf__.DB_HOST, network_timeout= __conf__.SOCK_TIMEOUT)
 
@@ -72,6 +73,7 @@ class LogicContext(object):
 
     def get_aync_mongo(self,name=None):
         """ 非阻塞的pympongo 支持，需要安装motor """
+        name = name or __conf__.DB_NAME
         if not self._sync_db:
             self._sync_db = motor.MotorClient(host = __conf__.DB_HOST).open_sync()[name]
 
