@@ -23,6 +23,7 @@ class WebApp(object):
         self._callback = callback
         self._handlers = load_handlers(__conf__.ACTION_DIR)
         self._webapp = self._get_webapp()
+        self._webapp.handlers = self._handlers
 
     def _get_webapp(self):
         settings = {"debug":__conf__.DEBUG,
