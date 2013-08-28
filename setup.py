@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "0.5.2.dev"
+version = "0.5.3.dev"
 
 with open('README.md') as f:
     long_description = f.read()
@@ -53,7 +53,7 @@ distutils.core.setup(
         ],
     long_description=long_description,
     keywords=["mongo", "mongodb", "pymongo", "gridfs", "profile", "motor", "tornado","redis","session","router"],
-    #install_requires=['pymongo >= 2.5.1','tornado >= 3.1','greenlet >= 0.4.0',],
-    setup_requires=['msgpack-python','motor','pymongo','redis','termcolor','greenlet','tornado'],
+    install_requires=['msgpack-python','motor','redis','termcolor','greenlet','tornado'],
+    setup_requires=['msgpack-python','motor','redis','termcolor','greenlet','tornado'],
     **kwargs
 )
