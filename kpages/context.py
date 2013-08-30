@@ -13,6 +13,7 @@ from gridfs import GridFS
 from redis import Redis
 from pymongo import Connection
 from tornado.web import RequestHandler
+import tornado.gen as gen
 try:
     import motor
 except:
@@ -46,6 +47,7 @@ class LogicContext(object):
         self._db_host = db_host or __conf__.DB_HOST
         self._db_conn = None
         self._sync_db = None
+        self._motor_clt = None
         self._session = None
 
     def __enter__(self):
@@ -90,6 +92,18 @@ class LogicContext(object):
                 host=__conf__.DB_HOST).open_sync()[name]
 
         return self._sync_db
+
+    @gen.coroutine
+    def get_motor(self, name=None):
+        name = name or __conf__.DB_NAME
+        if not self._motor_clt:
+            result, err = (yield gen.Task(
+                motor.MotorClient(host=self._db_host).open, )).args
+            if err:
+                raise err
+            self._motor_clt = result
+
+        raise gen.Return(self._motor_clt[name])
 
     def session(self, _id, key, val=None, expire=None):
         if not self._session:
