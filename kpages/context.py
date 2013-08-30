@@ -9,6 +9,7 @@ import time
 from threading import local
 from hashlib import sha1
 
+from gridfs import GridFS
 from redis import Redis
 from pymongo import Connection
 from tornado.web import RequestHandler
@@ -63,6 +64,10 @@ class LogicContext(object):
         h, p = host.split(":") if ":" in host else (host, 6379)
         cache = Redis(host = h, port = int(p), socket_timeout = __conf__.SOCK_TIMEOUT)
         return cache
+
+    def get_gfs(self,name=None):
+        name = name or __conf__.GFS_NAME
+        return GridFS(self.get_mongo(name))
 
     def get_mongo(self,name=None):
         name = name or __conf__.DB_NAME
