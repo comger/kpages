@@ -33,8 +33,8 @@ with open('README.md') as f:
 distutils.core.setup(
     name="kpages",
     version=version,
-    packages = ["kpages"],
-    package_data = {},
+    packages=["kpages"],
+    package_data={},
     author="comger",
     author_email="comger@gmail.com",
     url="http://github.com/comger/kpages",
@@ -50,10 +50,13 @@ distutils.core.setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
-        ],
+    ],
     long_description=long_description,
-    keywords=["mongo", "mongodb", "pymongo", "gridfs", "profile", "motor", "tornado","redis","session","router"],
-    install_requires=['msgpack-python','motor','redis','termcolor','greenlet','tornado'],
-    setup_requires=['msgpack-python','motor','redis','termcolor','greenlet','tornado'],
+    keywords=["mongo", "mongodb", "pymongo", "gridfs", "profile",
+              "motor", "tornado", "redis", "session", "router"],
+    install_requires=['msgpack-python', 'motor', 'redis', 'termcolor',
+                      'greenlet', 'tornado'],
+    setup_requires=['msgpack-python', 'motor', 'redis', 'termcolor',
+                    'greenlet', 'tornado'],
     **kwargs
 )

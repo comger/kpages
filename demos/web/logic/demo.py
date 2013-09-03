@@ -1,6 +1,7 @@
-# -*- coding:utf-8 -*- 
+# -*- coding:utf-8 -*-
 
 from kpages import srvcmd
+
 
 @srvcmd('demofun')
 def demofun(data):

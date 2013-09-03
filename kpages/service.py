@@ -32,6 +32,7 @@ from termcolor import colored
 from context import LogicContext, get_context
 from utility import get_members
 
+
 def staticclass(cls):
     def new(cls, *args, **kwargs):
         raise RuntimeError("Static Class")
@@ -59,9 +60,8 @@ class Pack(object):
         """
             将数据打包并序列化后发送到消息队列
         """
-        pack = dumps(dict(cmd = cmd, data = data))
+        pack = dumps(dict(cmd=cmd, data=data))
         mq.publish(channel, pack)
-
 
     @staticmethod
     def unpack(data):
@@ -69,36 +69,34 @@ class Pack(object):
             将消息队列中的数据解包
         """
         try:
-            print 'unpack data:',data
+            print 'unpack data:', data
             pack = loads(data)
             return pack["cmd"], pack["data"]
         except:
-            return 'undefined cmd',None
+            return 'undefined cmd', None
 
     @classmethod
-    def async_send_pack(cls,cmd, data, channel = None):
+    def async_send_pack(cls, cmd, data, channel=None):
         """
             将数据发送到队列，以实现异步处理。
         """
-        cls.send_pack(get_context().get_redis(), channel or __conf__.SERVICE_CHANNEL, cmd, data)
-
+        cls.send_pack(get_context(
+        ).get_redis(), channel or __conf__.SERVICE_CHANNEL, cmd, data)
 
 
 class Consumer(object):
     """
         队列消费服务
     """
-    def __init__(self, channel, host = "localhost"):
+    def __init__(self, channel, host="localhost"):
         self._channel = channel
         self._host = host
 
-
     def subscribe(self):
-        self._redis = Redis(host = self._host) # 不能加 Timeout，因为需要长时间等待消息到达。
+        self._redis = Redis(host=self._host)  # 不能加 Timeout，因为需要长时间等待消息到达。
         self._pubsub = self._redis.pubsub()
         self._pubsub.subscribe(self._channel)
         self._listen = None
-
 
     def consume(self):
         if not self._listen:
@@ -106,11 +104,9 @@ class Consumer(object):
 
         return Pack.unpack(self._listen.next()["data"])
 
-
     def close(self):
         if hasattr(self, "_redis"):
             self._redis.connection_pool.disconnect()
-
 
 
 class Service(object):
@@ -123,7 +119,7 @@ class Service(object):
             host    默认 "localhost"
             channel 默认 settings.py SERVICE_CHANNEL
     """
-    def __init__(self, host = None, channel = None, callback = None):
+    def __init__(self, host=None, channel=None, callback=None):
         self._host = host or "localhost"
         self._channel = channel or __conf__.SERVICE_CHANNEL
         #self._processes = __conf__.DEBUG and 1 or cpu_count()
@@ -135,17 +131,16 @@ class Service(object):
 
         if callback:
             kwargs = dict(
-                host = self._host,
-                channel = self._channel,
-                processes = self._processes,
-                services = self._services,
-                debug = __conf__.DEBUG
+                host=self._host,
+                channel=self._channel,
+                processes=self._processes,
+                services=self._services,
+                debug=__conf__.DEBUG
             )
             callback(**kwargs)
 
-
     def _signal(self):
-        
+
         def sig_handler(signum, frame):
             pid = getpid()
 
@@ -165,10 +160,10 @@ class Service(object):
         signal(SIGCHLD, sig_handler)
         signal(SIGUSR1, sig_handler)
 
-
     def _get_services(self):
         try:
-            members = get_members(__conf__.JOB_DIR, lambda o: hasattr(o, "__service__"))
+            members = get_members(
+                __conf__.JOB_DIR, lambda o: hasattr(o, "__service__"))
             return dict([(v.__service__, v) for k, v in members.items()])
         except:
             return {}
@@ -177,7 +172,8 @@ class Service(object):
         self._consumer.subscribe()
 
         for i in range(self._processes):
-            if fork() > 0: continue
+            if fork() > 0:
+                continue
 
             try:
                 with LogicContext():
@@ -189,13 +185,14 @@ class Service(object):
                             try:
                                 srv_func(data)
                             except Exception as e:
-                                print >> stderr, colored("Exception", "red"), ":", e.message
+                                print >> stderr, colored(
+                                    "Exception", "red"), ":", e.message
 
             except ConnectionError as e:
-                print >> stderr, colored("Exception {0}".format(getpid()), "red", attrs = ["bold", "blink"]), ":", e.message
+                print >> stderr, colored("Exception {0}".format(getpid(
+                )), "red", attrs=["bold", "blink"]), ":", e.message
 
             exit(0)
-
 
     def run(self):
         self._signal()
@@ -203,18 +200,17 @@ class Service(object):
         try:
             self._subscribe()
         except RuntimeError:
-            print >> stderr, colored("ERROR", "red", attrs = ["bold", "blink"]), ": Is redis running?"
+            print >> stderr, colored("ERROR", "red", attrs=[
+                                     "bold", "blink"]), ": Is redis running?"
             exit(-1)
-            
 
-        while True: pause()
-
+        while True:
+            pause()
 
 
 # 为 Redis 添加发送消息包方法。
 Redis.send_pack = Pack.send_pack
 service_async = Pack.async_send_pack
-
 
 
 __all__ = ["Consumer", "Service", "srvcmd", "service_async"]

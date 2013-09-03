@@ -12,7 +12,7 @@
 
 from pprint import pprint
 from optparse import OptionParser, OptionGroup
-from kpages import Service,reflesh_config
+from kpages import Service, reflesh_config
 
 
 def _show_info(**kwargs):
@@ -25,7 +25,8 @@ def _show_info(**kwargs):
 
     print "Parameters:"
     for k in sorted(settings.keys()):
-        if k.startswith("__"): continue
+        if k.startswith("__"):
+            continue
         print "  {0:<20} : {1}".format(k.upper(), settings[k])
 
     print
@@ -36,16 +37,18 @@ def _show_info(**kwargs):
     print
 
 
-
 def _get_opt():
     parser = OptionParser("%prog [options]", version="%prog v0.9")
-    parser.add_option("--host", dest = "host", default = None, help = "Redis server address.")
-    parser.add_option("--channel", dest = "channel", default = None, help = "Subscribe channel name.")
-    parser.add_option("--debug", dest = "debug", action = "store_true", default = None, help = "Debug mode.")
-    parser.add_option("--ndebug", dest = "debug", action = "store_false", help = "No Debug mode.")
+    parser.add_option("--host", dest="host", default=None,
+                      help="Redis server address.")
+    parser.add_option("--channel", dest="channel", default=None,
+                      help="Subscribe channel name.")
+    parser.add_option("--debug", dest="debug", action="store_true",
+                      default=None, help="Debug mode.")
+    parser.add_option("--ndebug", dest="debug",
+                      action="store_false", help="No Debug mode.")
 
     return parser.parse_args()
-
 
 
 def main():
@@ -54,10 +57,9 @@ def main():
     if opts.debug is not None:
         __conf__.DEBUG = opts.debug
 
-    Service(host = opts.host, channel = opts.channel, callback = _show_info).run()
-
+    Service(
+        host=opts.host, channel=opts.channel, callback=_show_info).run()
 
 
 if __name__ == "__main__":
     main()
-
