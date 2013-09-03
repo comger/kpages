@@ -20,7 +20,7 @@ except:
 
 session_id = lambda :sha1('%s%s'%(os.urandom(16),time.time())).hexdigest()
 
-class ContextHandler(RequestHandler):
+class ContextHandler():
     def _execute(self, transforms, *args, **kwargs):
         with LogicContext():
             super(ContextHandler, self)._execute(transforms, *args, **kwargs)

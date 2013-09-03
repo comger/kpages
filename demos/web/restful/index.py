@@ -9,7 +9,7 @@ from tornado import gen
 from kpages import url,ContextHandler,LogicContext,get_context,service_async
 
 @url(r"/")
-class IndexHandler(ContextHandler):
+class IndexHandler(ContextHandler,tornado.web.RequestHandler):
     def get(self):
         #import pdb;pdb.set_trace()
 
@@ -24,7 +24,7 @@ class IndexHandler(ContextHandler):
         self.write('hi kpages')
 
 @url(r'/list')
-class ListHandler(ContextHandler):
+class ListHandler(ContextHandler,tornado.web.RequestHandler):
     ''' demo for motor pymongo '''
     @gen.coroutine
     def get(self):

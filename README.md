@@ -50,7 +50,7 @@ How to use context in hander?
 from kpages import ContextHandler
 
 @url(r'/context/demo')
-class DemoHandler(ContextHandler):
+class DemoHandler(ContextHandler,tornado.web.RequestHandler):
     def get(self):
         db = get_context().get_mongo('dbname')
         val = self.session(key)
