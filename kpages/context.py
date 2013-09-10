@@ -84,7 +84,7 @@ class LogicContext(object):
 
         return self._db_conn[name]
 
-    def get_aync_mongo(self, name=None):
+    def get_async_mongo(self, name=None):
         """ 非阻塞的pympongo 支持，需要安装motor """
         name = name or __conf__.DB_NAME
         if not self._sync_db:
