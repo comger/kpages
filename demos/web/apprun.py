@@ -6,8 +6,9 @@
 import sys
 
 from kpages import run
-from tornado.options import define
 
+def callback(app):
+    print app
 
-if __name__ == "__main__":
-    run(*sys.argv)
+f __name__ == "__main__":
+    run(callback)

@@ -26,7 +26,7 @@ from multiprocessing import cpu_count
 from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
 
 from redis import Redis, ConnectionError
-from msgpack import loads, dumps
+from json import loads, dumps
 from termcolor import colored
 
 from context import LogicContext, get_context
@@ -69,7 +69,6 @@ class Pack(object):
             将消息队列中的数据解包
         """
         try:
-            print 'unpack data:', data
             pack = loads(data)
             return pack["cmd"], pack["data"]
         except:
@@ -180,7 +179,6 @@ class Service(object):
                     while True:
                         cmd, data = self._consumer.consume()
                         srv_func = self._services.get(cmd)
-
                         if srv_func:
                             try:
                                 srv_func(data)

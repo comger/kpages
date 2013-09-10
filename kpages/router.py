@@ -23,7 +23,7 @@ def url(pattern, order=0):
                 pass
     """
     def actual(handler):
-        assert(issubclass(handler, tornado.web.RequestHandler))
+        assert(issubclass(handler,tornado.web.RequestHandler))
         if not hasattr(handler, "__urls__") or not handler.__urls__:
             handler.__urls__ = []
         handler.__urls__.append((pattern, order))

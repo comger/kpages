@@ -6,6 +6,7 @@
 """
 import os
 import time
+import tornado
 from threading import local
 from hashlib import sha1
 
@@ -22,10 +23,14 @@ except:
 session_id = lambda: sha1('%s%s' % (os.urandom(16), time.time())).hexdigest()
 
 
-class ContextHandler(RequestHandler):
+class ContextHandler():
     def _execute(self, transforms, *args, **kwargs):
         with LogicContext():
-            super(ContextHandler, self)._execute(transforms, *args, **kwargs)
+            #super(ContextHandler, self)._execute(transforms, *args, **kwargs)
+            if isinstance(self,tornado.websocket.WebSocketHandler):
+                tornado.websocket.WebSocketHandler._execute(self,transforms, *args, **kwargs)
+            elif isinstance(self,RequestHandler):
+                RequestHandler._execute(self,transforms, *args, **kwargs)
 
     def session(self, key, val=None):
         _id = self.get_secure_cookie('session_id', None)
