@@ -19,7 +19,7 @@
         2011-08-28  * 重构 Pack 为一个独立类。
         2011-08-29  * 取消 Timeout。
 """
-
+import datetime,json
 from sys import stderr, argv
 from os import wait, fork, getpid, getppid, killpg, waitpid
 from multiprocessing import cpu_count
@@ -51,6 +51,13 @@ def srvcmd(cmd):
 
     return actual
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        
+        return json.JSONEncoder.default(self, obj)
+            
 
 @staticclass
 class Pack(object):
@@ -60,7 +67,7 @@ class Pack(object):
         """
             将数据打包并序列化后发送到消息队列
         """
-        pack = dumps(dict(cmd=cmd, data=data))
+        pack = dumps(dict(cmd=cmd, data=data),cls=DateTimeEncoder)
         mq.publish(channel, pack)
 
     @staticmethod
