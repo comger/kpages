@@ -53,7 +53,7 @@ def reflesh_config(*args):
         use like : __conf__.DB_HOST
     '''
     if not args:
-        args = ("setting.py.txt",)
+        args = ()
 
     dct = {}
     import settings

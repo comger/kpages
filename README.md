@@ -30,8 +30,11 @@ app.py
 ```
 from kpages import run
 
+def callback(app):
+    pass
+
 if __name__ == '__main__':
-    run()
+    run(callback)
 ```
 
 How to use mongo and redis context?

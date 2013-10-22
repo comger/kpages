@@ -6,7 +6,6 @@
 """
 import os
 import time
-import tornado
 from threading import local
 from hashlib import sha1
 
@@ -14,6 +13,7 @@ from gridfs import GridFS
 from redis import Redis
 from pymongo import Connection
 from tornado.web import RequestHandler
+from tornado.websocket import WebSocketHandler
 import tornado.gen as gen
 try:
     import motor
@@ -26,9 +26,8 @@ session_id = lambda: sha1('%s%s' % (os.urandom(16), time.time())).hexdigest()
 class ContextHandler():
     def _execute(self, transforms, *args, **kwargs):
         with LogicContext():
-            #super(ContextHandler, self)._execute(transforms, *args, **kwargs)
-            if isinstance(self,tornado.websocket.WebSocketHandler):
-                tornado.websocket.WebSocketHandler._execute(self,transforms, *args, **kwargs)
+            if isinstance(self,WebSocketHandler):
+                WebSocketHandler._execute(self,transforms, *args, **kwargs)
             elif isinstance(self,RequestHandler):
                 RequestHandler._execute(self,transforms, *args, **kwargs)
 
