@@ -73,8 +73,10 @@ def reflesh_config(*args):
 
 
 def mongo_conv(d):
-    if isinstance(d, (unicode, ObjectId, datetime.datetime)):
+    if isinstance(d, (ObjectId, datetime.datetime)):
         return str(d)
+    elif isinstance(d,(unicode,)):
+        return str(d.encode('utf-8'))
     elif isinstance(d, (list, tuple)):
         return [mongo_conv(x) for x in d]
     elif isinstance(d, dict):
