@@ -21,13 +21,14 @@
 """
 import datetime,json
 from sys import stderr, argv
-from os import wait, fork, getpid, getppid, killpg, waitpid
-from multiprocessing import cpu_count
-from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
+try:
+    from os import wait, fork, getpid, getppid, killpg, waitpid
+    from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
+except:
+    print 'some function only support unix and linux '
 
 from redis import Redis, ConnectionError
 from json import loads, dumps
-from termcolor import colored
 
 from context import LogicContext, get_context
 from utility import get_members
@@ -190,23 +191,20 @@ class Service(object):
                             try:
                                 srv_func(data)
                             except Exception as e:
-                                print >> stderr, colored(
-                                    "Exception", "red"), ":", e.message
+                                print 'Expception:'+e.message
 
             except ConnectionError as e:
-                print >> stderr, colored("Exception {0}".format(getpid(
-                )), "red", attrs=["bold", "blink"]), ":", e.message
+                print 'Expception:'+e.message
 
             exit(0)
 
     def run(self):
-        self._signal()
+        #self._signal()
 
         try:
             self._subscribe()
         except RuntimeError:
-            print >> stderr, colored("ERROR", "red", attrs=[
-                                     "bold", "blink"]), ": Is redis running?"
+            print "Is running?"
             exit(-1)
 
         while True:
