@@ -43,7 +43,7 @@ from kpages import get_context, LogicContext,mongo_conv
 
 with LogicContext():
     db = get_context().get_mongo()
-    cache = get_context().get_cache()
+    cache = get_context().get_redis()
     lst = list(db['table'].find().limit(10))
     lst = mongo_conv(lst)
 
