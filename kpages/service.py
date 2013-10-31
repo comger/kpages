@@ -24,7 +24,9 @@ from sys import stderr, argv
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
     from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
+    iswin = False
 except:
+    iswin = True
     print 'some function only support unix and linux '
 
 from redis import Redis, ConnectionError
@@ -133,7 +135,6 @@ class Service(object):
         self._processes = 1
 
         self._consumer = Consumer(self._channel, self._host)
-        self._parent = getpid()
         self._services = self._get_services()
 
         if callback:
@@ -148,6 +149,7 @@ class Service(object):
 
     def _signal(self):
 
+        self._parent = getpid()
         def sig_handler(signum, frame):
             pid = getpid()
 
@@ -179,8 +181,9 @@ class Service(object):
         self._consumer.subscribe()
 
         for i in range(self._processes):
-            if fork() > 0:
-                continue
+            if not iswin:
+                if fork() > 0:
+                    continue
 
             try:
                 with LogicContext():
@@ -199,7 +202,8 @@ class Service(object):
             exit(0)
 
     def run(self):
-        #self._signal()
+        if not iswin:
+            self._signal()
 
         try:
             self._subscribe()
