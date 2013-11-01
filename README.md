@@ -4,6 +4,34 @@
 
 ######基于Tornado的开发包，提供地址路由、配置、测试、性能分析、数据库及内存连接上下文管理等，如果你想用Tornado提供一些高性能的服务接口，这会给你很大的帮助的。
 
+##如何使用kpages 创建项目
+
+```
+    1. 复制 demos/web， 创建一个新的项目。
+    2. 在Settings.py 里指定你的RequestHandler 目录， 默认为目录 action （设置后，软件会自己处理添加 url 的 RequestHandler）
+```
+
+## kpages web 服务启动方式
+```
+python apprun.py  或 ./apprun.py
+可配置参数
+     config=CONFIG  set config for server
+     port=PORT      set http port for server
+     debug          Debug mode.
+     ndebug         No Debug mode.
+```
+
+## kpages mq 服务启动方式
+```
+python service.py  或 ./service.py
+可配置参数
+     config=CONFIG  set config for server
+     port=PORT      set http port for server
+     debug          Debug mode.
+     ndebug         No Debug mode.
+     channel        set channel for redis mq
+```
+
 ##router
 
 restful/index.py(add @url to class , kpages will route url to this handler)
