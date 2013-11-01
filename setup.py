@@ -53,10 +53,8 @@ distutils.core.setup(
     ],
     long_description=long_description,
     keywords=["mongo", "mongodb", "pymongo", "gridfs", "profile",
-              "motor", "tornado", "redis", "session", "router"],
-    install_requires=['msgpack-python', 'motor', 'redis', 'termcolor',
-                      'greenlet', 'tornado'],
-    setup_requires=['msgpack-python', 'motor', 'redis', 'termcolor',
-                    'greenlet', 'tornado'],
+             "tornado", "redis", "session", "router"],
+    install_requires=['pymongo', 'redis', 'tornado'],
+    setup_requires=[ 'pymongo', 'redis', 'tornado'],
     **kwargs
 )
