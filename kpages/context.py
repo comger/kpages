@@ -43,6 +43,7 @@ class ContextHandler():
 class LogicContext(object):
     """
         logic context for mongodb and redis cache
+        如果不在上下文内，直接返回一个默认的上下文对象
     """
     _thread_local = local()
 
@@ -129,7 +130,7 @@ class LogicContext(object):
     @classmethod
     def get_context(cls):
         return hasattr(cls._thread_local, "contexts") and cls._thread_local.contexts and \
-            cls._thread_local.contexts[-1] or None
+            cls._thread_local.contexts[-1] or cls()
 
 
 get_context = LogicContext.get_context
