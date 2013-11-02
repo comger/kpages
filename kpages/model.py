@@ -91,22 +91,24 @@ class Model(object):
         self._fields = _fields
         return self._fields
     
-    def _get_postdata(self, args=None):
+    def _get_postdata(self, **kwargs):
         """建立完整的数据模型"""
-        data,args ={}, args or self.request.arguments
+        data = {}
         try:
             for key,field in self._get_fields().items():
-                vals = args.get(key,())
                 if hasattr(field,'datatype') and issubclass(field.datatype, ListField):
+                    vals = self.get_arugments(key,())
                     data[key] = field.val(vals)
                     continue
-
-                if field.required and not vals:
+                
+                val = self.get_argument(key,None)
+                if field.required and not val:
                     raise Exception('field {0} is required'.format(key))
-                elif not vals:
+                elif not val:
                     data[key] = field.initial
                 else:
-                    data[key] = field.val(vals[0])
+                    data[key] = field.val(val)
+
         except Exception as e:
             raise Exception('{0} in Model {1}'.format(e.message, self._name))
 
@@ -114,12 +116,16 @@ class Model(object):
 
     def _save(self, db=None, cond={}, **kwargs):
         """创建或更新记录"""
-        data = self._get_postdata()
-        data.update(kwargs)
+        try:
+            data = self._get_postdata()
+            data.update(kwargs)
+        except Exception as e:
+            return False,e
+
         if not cond:
             data['_id'] = str(db[self._name].insert(data))
             return data
 
         db[self._name].update(cond,{'$set':data})
-        return data
+        return True,data
     
