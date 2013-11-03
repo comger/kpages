@@ -93,15 +93,15 @@ class Model(object):
     
     def _get_postdata(self, **kwargs):
         """建立完整的数据模型"""
-        data = {}
+        data = kwargs
         try:
             for key,field in self._get_fields().items():
-                if hasattr(field,'datatype') and issubclass(field.datatype, ListField):
-                    vals = self.get_arugments(key,())
+                if hasattr(field,'datatype') and isinstance(field, ListField):
+                    vals = self.get_arguments(key,())
                     data[key] = field.val(vals)
                     continue
                 
-                val = self.get_argument(key,None)
+                val = self.get_argument(key,data.get(key,None))
                 if field.required and not val:
                     raise Exception('field {0} is required'.format(key))
                 elif not val:
