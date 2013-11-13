@@ -81,7 +81,7 @@ with LogicContext():
     lst = mongo_conv(lst)
 
 ```
-How to use context in hander?
+How to use context in hander( with session )?
 ```
 from kpages import ContextHandler
 
@@ -92,6 +92,8 @@ class DemoHandler(ContextHandler,tornado.web.RequestHandler):
         val = self.session(key)
         self.session(key,val)
 ```
+
+
 test commend
 ```
 run_test(test_city.DemoCase.testprint) :test testprint method
