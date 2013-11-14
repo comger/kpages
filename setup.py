@@ -33,13 +33,14 @@ with open('README.md') as f:
 distutils.core.setup(
     name="kpages",
     version=version,
-    packages=["kpages"],
+    packages=["kpages","demos"],
     package_data={},
     author="comger",
     author_email="comger@gmail.com",
     url="http://github.com/comger/kpages",
     license="http://www.apache.org/licenses/LICENSE-2.0",
     description="kpages is api-centric web application framework for the Tornado and Mongodb",
+    scripts=['kpages/kpages_init.py'],
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
