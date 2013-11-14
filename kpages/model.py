@@ -64,31 +64,24 @@ class DatetimeField(Field):
 use demo:
 class DemoModel(Model):
     _name = 'demomodel'
-
-    name = CharField(label='姓名',required=True)
-    sex = BooleanField() 
-    age = IntField()
+    _field = dict(
+        name = CharField(label='姓名',required=True),
+        sex = BooleanField(),
+        age = IntField()
+    )
 '''
 class Model(object):
     
     #对应mongodb collection 名称
     _name = None
+    _fields = {}
 
     def _get_fields(self):
         """获取模型所有字段"""
-        if hasattr(self, '_fields'):
-            return self._fields
+        for f in self._fields.keys():
+            if not self._fields[f].label:
+                self._fields[f].label = f
 
-        _fields = {}
-        fs = dir(self)
-        for f in fs:
-            _f = getattr(self,f)
-            if isinstance(_f,Field):
-                if not _f.label:_f.label = f
-
-                _fields[f] = _f
-        
-        self._fields = _fields
         return self._fields
     
     def _get_postdata(self, **kwargs):
