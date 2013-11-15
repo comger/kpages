@@ -9,10 +9,10 @@
 * [Migrant 回归线](https://github.com/comger/migrant)
 
 
-##如何使用kpages 创建项目
+##如何使用kpages 创建项目(版本号>= 0.6.3.dev)
 
 ```
-    1. 复制 demos/web， 创建一个新的项目。
+    1. 在需要创建项目的目录执行: kpages_init.py projectname # projectname 为你的项目名称、当projectname 为空时 默认名称为 kpages_project
     2. 在Settings.py 里指定你的RequestHandler 目录， 默认为目录 action （设置后，软件会自己处理添加 url 的 RequestHandler）
 ```
 
