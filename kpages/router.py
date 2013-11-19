@@ -65,8 +65,13 @@ def _load_handlers(handler_dir='action'):
         members = dict(("{0}.{1}".format(
             v.__module__, k), v) for k, v in getmembers(m, member_filter))
         ret.update(members)
+    return _sorted_hanlders(ret.values())
 
-    handlers = [(pattern, order, h) for h in ret.values() for pattern,
+def _sorted_hanlders(handlers):
+    """
+        将handlers列表转为排序好的(url, handlers)列表
+    """
+    handlers = [(pattern, order, h) for h in handlers for pattern,
                 order in h.__urls__]
     handlers.sort(cmp=cmp, key=lambda x: x[1])
 
