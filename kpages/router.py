@@ -17,7 +17,7 @@ def url(pattern, order=0):
         支持多次设置及排序
 
         Demo:
-        @url('/blog/info/{0}')
+        @url('/blog/info/(.*)')
         class ActionHandler(tornado.web.RequestHandler):
             def get(self,blogid):
                 pass
