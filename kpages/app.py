@@ -6,23 +6,55 @@
 import tornado.web
 import tornado.ioloop
 
+from inspect import isclass
 from tornado.httpserver import HTTPServer
 from optparse import OptionParser, OptionGroup
 from router import load_handlers
 from context import LogicContext
-from utility import reflesh_config, app_path, set_default_encoding
+from utility import reflesh_config, app_path, set_default_encoding,get_members
 
 
 class WebApp(object):
     settings = property(lambda self: __conf__.__dict__)
     handlers = property(lambda self: self._handlers)
+    uimodles = property(lambda self: self._modules)
+    uimethods = property(lambda self: self._methods)
     webapp = property(lambda self: self._webapp)
 
     def __init__(self, port=None, callback=None):
         self._port = port or __conf__.PORT
         self._callback = callback
         self._handlers = load_handlers(__conf__.ACTION_DIR)
+        self._modules = self._get_ui_modules()
+        self._methods = self._get_ui_methods()
         self._webapp = self._get_webapp()
+    
+    def _get_ui_modules(self):
+        """
+        返回ACTION_DIR 目录下的 ui module 子类字典
+        """
+        m_filter = lambda m: isclass(m) and issubclass(m,tornado.web.UIModule)
+        ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
+        if 'tornado.web.UIModule' in ms:
+            del ms['tornado.web.UIModule']
+        
+        newms = {}
+        for key,val in ms.items():
+            newms[key.replace('.','_')] = val
+        return newms
+    
+    def _get_ui_methods(self):
+        """
+        返回ACTION_DIR 目录下的 ui method 方法
+        """
+        m_filter = lambda m: hasattr(m,'__reg_ui__') and m.__reg_ui__ ==True
+        ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
+        newms = {}
+
+        for key,val in ms.items():
+            newms[key.replace('.','_')] = val
+        return newms
+
 
     def _get_webapp(self):
         settings = {"debug": __conf__.DEBUG,
@@ -30,6 +62,8 @@ class WebApp(object):
                     "template_path": app_path(__conf__.TEMPLATE_DIR_NAME),
                     "gzip": __conf__.GZIP,
                     "cookie_secret": __conf__.COOKIE_SECRET,
+                    "ui_modules":self._modules,
+                    "ui_methods":self._methods,
                     "xsrf_cookies": __conf__.XSRF_COOKIES}
 
         return tornado.web.Application(self._handlers, **settings)

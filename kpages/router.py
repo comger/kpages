@@ -9,9 +9,30 @@ import tornado.web
 
 from fnmatch import fnmatch
 from inspect import getmembers
+from utility import app_path
 
 
-def url(pattern, order=0):
+def reg_ui_method(name=None,intro=None):
+    """
+    注册模板用使用的ui_method
+    Demo
+    @reg_ui_method()
+    def add(self,a,b,c):
+        return a+b+c
+
+    """
+    def actual(handler):
+        if not hasattr(handler,'__reg_ui__'):
+            handler.__reg_ui__ = True
+            handler.__uiname__ = name
+            handler.__intro__ = intro
+
+        return handler
+
+    return actual
+
+
+def url(pattern, order=0, sub_domain='*'):
     """
         设置路径匹配模式和排序序号
         支持多次设置及排序
@@ -26,7 +47,7 @@ def url(pattern, order=0):
         assert(issubclass(handler,tornado.web.RequestHandler))
         if not hasattr(handler, "__urls__") or not handler.__urls__:
             handler.__urls__ = []
-        handler.__urls__.append((pattern, order))
+        handler.__urls__.append((pattern, order, sub_domain))
         return handler
 
     return actual
@@ -51,7 +72,8 @@ def _load_handlers(handler_dir='action'):
         handlers = load_handlers():
         app = tornado.web.Application(handlers)
     '''
-    path = os.path.join(os.getcwd(), handler_dir)
+    #path = os.path.join(os.getcwd(), handler_dir)
+    path = app_path(handler_dir)
     py_filter = lambda f: fnmatch(f, '*.py') and not f.startswith('__')
     member_filter = lambda m: isinstance(
         m, type) and hasattr(m, '__urls__') and m.__urls__
@@ -66,11 +88,10 @@ def _load_handlers(handler_dir='action'):
             v.__module__, k), v) for k, v in getmembers(m, member_filter))
         ret.update(members)
 
-    handlers = [(pattern, order, h) for h in ret.values() for pattern,
-                order in h.__urls__]
+    handlers = [(pattern, order,sub, h) for h in ret.values() for pattern,
+                order,sub in h.__urls__]
     handlers.sort(cmp=cmp, key=lambda x: x[1])
+    return [(pattern, handler) for pattern, _, _, handler in handlers]
 
-    return [(pattern, handler) for pattern, _, handler in handlers]
 
-
-__all__ = ["url", "load_handlers"]
+__all__ = ["reg_ui_method","url", "load_handlers"]
