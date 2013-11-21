@@ -32,13 +32,13 @@ def reg_ui_method(name=None,intro=None):
     return actual
 
 
-def url(pattern, order=0, sub_domain='*'):
+def url(pattern, order=0):
     """
         设置路径匹配模式和排序序号
         支持多次设置及排序
 
         Demo:
-        @url('/blog/info/{0}')
+        @url('/blog/info/(.*)')
         class ActionHandler(tornado.web.RequestHandler):
             def get(self,blogid):
                 pass
@@ -47,7 +47,7 @@ def url(pattern, order=0, sub_domain='*'):
         assert(issubclass(handler,tornado.web.RequestHandler))
         if not hasattr(handler, "__urls__") or not handler.__urls__:
             handler.__urls__ = []
-        handler.__urls__.append((pattern, order, sub_domain))
+        handler.__urls__.append((pattern, order))
         return handler
 
     return actual
@@ -87,11 +87,16 @@ def _load_handlers(handler_dir='action'):
         members = dict(("{0}.{1}".format(
             v.__module__, k), v) for k, v in getmembers(m, member_filter))
         ret.update(members)
+    return _sorted_hanlders(ret.values())
 
-    handlers = [(pattern, order,sub, h) for h in ret.values() for pattern,
-                order,sub in h.__urls__]
+def _sorted_hanlders(handlers):
+    """
+        将handlers列表转为排序好的(url, handlers)列表
+    """
+    handlers = [(pattern, order, h) for h in handlers for pattern,
+                order in h.__urls__]
     handlers.sort(cmp=cmp, key=lambda x: x[1])
-    return [(pattern, handler) for pattern, _, _, handler in handlers]
+    return [(pattern, handler) for pattern, _, handler in handlers]
 
 
 __all__ = ["reg_ui_method","url", "load_handlers"]
