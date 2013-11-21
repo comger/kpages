@@ -37,6 +37,31 @@ python service.py  或 ./service.py
      channel        set channel for redis mq
 ```
 
+## 使用Tornado 的UI module及 method
+```
+1. kpages 可以自动识别ACTION_DIR 目录中 Ui_Module 的子类; 并添加到app 中
+2. 在模板中可以直接使用 {% module 目录_模块_类名() %} 调用Ui Module
+Demo Code
+    Class Demo(tornado.web.UIModule):
+        def render(self,name):
+            return self.render('<h1>Hello world:{0}</h1>'.format(name))
+
+Template code
+    {% module Demo('kpages') %}
+    
+
+3. 在ACTION_DIR 目录中, 使用reg_ui_method 修饰器, 注册Ui methods; 在Template 中全局可使用
+Demo code
+    
+    @reg_ui_method(name='testmethod',intro='demo for ui method')
+    def add(self,a,b):
+        return a+b
+        
+Template code
+    {{ add(3,4) }}
+    
+```
+
 ##router
 
 restful/index.py(add @url to class , kpages will route url to this handler)
