@@ -88,8 +88,10 @@ def mongo_conv(d):
         return str(d)
     elif isinstance(d,(unicode,)):
         return str(d.encode('utf-8'))
-    elif isinstance(d, (list, tuple)):
-        return [mongo_conv(x) for x in d]
+    elif isinstance(d, list):
+        return map(mongo_conv, d)
+    elif isinstance(d, tuple):
+        return tuple(map(mongo_conv, d))
     elif isinstance(d, dict):
         return dict([(mongo_conv(k), mongo_conv(v)) for k, v in d.items()])
     else:
