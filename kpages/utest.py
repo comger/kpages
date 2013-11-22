@@ -18,13 +18,13 @@ import os
 import profile
 from inspect import isclass, ismethod, getmembers
 from unittest import TestCase, TextTestRunner, TestSuite
-from utility import get_members
+from utility import _get_members
 
 
 def load_testsuites(module=None):
     """ load all test cases in module, if module==None,all test cases in utest dir """
     _filter = lambda m: isclass(m) and issubclass(m, TestCase)
-    testcases = get_members(
+    testcases = _get_members(
         __conf__.UTEST_DIR, member_filter=_filter, in_module=module)
 
     # 找出所有测试方法，并构件 TestSuite 对象。

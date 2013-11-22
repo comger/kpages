@@ -22,7 +22,7 @@ def get_modules(m_path):
     return [__import__("{0}.{1}".format(m_path, n)).__dict__[n] for n in names]
 
 
-def get_members(m_path, member_filter=None, in_module=None):
+def _get_members(m_path, member_filter=None, in_module=None):
     ''' get all members in m_path for member_filter'''
     modules = get_modules(m_path)
     if not member_filter:
@@ -38,6 +38,17 @@ def get_members(m_path, member_filter=None, in_module=None):
             v.__module__, k), v) for k, v in getmembers(m, member_filter))
         ret.update(members)
     return ret
+
+
+def get_members(dirs, member_filter=None):
+    if isinstance(dirs, str):
+        dirs = (dirs,)
+
+    ms = {}
+    for path in dirs:
+        ms.update(_get_members(path,member_filter=member_filter))
+    
+    return ms
 
 
 def not_empty(*args):
