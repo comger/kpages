@@ -30,6 +30,22 @@ version = "0.6.6dev"
 with open('README.md') as f:
     long_description = f.read()
 
+class PyTest(distutils.core.Command):
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        import os, sys, unittest
+        setup_file = sys.modules['__main__'].__file__
+        setup_dir = os.path.abspath(os.path.dirname(setup_file))
+        test_loader = unittest.defaultTestLoader
+        test_runner = unittest.TextTestRunner()
+        test_suite = test_loader.discover(setup_dir)
+        test_runner.run(test_suite)
+
+
 distutils.core.setup(
     name="kpages",
     version=version,
@@ -57,5 +73,6 @@ distutils.core.setup(
              "tornado", "redis", "session", "router"],
     install_requires=['pymongo', 'redis', 'tornado'],
     setup_requires=[ 'pymongo', 'redis', 'tornado'],
+    cmdclass={'test': PyTest},
     **kwargs
 )
