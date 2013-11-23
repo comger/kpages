@@ -64,6 +64,7 @@ class AsyncSecondHandler(ContextHandler, tornado.web.RequestHandler):
 class TestPersistentDB(tornado.testing.AsyncHTTPTestCase):
     def setUp(self):
         refresh_config()
+        __conf__.DEBUG = False
         __conf__.ACTION_DIR = []
         __conf__.PERSISTENT_DB_CONNECTION = True
         __conf__.DB_HOST = 'localhost'
@@ -98,6 +99,7 @@ class TestPersistentDB(tornado.testing.AsyncHTTPTestCase):
         self.assertEqual(_round, 1)
         self.assertEqual(init_id, second_id)
 
+    def test_async_client(self):
         self.http_client.fetch(self.get_url("/async/init/"), self.stop)
         response = json.load(self.wait().buffer)
         init_id, _round = response['id'], response['round']
