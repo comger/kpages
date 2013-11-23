@@ -21,10 +21,10 @@ class WebApp(object):
     uimethods = property(lambda self: self._methods)
     webapp = property(lambda self: self._webapp)
 
-    def __init__(self, port=None, callback=None):
+    def __init__(self, port=None, handlers=None, callback=None):
         self._port = port or __conf__.PORT
         self._callback = callback
-        self._handlers = load_handlers(__conf__.ACTION_DIR)
+        self._handlers = handlers or load_handlers(__conf__.ACTION_DIR)
         self._modules = self._get_ui_modules()
         self._methods = self._get_ui_methods()
         self._webapp = self._get_webapp()
@@ -101,7 +101,7 @@ def _get_opt():
 def run(callback=None):
     set_default_encoding()
     opts, args = _get_opt()
-    reflesh_config(opts.config)
+    refresh_config(opts.config)
 
     if opts.debug is not None:
         __conf__.DEBUG = opts.debug
