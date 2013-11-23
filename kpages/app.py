@@ -28,7 +28,7 @@ class WebApp(object):
         self._modules = self._get_ui_modules()
         self._methods = self._get_ui_methods()
         self._webapp = self._get_webapp()
-    
+
     def _get_ui_modules(self):
         """
         返回ACTION_DIR 目录下的 ui module 子类字典
@@ -37,12 +37,12 @@ class WebApp(object):
         ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
         if 'tornado.web.UIModule' in ms:
             del ms['tornado.web.UIModule']
-        
+
         newms = {}
         for key,val in ms.items():
             newms[key.replace('.','_')] = val
         return newms
-    
+
     def _get_ui_methods(self):
         """
         返回ACTION_DIR 目录下的 ui method 方法
@@ -65,6 +65,7 @@ class WebApp(object):
                     "ui_modules":self._modules,
                     "ui_methods":self._methods,
                     "xsrf_cookies": __conf__.XSRF_COOKIES}
+
 
         return tornado.web.Application(self._handlers, **settings)
 
