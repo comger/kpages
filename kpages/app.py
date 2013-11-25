@@ -11,7 +11,7 @@ from tornado.httpserver import HTTPServer
 from optparse import OptionParser, OptionGroup
 from router import load_handlers
 from context import LogicContext
-from utility import reflesh_config, app_path, set_default_encoding,get_members
+from utility import refresh_config, app_path, set_default_encoding,get_members
 
 
 class WebApp(object):
@@ -66,7 +66,6 @@ class WebApp(object):
                     "ui_methods":self._methods,
                     "xsrf_cookies": __conf__.XSRF_COOKIES}
 
-
         return tornado.web.Application(self._handlers, **settings)
 
     def _run_server(self):
@@ -106,6 +105,6 @@ def run(callback=None):
     if opts.debug is not None:
         __conf__.DEBUG = opts.debug
 
-    WebApp(opts.port, callback).run()
+    WebApp(port=opts.port, callback=callback).run()
 
 __all__ = ["run", "WebApp"]
