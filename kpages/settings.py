@@ -47,6 +47,9 @@ COOKIE_SECRET = "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo="
 # COOKIE 安全
 XSRF_COOKIES = False
 
+# 数据库与缓存是否使用持久连接
+PERSISTENT_DB_CONNECTION = False
+
 # 缓存服务器
 CACHE_HOST = "localhost"
 

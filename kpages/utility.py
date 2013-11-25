@@ -47,7 +47,7 @@ def get_members(dirs, member_filter=None):
     ms = {}
     for path in dirs:
         ms.update(_get_members(path,member_filter=member_filter))
-    
+
     return ms
 
 
@@ -56,7 +56,7 @@ def not_empty(*args):
         raise ValueError("Argument must be not None/Null/Zero/Empty!")
 
 
-def reflesh_config(*args):
+def refresh_config(*args):
     '''
         刷新当前环境配置 保存到__builtin__
         *args:相对目录的文件列表
@@ -82,6 +82,7 @@ def reflesh_config(*args):
 
     __builtin__.__conf__ = module
 
+reflesh_config = refresh_config
 
 def mongo_conv(d):
     if isinstance(d, (ObjectId, datetime.datetime)):
@@ -109,5 +110,5 @@ def set_default_encoding():
 
     sys.setdefaultencoding(coding)
 
-__all__ = ["app_path", "not_empty", "reflesh_config", "mongo_conv",
+__all__ = ["app_path", "not_empty", "refresh_config", "reflesh_config", "mongo_conv",
            "set_default_encoding", "get_modules", "get_members"]
