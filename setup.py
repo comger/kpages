@@ -33,7 +33,7 @@ with open('README.md') as f:
 distutils.core.setup(
     name="kpages",
     version=version,
-    packages=["kpages","demos"],
+    packages=["kpages"],
     package_data={},
     author="comger",
     author_email="comger@gmail.com",
