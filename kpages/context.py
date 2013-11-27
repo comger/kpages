@@ -10,8 +10,8 @@ from threading import local
 from hashlib import sha1
 
 from gridfs import GridFS
-from redis import Redis
-from pymongo import Connection
+from redis import Redis, ConnectionPool
+from pymongo import Connection, MongoClient
 from tornado.web import RequestHandler
 from tornado.websocket import WebSocketHandler
 import tornado.gen as gen
@@ -25,7 +25,7 @@ session_id = lambda: sha1('%s%s' % (os.urandom(16), time.time())).hexdigest()
 
 class ContextHandler():
     def _execute(self, transforms, *args, **kwargs):
-        with LogicContext():
+        with LogicContext(handler=self):
             if isinstance(self,WebSocketHandler):
                 WebSocketHandler._execute(self,transforms, *args, **kwargs)
             elif isinstance(self,RequestHandler):
@@ -47,13 +47,21 @@ class LogicContext(object):
     """
     _thread_local = local()
 
-    def __init__(self, cache_host=None, db_host=None):
+    def __init__(self, handler=None, cache_host=None, db_host=None):
         self._cache_host = cache_host or __conf__.CACHE_HOST
         self._db_host = db_host or __conf__.DB_HOST
         self._db_conn = None
         self._sync_db = None
         self._motor_clt = None
         self._session = None
+
+        self.handler = handler
+        if handler is not None:
+            self.settings = self.handler.settings
+            self.application = self.handler.application
+        else:
+            self.settings = None
+            self.application = None
 
     def __enter__(self):
         if not hasattr(self._thread_local, "contexts"):
@@ -73,9 +81,18 @@ class LogicContext(object):
     def get_redis(self):
         host = self._cache_host
         h, p = host.split(":") if ":" in host else (host, 6379)
-        cache = Redis(
-            host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
-        return cache
+
+        if self.handler:
+            key = "_redis_%s" % host
+            # 使用Redis连接池
+            if __conf__.PERSISTENT_DB_CONNECTION:
+                if key not in self.settings:
+                    self.settings[key] = ConnectionPool(
+                        host=h, port=int(p),
+                        socket_timeout=__conf__.SOCK_TIMEOUT)
+                return Redis(connection_pool=self.settings[key])
+
+        return Redis(host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
 
     def get_gfs(self, name=None):
         name = name or __conf__.GFS_NAME
@@ -83,18 +100,38 @@ class LogicContext(object):
 
     def get_mongo(self, name=None):
         name = name or __conf__.DB_NAME
+
+        # if persistent connection
+        if self.handler:
+            if __conf__.PERSISTENT_DB_CONNECTION:
+                if '_mongo' not in self.settings:
+                    self.settings['_mongo'] = MongoClient(
+                        host=__conf__.DB_HOST,
+                        socketTimeoutMS=__conf__.SOCK_TIMEOUT)
+                return self.settings['_mongo'][name]
+
         if not self._db_conn:
             self._db_conn = Connection(host=__conf__.DB_HOST,
                                        network_timeout=__conf__.SOCK_TIMEOUT)
 
         return self._db_conn[name]
-    
+
     def get_coll(self,name, dbname=None):
         return get_mongo(dbname)[name]
 
     def get_async_mongo(self, name=None):
         """ 非阻塞的pympongo 支持，需要安装motor """
         name = name or __conf__.DB_NAME
+
+        # if persistant
+        if self.handler:
+            if __conf__.PERSISTENT_DB_CONNECTION:
+                if '_motor' not in self.settings:
+                    self.settings['_motor'] = motor.MotorClient(
+                        host=__conf__.DB_HOST,
+                        network_timeout=__conf__.SOCK_TIMEOUT).open_sync()
+                return self.settings['_motor'][name]
+
         if not self._sync_db:
             self._sync_db = motor.MotorClient(
                 host=__conf__.DB_HOST).open_sync()[name]
@@ -104,6 +141,17 @@ class LogicContext(object):
     @gen.coroutine
     def get_motor(self, name=None):
         name = name or __conf__.DB_NAME
+
+        if self.handler:
+            if __conf__.PERSISTENT_DB_CONNECTION:
+                if '_motor' not in self.settings:
+                    result, err = (yield gen.Task(
+                        motor.MotorClient(host=self._db_host).open, )).args
+                    if err:
+                        raise err
+                    self.settings['_motor'] = result
+                raise gen.Return(self.settings['_motor'][name])
+
         if not self._motor_clt:
             result, err = (yield gen.Task(
                 motor.MotorClient(host=self._db_host).open, )).args

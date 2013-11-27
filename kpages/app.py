@@ -11,7 +11,7 @@ from tornado.httpserver import HTTPServer
 from optparse import OptionParser, OptionGroup
 from router import load_handlers
 from context import LogicContext
-from utility import reflesh_config, app_path, set_default_encoding,get_members
+from utility import refresh_config, app_path, set_default_encoding,get_members
 
 def get_ui_modules():
     """
@@ -48,7 +48,7 @@ class WebApp(object):
     uimethods = property(lambda self: self._methods)
     webapp = property(lambda self: self._webapp)
 
-    def __init__(self, port=None, callback=None):
+    def __init__(self, port=None, handlers=None, callback=None):
         self._port = port or __conf__.PORT
         self._callback = callback
         self._handlers = load_handlers(__conf__.ACTION_DIR)
@@ -56,18 +56,6 @@ class WebApp(object):
         self._methods = get_ui_methods()
         self._webapp = self._get_webapp()
     
-    def _get_ui_methods(self):
-        """
-        返回ACTION_DIR 目录下的 ui method 方法
-        """
-        m_filter = lambda m: hasattr(m,'__reg_ui__') and m.__reg_ui__ ==True
-        ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
-        newms = {}
-
-        for key,val in ms.items():
-            newms[key.replace('.','_')] = val
-        return newms
-
 
     def _get_webapp(self):
         settings = {"debug": __conf__.DEBUG,
@@ -113,11 +101,11 @@ def _get_opt():
 def run(callback=None):
     set_default_encoding()
     opts, args = _get_opt()
-    reflesh_config(opts.config)
+    refresh_config(opts.config)
 
     if opts.debug is not None:
         __conf__.DEBUG = opts.debug
 
-    WebApp(opts.port, callback).run()
+    WebApp(port=opts.port, callback=callback).run()
 
 __all__ = ["run", "WebApp","get_ui_modules","get_ui_methods"]
