@@ -22,7 +22,7 @@ def get_modules(m_path):
     return [__import__("{0}.{1}".format(m_path, n)).__dict__[n] for n in names]
 
 
-def get_members(m_path, member_filter=None, in_module=None):
+def _get_members(m_path, member_filter=None, in_module=None):
     ''' get all members in m_path for member_filter'''
     modules = get_modules(m_path)
     if not member_filter:
@@ -40,12 +40,23 @@ def get_members(m_path, member_filter=None, in_module=None):
     return ret
 
 
+def get_members(dirs, member_filter=None):
+    if isinstance(dirs, str):
+        dirs = (dirs,)
+
+    ms = {}
+    for path in dirs:
+        ms.update(_get_members(path,member_filter=member_filter))
+
+    return ms
+
+
 def not_empty(*args):
     if not all(args):
         raise ValueError("Argument must be not None/Null/Zero/Empty!")
 
 
-def reflesh_config(*args):
+def refresh_config(*args):
     '''
         刷新当前环境配置 保存到__builtin__
         *args:相对目录的文件列表
@@ -71,14 +82,17 @@ def reflesh_config(*args):
 
     __builtin__.__conf__ = module
 
+reflesh_config = refresh_config
 
 def mongo_conv(d):
     if isinstance(d, (ObjectId, datetime.datetime)):
         return str(d)
     elif isinstance(d,(unicode,)):
         return str(d.encode('utf-8'))
-    elif isinstance(d, (list, tuple)):
-        return [mongo_conv(x) for x in d]
+    elif isinstance(d, list):
+        return map(mongo_conv, d)
+    elif isinstance(d, tuple):
+        return tuple(map(mongo_conv, d))
     elif isinstance(d, dict):
         return dict([(mongo_conv(k), mongo_conv(v)) for k, v in d.items()])
     else:
@@ -96,5 +110,5 @@ def set_default_encoding():
 
     sys.setdefaultencoding(coding)
 
-__all__ = ["app_path", "not_empty", "reflesh_config", "mongo_conv",
+__all__ = ["app_path", "not_empty", "refresh_config", "reflesh_config", "mongo_conv",
            "set_default_encoding", "get_modules", "get_members"]

@@ -174,7 +174,8 @@ class Service(object):
             members = get_members(
                 __conf__.JOB_DIR, lambda o: hasattr(o, "__service__"))
             return dict([(v.__service__, v) for k, v in members.items()])
-        except:
+        except Exception as e:
+            print 'load error:',e.message 
             return {}
 
     def _subscribe(self):

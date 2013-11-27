@@ -9,6 +9,27 @@ import tornado.web
 
 from fnmatch import fnmatch
 from inspect import getmembers
+from utility import app_path
+
+
+def reg_ui_method(name=None,intro=None):
+    """
+    注册模板用使用的ui_method
+    Demo
+    @reg_ui_method()
+    def add(self,a,b,c):
+        return a+b+c
+
+    """
+    def actual(handler):
+        if not hasattr(handler,'__reg_ui__'):
+            handler.__reg_ui__ = True
+            handler.__uiname__ = name
+            handler.__intro__ = intro
+
+        return handler
+
+    return actual
 
 
 def url(pattern, order=0):
@@ -17,7 +38,7 @@ def url(pattern, order=0):
         支持多次设置及排序
 
         Demo:
-        @url('/blog/info/{0}')
+        @url('/blog/info/(.*)')
         class ActionHandler(tornado.web.RequestHandler):
             def get(self,blogid):
                 pass
@@ -51,7 +72,8 @@ def _load_handlers(handler_dir='action'):
         handlers = load_handlers():
         app = tornado.web.Application(handlers)
     '''
-    path = os.path.join(os.getcwd(), handler_dir)
+    #path = os.path.join(os.getcwd(), handler_dir)
+    path = app_path(handler_dir)
     py_filter = lambda f: fnmatch(f, '*.py') and not f.startswith('__')
     member_filter = lambda m: isinstance(
         m, type) and hasattr(m, '__urls__') and m.__urls__
@@ -65,12 +87,16 @@ def _load_handlers(handler_dir='action'):
         members = dict(("{0}.{1}".format(
             v.__module__, k), v) for k, v in getmembers(m, member_filter))
         ret.update(members)
+    return _sorted_hanlders(ret.values())
 
-    handlers = [(pattern, order, h) for h in ret.values() for pattern,
+def _sorted_hanlders(handlers):
+    """
+        将handlers列表转为排序好的(url, handlers)列表
+    """
+    handlers = [(pattern, order, h) for h in handlers for pattern,
                 order in h.__urls__]
     handlers.sort(cmp=cmp, key=lambda x: x[1])
-
     return [(pattern, handler) for pattern, _, handler in handlers]
 
 
-__all__ = ["url", "load_handlers"]
+__all__ = ["reg_ui_method","url", "load_handlers"]
