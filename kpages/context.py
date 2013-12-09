@@ -145,7 +145,8 @@ class LogicContext(object):
             cls.__mongoclient__ = MongoClient(host=__conf__.DB_HOST,socketTimeoutMS=__conf__.SOCK_TIMEOUT)
         
         return cls.__mongoclient__[name]
-        
+    
+    @classmethod
     def get_redisclient(cls):
         """
         获取持久化的redis连接
