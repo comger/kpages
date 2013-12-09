@@ -55,7 +55,7 @@ class WebApp(object):
         self._modules = get_ui_modules()
         self._methods = get_ui_methods()
         self._webapp = self._get_webapp()
-    
+        __conf__.APP = self._webapp    
 
     def _get_webapp(self):
         settings = {"debug": __conf__.DEBUG,
