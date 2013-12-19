@@ -21,6 +21,7 @@
 """
 import datetime,json
 from sys import stderr, argv
+from multiprocessing import cpu_count,Process
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
     from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
@@ -185,7 +186,7 @@ class Service(object):
             return svrs
 
         except Exception as e:
-            print 'load error:',e.message 
+            print 'load error:',e,e.message 
             return {}
 
     def _subscribe(self):
@@ -203,9 +204,11 @@ class Service(object):
                         srv_funcs = self._services.get(cmd,())
                         for fun in srv_funcs:
                             try:
-                                fun(data)
+                                p = Process(target=fun,args=(data,))
+                                p.start()
+                                p.join()
                             except Exception as e:
-                                print cmd,data,e.message
+                                print cmd,e
 
             except ConnectionError as e:
                 print 'Expception:'+e.message
