@@ -21,6 +21,7 @@
 """
 import datetime,json
 from sys import stderr, argv
+from multiprocessing import cpu_count,Process
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
     from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
@@ -173,9 +174,19 @@ class Service(object):
         try:
             members = get_members(
                 __conf__.JOB_DIR, lambda o: hasattr(o, "__service__"))
-            return dict([(v.__service__, v) for k, v in members.items()])
+            #此处应该支持多个消费注册
+            svrs = {}
+            for k,v in members.items():
+                if not svrs.get(v.__service__,None):
+                    svrs[v.__service__] = []
+                
+                svrs[v.__service__].append(v)
+                
+            #return dict([(v.__service__, v) for k, v in members.items()])
+            return svrs
+
         except Exception as e:
-            print 'load error:',e.message 
+            print 'load error:',e,e.message 
             return {}
 
     def _subscribe(self):
@@ -190,12 +201,14 @@ class Service(object):
                 with LogicContext():
                     while True:
                         cmd, data = self._consumer.consume()
-                        srv_func = self._services.get(cmd)
-                        if srv_func:
+                        srv_funcs = self._services.get(cmd,())
+                        for fun in srv_funcs:
                             try:
-                                srv_func(data)
+                                p = Process(target=fun,args=(data,))
+                                p.start()
+                                p.join()
                             except Exception as e:
-                                print 'Expception:'+e.message
+                                print cmd,e
 
             except ConnectionError as e:
                 print 'Expception:'+e.message
