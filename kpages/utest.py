@@ -27,7 +27,6 @@ def load_testsuites(module=None):
     testcases = _get_members(
         __conf__.UTEST_DIR, member_filter=_filter, in_module=module)
 
-    # 找出所有测试方法，并构件 TestSuite 对象。
     _suites = {}
     for name, cls in testcases.items():
         for n, m in getmembers(cls):
@@ -67,4 +66,4 @@ def pro_test(m):
     profile.runctx("_run()", globals(), locals())
 
 
-__all__ = ['run_test', 'pro_test']
+__al__ = ['run_test', 'pro_test']

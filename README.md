@@ -1,35 +1,33 @@
 #kpages
 
-######kpages is mini helper for tornado,Contains the address routing management,tornado and app config management, mongodb, redis connection management and other functions; these things can help you quickly build a web application.
-
-######基于Tornado的开发包，提供地址路由、配置、测试、性能分析、数据库及内存连接上下文管理等，如果你想用Tornado提供一些高性能的服务接口，这会给你很大的帮助的。
+###kpages is mini helper for tornado,Contains the address routing management,tornado and app config management, mongodb, redis connection management and other functions; these things can help you quickly build a web application.
 
 
-## 使用案例
-* [Migrant 回归线](https://github.com/comger/migrant)
+## Case 
+* [Migrant](https://github.com/comger/migrant)
 
 
-##如何使用kpages 创建项目(版本号>= 0.6.3.dev)
+## How to create kpages project (version >= 0.6.3.dev)
 
 ```
-    1. 在需要创建项目的目录执行: kpages_init.py projectname # projectname 为你的项目名称、当projectname 为空时 默认名称为 kpages_project
-    2. 在Settings.py 里指定你的RequestHandler 目录， 默认为目录 action （设置后，软件会自己处理添加 url 的 RequestHandler）
+    1. input command: kpages_init.py projectname # projectname: you project name, default is kpages_project
+    2. set you RequestHandler action dir
 ```
 
-## kpages web 服务启动方式
+## How to start kpages web application
 ```
-python apprun.py  或 ./apprun.py
-可配置参数
+python apprun.py  or ./apprun.py
+Params
      config=CONFIG  set config for server
      port=PORT      set http port for server
      debug          Debug mode.
      ndebug         No Debug mode.
 ```
 
-## kpages mq 服务启动方式
+## How to start kpages mq
 ```
 python service.py  或 ./service.py
-可配置参数
+Params
      config=CONFIG  set config for server
      port=PORT      set http port for server
      debug          Debug mode.
@@ -37,10 +35,10 @@ python service.py  或 ./service.py
      channel        set channel for redis mq
 ```
 
-## 使用Tornado 的UI module及 method
+## How to use tornado uimodule and uimethod in kpages
 ```
-1. kpages 可以自动识别ACTION_DIR 目录中 Ui_Module 的子类; 并添加到app 中
-2. 在模板中可以直接使用 {% module 目录_模块_类名() %} 调用Ui Module
+1. kpages can auto find  Ui_Module's subclass in ACTION_DIR
+2. you can use {% module dir_modulename_classname() %} to call Ui Module
 Demo Code
     Class Demo(tornado.web.UIModule):
         def render(self,name):
@@ -50,7 +48,7 @@ Template code
     {% module Demo('kpages') %}
     
 
-3. 在ACTION_DIR 目录中, 使用reg_ui_method 修饰器, 注册Ui methods; 在Template 中全局可使用
+3. @reg_ui_method in ACTION_DIR's files, to apply Ui methods
 Demo code
     
     @reg_ui_method(name='testmethod',intro='demo for ui method')

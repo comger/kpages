@@ -43,7 +43,6 @@ class ContextHandler():
 class LogicContext(object):
     """
         logic context for mongodb and redis cache
-        如果不在上下文内，直接返回一个默认的上下文对象
     """
     _thread_local = local()
 
@@ -93,7 +92,7 @@ class LogicContext(object):
         return get_mongo(dbname)[name]
 
     def get_async_mongo(self, name=None):
-        """ 非阻塞的pympongo 支持，需要安装motor """
+        """ need motor """
         name = name or __conf__.DB_NAME
         if not self._sync_db:
             self._sync_db = motor.MotorClient(
@@ -138,7 +137,7 @@ class LogicContext(object):
     @classmethod 
     def get_mongoclient(cls, name):
         """
-        获取持久化的mongoclient 连接
+        get mongoclient in application
         """
         name = name or __conf__.DB_NAME
         if not hasattr(cls,'__mongoclient__'):
@@ -149,7 +148,7 @@ class LogicContext(object):
     @classmethod
     def get_redisclient(cls):
         """
-        获取持久化的redis连接
+        get redis clinet in application 
         """
         if not hasattr(cls,'__redisclient__'):
             cp = ConnectionPool(host=h, port=int(p),socket_timeout=__conf__.SOCK_TIMEOUT)

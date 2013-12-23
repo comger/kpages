@@ -14,7 +14,7 @@ from utility import app_path
 
 def reg_ui_method(name=None,intro=None):
     """
-    注册模板用使用的ui_method
+    reg ui_method
     Demo
     @reg_ui_method()
     def add(self,a,b,c):
@@ -34,9 +34,7 @@ def reg_ui_method(name=None,intro=None):
 
 def url(pattern, order=0):
     """
-        设置路径匹配模式和排序序号
-        支持多次设置及排序
-
+        set router for RequestHandler 
         Demo:
         @url('/blog/info/(.*)')
         class ActionHandler(tornado.web.RequestHandler):
@@ -66,7 +64,6 @@ def load_handlers(handler_dir='action'):
 
 def _load_handlers(handler_dir='action'):
     '''
-        加载指定目录的RequestHandler
         Load handler_dir's Handler
         Demo:
         handlers = load_handlers():
@@ -90,9 +87,6 @@ def _load_handlers(handler_dir='action'):
     return _sorted_hanlders(ret.values())
 
 def _sorted_hanlders(handlers):
-    """
-        将handlers列表转为排序好的(url, handlers)列表
-    """
     handlers = [(pattern, order, h) for h in handlers for pattern,
                 order in h.__urls__]
     handlers.sort(cmp=cmp, key=lambda x: x[1])

@@ -1,8 +1,7 @@
 # -*- coding -*-
 """
     author comger@gmail.com
-    一致性哈希算法
-    提供分布式缓存、数据库等负载均衡的解决算法
+    Consisten hash 
 """
 from hashlib import md5
 from bisect import bisect_right
@@ -31,16 +30,10 @@ class ConsistentHash(object):
 
 
     def _hash(self,s):
-        """
-        md5 取模运算
-        """
         return hash(md5(s).digest()) % 10000
 
     
     def get_node(self, key):
-        """
-        获取key 将分配的节点位置
-        """
         hsh = self._hash(key)
         index = bisect_right(self._ring, hsh)
         if index >= len(self._ring): index = 0
@@ -48,9 +41,6 @@ class ConsistentHash(object):
         return self._ring[index]
 
     def get_host(self, key):
-        """
-        获取key 将被分配到的机器
-        """
         return self._hosts(str(self.get_node(key)))
 
     

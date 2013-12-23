@@ -58,8 +58,8 @@ def not_empty(*args):
 
 def refresh_config(*args):
     '''
-        刷新当前环境配置 保存到__builtin__
-        *args:相对目录的文件列表
+        reflesh setting.py to __builtin__
+
         demo: reflesh_config('setting.py.txt','cacheconfig.py.txt')
         use like : __conf__.DB_HOST
     '''

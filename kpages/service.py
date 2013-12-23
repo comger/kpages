@@ -1,10 +1,8 @@
 # -*- coding:utf-8 -*-
 
 """
-    消息队列服务
+    Reids MQ Service
 
-    通过接收消息队列中的信息，并按照特定协议解包后进行处理。
-    通常和 Redis 等部署在同一台服务器上。
 
 
     作者: Q.yuhen
@@ -46,9 +44,6 @@ def staticclass(cls):
 
 
 def srvcmd(cmd):
-    """
-        消息服务处理函数装饰器
-    """
     def actual(func):
         func.__service__ = cmd
         return func
@@ -68,17 +63,11 @@ class Pack(object):
 
     @staticmethod
     def send_pack(mq, channel, cmd, data):
-        """
-            将数据打包并序列化后发送到消息队列
-        """
         pack = dumps(dict(cmd=cmd, data=data),cls=DateTimeEncoder)
         mq.publish(channel, pack)
 
     @staticmethod
     def unpack(data):
-        """
-            将消息队列中的数据解包
-        """
         try:
             pack = loads(data)
             return pack["cmd"], pack["data"]
@@ -87,23 +76,17 @@ class Pack(object):
 
     @classmethod
     def async_send_pack(cls, cmd, data, channel=None):
-        """
-            将数据发送到队列，以实现异步处理。
-        """
         cls.send_pack(get_context(
         ).get_redis(), channel or __conf__.SERVICE_CHANNEL, cmd, data)
 
 
 class Consumer(object):
-    """
-        队列消费服务
-    """
     def __init__(self, channel, host="localhost"):
         self._channel = channel
         self._host = host
 
     def subscribe(self):
-        self._redis = Redis(host=self._host)  # 不能加 Timeout，因为需要长时间等待消息到达。
+        self._redis = Redis(host=self._host) 
         self._pubsub = self._redis.pubsub()
         self._pubsub.subscribe(self._channel)
         self._listen = None
@@ -121,13 +104,13 @@ class Consumer(object):
 
 class Service(object):
     """
-        队列服务
+        MQ Service
 
-        命令行参数:
+        Demo:
             ./service.py [host] [channel]
 
-            host    默认 "localhost"
-            channel 默认 settings.py SERVICE_CHANNEL
+            host    default "localhost"
+            channel defailt  settings.py SERVICE_CHANNEL
     """
     def __init__(self, host=None, channel=None, callback=None):
         self._host = host or "localhost"
@@ -174,7 +157,6 @@ class Service(object):
         try:
             members = get_members(
                 __conf__.JOB_DIR, lambda o: hasattr(o, "__service__"))
-            #此处应该支持多个消费注册
             svrs = {}
             for k,v in members.items():
                 if not svrs.get(v.__service__,None):
@@ -229,7 +211,6 @@ class Service(object):
             pause()
 
 
-# 为 Redis 添加发送消息包方法。
 Redis.send_pack = Pack.send_pack
 service_async = Pack.async_send_pack
 

@@ -15,7 +15,7 @@ from utility import refresh_config, app_path, set_default_encoding,get_members
 
 def get_ui_modules():
     """
-    返回ACTION_DIR 目录下的 ui module 子类字典
+    return ui module members in ACTION_DIR
     """
     m_filter = lambda m: isclass(m) and issubclass(m,tornado.web.UIModule)
     ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
@@ -30,7 +30,7 @@ def get_ui_modules():
 
 def get_ui_methods():
     """
-    返回ACTION_DIR 目录下的 ui method 方法
+    return uimethod methods in ACTION_DIR
     """
     m_filter = lambda m: hasattr(m,'__reg_ui__') and m.__reg_ui__ ==True
     ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
