@@ -51,7 +51,6 @@ distutils.core.setup(
     version=version,
     packages=["kpages"],
     package_data={},
-    package_data= {'':['*.*']},
     author="comger",
     author_email="comger@gmail.com",
     url="http://github.com/comger/kpages",
