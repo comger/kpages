@@ -9,7 +9,7 @@ from bson import ObjectId
 
 class Field(object):
     """
-    字段基类
+    Field Base Class
     """
     required,initial = False,None
 
@@ -65,7 +65,7 @@ use demo:
 class DemoModel(Model):
     _name = 'demomodel'
     _field = dict(
-        name = CharField(label='姓名',required=True),
+        name = CharField(label='username',required=True),
         sex = BooleanField(),
         age = IntField()
     )
@@ -77,7 +77,7 @@ class Model(object):
     _fields = {}
 
     def _get_fields(self):
-        """获取模型所有字段"""
+        """get all fields  in model"""
         for f in self._fields.keys():
             if not self._fields[f].label:
                 self._fields[f].label = f
@@ -85,7 +85,7 @@ class Model(object):
         return self._fields
     
     def _get_postdata(self, **kwargs):
-        """建立完整的数据模型"""
+        """ fill fields value """
         data = kwargs
         try:
             for key,field in self._get_fields().items():
@@ -108,7 +108,7 @@ class Model(object):
         return data
 
     def _save(self, db=None, cond={}, **kwargs):
-        """创建或更新记录"""
+        """ No longer supported """
         try:
             data = self._get_postdata()
             data.update(kwargs)

@@ -135,7 +135,7 @@ class LogicContext(object):
             cls._thread_local.contexts[-1] or cls()
 
     @classmethod 
-    def get_mongoclient(cls, name):
+    def get_mongoclient(cls, name=None):
         """
         get mongoclient in application
         """
