@@ -48,8 +48,9 @@ class WebApp(object):
     uimethods = property(lambda self: self._methods)
     webapp = property(lambda self: self._webapp)
 
-    def __init__(self, port=None, handlers=None, callback=None):
+    def __init__(self, port=None,bindip=None, handlers=None, callback=None):
         self._port = port or __conf__.PORT
+        self._ip = bindip or __conf__.BIND_IP
         self._callback = callback
         self._handlers = load_handlers(__conf__.ACTION_DIR)
         self._modules = get_ui_modules()
@@ -71,10 +72,10 @@ class WebApp(object):
 
     def _run_server(self):
         if __conf__.DEBUG:
-            self._webapp.listen(self._port)
+            self._webapp.listen(self._port,address=self._ip)
         else:
             server = HTTPServer(self._webapp)
-            server.bind(self._port)
+            server.bind(self._port,address=self._ip)
             server.start(0)
         tornado.ioloop.IOLoop.instance().start()
 
@@ -90,6 +91,8 @@ def _get_opt():
                       default='setting.py', help="set config for server")
     parser.add_option("--port", dest="port", default=None,
                       help="set http port for server")
+    parser.add_option("--ip", dest="ip", default=None,
+                      help="bind accept ip for server")
     parser.add_option("--debug", dest="debug", action="store_true",
                       default=None, help="Debug mode.")
     parser.add_option("--ndebug", dest="debug",
@@ -106,6 +109,9 @@ def run(callback=None):
     if opts.debug is not None:
         __conf__.DEBUG = opts.debug
 
-    WebApp(port=opts.port, callback=callback).run()
+    if opts.ip is not None:
+        __conf__.BIND_IP = opts.ip
+
+    WebApp(callback=callback).run()
 
 __all__ = ["run", "WebApp","get_ui_modules","get_ui_methods"]
