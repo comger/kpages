@@ -13,6 +13,33 @@ from inspect import getmembers
 #merge f with current path
 app_path = lambda f: os.path.join(os.getcwd(), f)
 
+try:
+    from line_profiler import LineProfiler
+    def lpro(follow=[]):
+        def inner(func):
+            def profiled_func(*args, **kwargs):
+                try:
+                    profiler = LineProfiler()
+                    profiler.add_function(func)
+                    for f in follow:
+                        profiler.add_function(f)
+
+                    profiler.enable_by_count()
+                    return func(*args, **kwargs)
+                finally:
+                    profiler.print_stats()
+            return profiled_func
+        return inner
+
+except ImportError:
+    def do_profile(follow=[]):
+        def inner(follow=[]):
+            def nothing(*args, **kwargs):
+                return func(*args, **kwargs)
+            return nothing
+
+        return inner
+
 
 def get_modules(m_path):
     ''' get all py module in m_path '''
@@ -111,4 +138,4 @@ def set_default_encoding():
     sys.setdefaultencoding(coding)
 
 __all__ = ["app_path", "not_empty", "refresh_config", "reflesh_config", "mongo_conv",
-           "set_default_encoding", "get_modules", "get_members"]
+           "set_default_encoding", "get_modules", "get_members","lpro"]

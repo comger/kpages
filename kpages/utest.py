@@ -62,7 +62,6 @@ def run_test(line=None):
 def pro_test(m):
     def _run():
         run_test(m)
-
     profile.runctx("_run()", globals(), locals())
 
 

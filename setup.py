@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "0.6.9.dev"
+version = "0.7.1.dev"
 
 with open('README.md') as f:
     long_description = f.read()
@@ -62,9 +62,6 @@ distutils.core.setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],

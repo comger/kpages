@@ -13,7 +13,7 @@ class ConsistentHash(object):
     2. 计算每个机器拥有的节点Node
     3. 新内容key添加时,get_node(key)获取key被分配的node;及get_host(key)获取key 被分配到的机器
     
-    * 节点的引入：保存每台机器负载均衡
+    * 节点的引入：保证每台机器负载均衡
     """
     def __init__(self, hosts, replicas = 10):
         self._hoss = {}

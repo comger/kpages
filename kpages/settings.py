@@ -11,6 +11,9 @@
 # 服务器监听端口
 PORT = 8088
 
+# http accept ip 
+BIND_IP = None
+
 # 数据库超时时间
 SOCK_TIMEOUT = 10
 
