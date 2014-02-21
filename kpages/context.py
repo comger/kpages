@@ -156,7 +156,15 @@ class LogicContext(object):
         
         return cls.__redisclient__
 
+    @classmethod
+    def get_replicaset(cls,hosts=None,replicaSet=None):
+        hosts = hosts or __conf__.ReplicaSetHost
+        replicaSet = replicaSet or __conf__.replicaSet
 
+        if not hasattr(cls,'__replicaset__'):
+            cls.__replicaset__ = MongoReplicaSetClient(hosts, replicaSet=relicaSet)
+            
+        return cls.__replicaset__
 
 get_context = LogicContext.get_context
 
