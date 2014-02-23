@@ -106,6 +106,9 @@ def run(callback=None):
     opts, args = _get_opt()
     refresh_config(opts.config)
 
+    if opts.port is not None:
+        __conf__.PORT = opts.port
+    
     if opts.debug is not None:
         __conf__.DEBUG = opts.debug
 
