@@ -32,7 +32,7 @@ try:
         return inner
 
 except ImportError:
-    def do_profile(follow=[]):
+    def lpro(follow=[]):
         def inner(follow=[]):
             def nothing(*args, **kwargs):
                 return func(*args, **kwargs)
@@ -138,4 +138,4 @@ def set_default_encoding():
     sys.setdefaultencoding(coding)
 
 __all__ = ["app_path", "not_empty", "refresh_config", "reflesh_config", "mongo_conv",
-           "set_default_encoding", "get_modules", "get_members"]
+           "set_default_encoding", "get_modules", "get_members","lpro"]
