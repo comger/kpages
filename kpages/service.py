@@ -70,12 +70,11 @@ class Pack(object):
     def send_pack(mq, channel, cmd, data):
         sendtime = time.time()
         data['sendtime'] = str(sendtime)
-        cmd_key = '{}_{}'.format(cmd,sendtime)
+        cmd_key = '{}_{}'.format(cmd,data['sendtime'])
         mq.lpush(__conf__.SERVICE_LISTKEY,cmd_key)        
         
         pack = dumps(dict(cmd=cmd, data=data),cls=DateTimeEncoder)
         mq.publish(channel, pack)
-        print 'send:',pack
 
     @staticmethod
     def unpack(data):
