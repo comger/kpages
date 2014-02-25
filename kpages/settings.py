@@ -65,3 +65,5 @@ DB_NAME = "test"
 GFS_NAME = 'gfs'
 
 SERVICE_CHANNEL = "channel1"
+
+SERVICE_LISTKEY = "kpages_cmd_list"
