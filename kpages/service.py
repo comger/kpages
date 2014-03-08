@@ -18,9 +18,10 @@
         2011-08-29  * 取消 Timeout。
 """
 import time
-import datetime,json
+import datetime
+import json
 from sys import stderr, argv
-from multiprocessing import cpu_count,Process
+from multiprocessing import cpu_count, Process
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
     from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
@@ -70,10 +71,10 @@ class Pack(object):
     def send_pack(mq, channel, cmd, data):
         sendtime = time.time()
         data['sendtime'] = str(sendtime)
-        cmd_key = '{}_{}'.format(cmd,data['sendtime'])
-        mq.lpush(__conf__.SERVICE_LISTKEY,cmd_key)        
+        cmd_key = '{}_{}'.format(cmd, data['sendtime'])
+        mq.lpush(__conf__.SERVICE_LISTKEY, cmd_key)        
         
-        pack = dumps(dict(cmd=cmd, data=data),cls=DateTimeEncoder)
+        pack = dumps(dict(cmd=cmd, data=data), cls=DateTimeEncoder)
         mq.publish(channel, pack)
 
     @staticmethod
@@ -169,7 +170,7 @@ class Service(object):
                 __conf__.JOB_DIR, lambda o: hasattr(o, "__service__"))
             svrs = {}
             for k,v in members.items():
-                if not svrs.get(v.__service__,None):
+                if not svrs.get(v.__service__, None):
                     svrs[v.__service__] = []
                 
                 svrs[v.__service__].append(v)
@@ -193,11 +194,11 @@ class Service(object):
                 with LogicContext():
                     while True:
                         cmd, data = self._consumer.consume()
-                        srv_funcs = self._services.get(cmd,())
+                        srv_funcs = self._services.get(cmd, ())
                         
                         if cmd and data:
-                            cmd_key = '{}_{}'.format(cmd,data.get('sendtime',''))
-                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY,cmd_key,num=1)
+                            cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
+                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY,cmd_key, num=1)
 
 
                         for fun in srv_funcs:
@@ -205,7 +206,7 @@ class Service(object):
                                 if fun.__sub_mode__ == -1 and count==0:
                                     continue
                                 
-                                p = Process(target=fun,args=(data,))
+                                p = Process(target=fun, args=(data,))
                                 p.start()
                                 p.join()
                             except Exception as e:
