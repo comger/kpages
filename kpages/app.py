@@ -17,8 +17,8 @@ def get_ui_modules():
     """
     return ui module members in ACTION_DIR
     """
-    m_filter = lambda m: isclass(m) and issubclass(m,tornado.web.UIModule)
-    ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
+    m_filter = lambda m: isclass(m) and issubclass(m, tornado.web.UIModule)
+    ms =  get_members(__conf__.ACTION_DIR, member_filter=m_filter)
     if 'tornado.web.UIModule' in ms:
         del ms['tornado.web.UIModule']
     
@@ -33,7 +33,7 @@ def get_ui_methods():
     return uimethod methods in ACTION_DIR
     """
     m_filter = lambda m: hasattr(m,'__reg_ui__') and m.__reg_ui__ ==True
-    ms =  get_members(__conf__.ACTION_DIR,member_filter=m_filter)
+    ms =  get_members(__conf__.ACTION_DIR, member_filter=m_filter)
     newms = {}
 
     for key,val in ms.items():
@@ -72,10 +72,10 @@ class WebApp(object):
 
     def _run_server(self):
         if __conf__.DEBUG:
-            self._webapp.listen(self._port,address=self._ip)
+            self._webapp.listen(self._port, address=self._ip)
         else:
             server = HTTPServer(self._webapp)
-            server.bind(self._port,address=self._ip)
+            server.bind(self._port, address=self._ip)
             server.start(0)
         tornado.ioloop.IOLoop.instance().start()
 
@@ -106,15 +106,10 @@ def run(callback=None):
     opts, args = _get_opt()
     refresh_config(opts.config)
 
-    if opts.port is not None:
-        __conf__.PORT = opts.port
-    
-    if opts.debug is not None:
-        __conf__.DEBUG = opts.debug
-
-    if opts.ip is not None:
-        __conf__.BIND_IP = opts.ip
+    __conf__.PORT = opts.port or __conf__.PORT
+    __conf__.DEBUG = opts.debug or __conf__.DEBUG
+    __conf__.BIND_IP = opts.ip or __conf__.BIND_IP
 
     WebApp(callback=callback).run()
 
-__all__ = ["run", "WebApp","get_ui_modules","get_ui_methods"]
+__all__ = ["run", "WebApp", "get_ui_modules", "get_ui_methods"]
