@@ -39,12 +39,10 @@ def load_testsuites(module=None):
 def run_test(line=None):
     _suites = []
     if not line:
-        suites = load_testsuites()
-        _suites = suites.values()
+        _suites = load_testsuites().values()
     else:
         ls = line.strip().split('.')
-        module = ls[0]
-        suites = load_testsuites(module)
+        suites = load_testsuites(ls[0])
         if len(ls) == 2:
             for key in suites.keys():
                 if key.startswith('utest.{0}.{1}'.format(ls[0], ls[1])):
