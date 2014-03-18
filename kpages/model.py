@@ -6,6 +6,7 @@
 """
 import time
 from bson import ObjectId
+from context import get_context
 
 class Field(object):
     """
@@ -110,6 +111,7 @@ class Model(object):
     def _save(self, db=None, cond={}, **kwargs):
         """ No longer supported """
         try:
+            db = db or get_context().get_mongoclient()
             data = self._get_postdata()
             data.update(kwargs)
         except Exception as e:
@@ -121,4 +123,9 @@ class Model(object):
 
         db[self._name].update(cond,{'$set':data})
         return True,data
-    
+   
+   def page(self, page=1, size=10, sort=None, **kwargs):
+       """ page list  """
+       if 'db' in kwargs:
+           db = kwargs.pop('db') or get_context().get_mongoclient()
+       return db[self._name].find(kwargs).skip(size*page).limit(size).sort(sort)
