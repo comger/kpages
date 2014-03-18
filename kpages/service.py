@@ -17,9 +17,11 @@
         2011-08-28  * 重构 Pack 为一个独立类。
         2011-08-29  * 取消 Timeout。
 """
-import datetime,json
+import time
+import datetime
+import json
 from sys import stderr, argv
-from multiprocessing import cpu_count,Process
+from multiprocessing import cpu_count, Process
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
     from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
@@ -43,9 +45,13 @@ def staticclass(cls):
     return cls
 
 
-def srvcmd(cmd):
+def srvcmd(cmd, sub_mode=0):
+    """
+    sub_mode : 0 时所有消费端都可以执行，-1时，只允许其中一个消费端执行
+    """
     def actual(func):
         func.__service__ = cmd
+        func.__sub_mode__ = sub_mode
         return func
 
     return actual
@@ -63,7 +69,12 @@ class Pack(object):
 
     @staticmethod
     def send_pack(mq, channel, cmd, data):
-        pack = dumps(dict(cmd=cmd, data=data),cls=DateTimeEncoder)
+        sendtime = time.time()
+        data['sendtime'] = str(sendtime)
+        cmd_key = '{}_{}'.format(cmd, data['sendtime'])
+        mq.lpush(__conf__.SERVICE_LISTKEY, cmd_key)        
+        
+        pack = dumps(dict(cmd=cmd, data=data), cls=DateTimeEncoder)
         mq.publish(channel, pack)
 
     @staticmethod
@@ -159,7 +170,7 @@ class Service(object):
                 __conf__.JOB_DIR, lambda o: hasattr(o, "__service__"))
             svrs = {}
             for k,v in members.items():
-                if not svrs.get(v.__service__,None):
+                if not svrs.get(v.__service__, None):
                     svrs[v.__service__] = []
                 
                 svrs[v.__service__].append(v)
@@ -183,10 +194,19 @@ class Service(object):
                 with LogicContext():
                     while True:
                         cmd, data = self._consumer.consume()
-                        srv_funcs = self._services.get(cmd,())
+                        srv_funcs = self._services.get(cmd, ())
+                        
+                        if cmd and data:
+                            cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
+                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY,cmd_key, num=1)
+
+
                         for fun in srv_funcs:
                             try:
-                                p = Process(target=fun,args=(data,))
+                                if fun.__sub_mode__ == -1 and count==0:
+                                    continue
+                                
+                                p = Process(target=fun, args=(data,))
                                 p.start()
                                 p.join()
                             except Exception as e:

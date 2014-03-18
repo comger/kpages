@@ -6,15 +6,16 @@
 """
 import os
 import time
+import tornado.gen as gen
+
 from threading import local
 from hashlib import sha1
 
 from gridfs import GridFS
-from redis import Redis,ConnectionPool
-from pymongo import Connection,MongoClient
+from redis import Redis, ConnectionPool
+from pymongo import Connection, MongoClient
 from tornado.web import RequestHandler
 from tornado.websocket import WebSocketHandler
-import tornado.gen as gen
 try:
     import motor
 except:
@@ -23,21 +24,28 @@ except:
 session_id = lambda: sha1('%s%s' % (os.urandom(16), time.time())).hexdigest()
 
 
-class ContextHandler():
+class ContextHandler(object):
+    """
+    base handler for session
+    """
     def _execute(self, transforms, *args, **kwargs):
+        ''' select base handler for self '''
         with LogicContext():
-            if isinstance(self,WebSocketHandler):
-                WebSocketHandler._execute(self,transforms, *args, **kwargs)
-            elif isinstance(self,RequestHandler):
-                RequestHandler._execute(self,transforms, *args, **kwargs)
+            if isinstance(self, WebSocketHandler):
+                WebSocketHandler._execute(self, transforms, *args, **kwargs)
+            elif isinstance(self, RequestHandler):
+                RequestHandler._execute(self, transforms, *args, **kwargs)
 
     def session(self, key, val=None):
+        ''' session for handler '''
         _id = self.get_secure_cookie('session_id', None)
         if not _id:
             _id = session_id()
             self.set_secure_cookie('session_id', _id)
-
-        return get_context().redis_session(_id, key, val) if __conf__.REDIS_SESSION else get_context().session(_id, key, val)
+        if __conf__.REDIS_SESSION:
+            return get_context().redis_session(_id, key, val)
+        else:
+            get_context().session(_id, key, val)
 
 
 class LogicContext(object):
@@ -70,6 +78,7 @@ class LogicContext(object):
             self._db_conn.disconnect()
 
     def get_redis(self):
+        ''' get redis from context '''
         host = self._cache_host
         h, p = host.split(":") if ":" in host else (host, 6379)
         cache = Redis(
@@ -77,10 +86,14 @@ class LogicContext(object):
         return cache
 
     def get_gfs(self, name=None):
+        ''' get gfs from context '''
         name = name or __conf__.GFS_NAME
         return GridFS(self.get_mongo(name))
 
     def get_mongo(self, name=None):
+        '''
+        get mongodb by connection
+        '''
         name = name or __conf__.DB_NAME
         if not self._db_conn:
             self._db_conn = Connection(host=__conf__.DB_HOST,
@@ -88,11 +101,9 @@ class LogicContext(object):
 
         return self._db_conn[name]
     
-    def get_coll(self,name, dbname=None):
-        return get_mongo(dbname)[name]
 
     def get_async_mongo(self, name=None):
-        """ need motor """
+        """ get motor client"""
         name = name or __conf__.DB_NAME
         if not self._sync_db:
             self._sync_db = motor.MotorClient(
@@ -102,6 +113,7 @@ class LogicContext(object):
 
     @gen.coroutine
     def get_motor(self, name=None):
+        ''' yield  motor client '''
         name = name or __conf__.DB_NAME
         if not self._motor_clt:
             result, err = (yield gen.Task(
@@ -113,6 +125,7 @@ class LogicContext(object):
         raise gen.Return(self._motor_clt[name])
 
     def session(self, _id, key, val=None, expire=None):
+        ''' mongodb session for tornado'''
         if not self._session:
             self._session = self.get_mongo('session')['session']
             self._session_val = (
@@ -122,11 +135,14 @@ class LogicContext(object):
         if not val:
             return self._session_val.get(key)
         if not self._session_val:
-            self._session.insert(dict(_id=_id, data=dict(key=val)))
+            self._session.insert(dict(_id = _id, data = dict(key = val)))
 
         self._session_val[key] = val
 
     def redis_session(self, _id, key, val=None):
+        '''
+        redis session for tornado
+        '''
         return self.get_redis().hget(_id, key) if val else self.get_redis().hset(_id, key, val)
 
     @classmethod
@@ -141,7 +157,8 @@ class LogicContext(object):
         """
         name = name or __conf__.DB_NAME
         if not hasattr(cls,'__mongoclient__'):
-            cls.__mongoclient__ = MongoClient(host=__conf__.DB_HOST,socketTimeoutMS=__conf__.SOCK_TIMEOUT)
+            cls.__mongoclient__ = MongoClient(host = __conf__.DB_HOST,
+                socketTimeoutMS = __conf__.SOCK_TIMEOUT_MS)
         
         return cls.__mongoclient__[name]
     
@@ -151,17 +168,17 @@ class LogicContext(object):
         get redis clinet in application 
         """
         if not hasattr(cls,'__redisclient__'):
-            cp = ConnectionPool(host=h, port=int(p),socket_timeout=__conf__.SOCK_TIMEOUT)
+            cp = ConnectionPool(host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
             cls.__redisclient__ = Redis(connection_pool=cp)
         
         return cls.__redisclient__
 
     @classmethod
-    def get_replicaset(cls,hosts=None,replicaSet=None):
+    def get_replicaset(cls, hosts=None, replicaSet=None):
         hosts = hosts or __conf__.ReplicaSetHost
         replicaSet = replicaSet or __conf__.replicaSet
 
-        if not hasattr(cls,'__replicaset__'):
+        if not hasattr(cls, '__replicaset__'):
             cls.__replicaset__ = MongoReplicaSetClient(hosts, replicaSet=relicaSet)
             
         return cls.__replicaset__

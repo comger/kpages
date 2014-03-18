@@ -16,6 +16,7 @@ BIND_IP = None
 
 # 数据库超时时间
 SOCK_TIMEOUT = 10
+SOCK_TIMEOUT_MS = None
 
 # SESSION 过期时间(秒)
 SESSION_EXPIRE = 60 * 10
@@ -65,3 +66,5 @@ DB_NAME = "test"
 GFS_NAME = 'gfs'
 
 SERVICE_CHANNEL = "channel1"
+
+SERVICE_LISTKEY = "kpages_cmd_list"
