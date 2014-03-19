@@ -127,7 +127,7 @@ class LogicContext(object):
     def session(self, _id, key, val=None, expire=None):
         ''' mongodb session for tornado'''
         if not self._session:
-            self._session = self.get_mongo('session')['session']
+            self._session = self.get_mongoclient('session')['session']
             self._session_val = (
                 self._session.find_one(dict(_id=_id)) or {}).get('data', {})
             self._session_id = _id
