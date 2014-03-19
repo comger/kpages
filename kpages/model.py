@@ -7,6 +7,7 @@
 import time
 from bson import ObjectId
 from context import get_context
+from utility import mongo_conv
 
 class Field(object):
     """
@@ -119,6 +120,8 @@ class Model(object):
         return _id
        
     def update(self, _id, key='_id', dbname=None,  **kwargs):
+        ''' update record by _id'''
+        not_empty(_id)
         coll = self._get_coll(dbname)
         if key == '_id':
             _id = ObjectId(_id)
@@ -127,6 +130,8 @@ class Model(object):
         coll.update(cond, {'$set':kwargs})
     
     def remove(self, _id, key='_id', dbname=None, **kwargs):
+        ''' remove record by _id '''
+        not_empty(_id)
         coll = self._get_coll(dbname)
         if key == '_id':
             _id = ObjectId(_id)
@@ -146,6 +151,22 @@ class Model(object):
 
         return coll.find(kwargs, fields).skip(size*(page-1)).limit(size).sort(_sort)
 
+    def info(self, _id, key='_id', dbname=None):
+        ''' show info by _id '''
+        not_empty(_id)
+        coll = self._get_coll(dbname)
+        if key == '_id':
+            _id = ObjectId(_id)
+        
+        cond = {key:_id}
+        return mongo_conv(coll.findOne(cond))
 
-        
-        
+    def exists(self, dbname=None, **kwargs):
+        ''' is exists records find by kwargs '''
+        coll = self._get_coll(dbname)
+        if coll.findOne(kwargs):
+            return True
+        else:
+            return False
+
+
