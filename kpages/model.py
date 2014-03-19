@@ -61,6 +61,7 @@ class DatetimeField(Field):
         v = time.mktime(time.strptime(v, self.timeformat)) + 60*60*8
         return v
 
+
 '''
 use demo:
 class DemoModel(Model):
@@ -72,7 +73,6 @@ class DemoModel(Model):
     )
 '''
 class Model(object):
-    
     #对应mongodb collection 名称
     _name = None
     _fields = {}
@@ -107,25 +107,35 @@ class Model(object):
             raise Exception('{0} in Model {1}'.format(e.message, self._name))
 
         return data
-
-    def _save(self, db=None, cond={}, **kwargs):
+    
+    def _get_coll(self, dbname = __conf__.DB_NAME):
+        return kwargs, get_context().get_mongoclient(dbname)[self._name]
+    
+    def insert(self, dbname=None, **kwargs):
         """ No longer supported """
-        try:
-            db = db or get_context().get_mongoclient()
-            data = self._get_postdata()
-            data.update(kwargs)
-        except Exception as e:
-            return False,e
+        coll = self._get_coll(dbname)
+        _id  = str(coll.insert(kwargs))
+        return _id
+       
+    def update(self, _id, key='_id', dbname=None,  **kwargs):
+        coll = self._get_coll(dbname)
+        if key == '_id':
+            _id = ObjectId(_id)
+           
+        cond = {key:_id}
+        coll.update(cond, {'$set':kwargs})
 
-        if not cond:
-            data['_id'] = str(db[self._name].insert(data))
-            return data
+    
+    def page(self, page=1, size=10, sort=None,dbname=None, **kwargs):
+        """ page list  """
+        coll = self._get_coll(dbname)
+        return coll.find(kwargs).skip(size*page).limit(size).sort(sort)
 
-        db[self._name].update(cond,{'$set':data})
-        return True,data
-   
-   def page(self, page=1, size=10, sort=None, **kwargs):
-       """ page list  """
-       if 'db' in kwargs:
-           db = kwargs.pop('db') or get_context().get_mongoclient()
-       return db[self._name].find(kwargs).skip(size*page).limit(size).sort(sort)
+    def del(self, _id, key='_id', dbname=None, **kwargs):
+        coll = self._get_coll(dbname)
+        if key == '_id':
+            _id = ObjectId(_id)
+        
+        cond = {key:_id}
+        cond.upadte(kwargs)
+        coll.remove(cond)
