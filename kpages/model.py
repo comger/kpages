@@ -62,8 +62,9 @@ class DatetimeField(Field):
         v = time.mktime(time.strptime(v, self.timeformat)) + 60*60*8
         return v
 
+    
 
-'''
+"""
 use demo:
 class DemoModel(Model):
     _name = 'demomodel'
@@ -72,7 +73,7 @@ class DemoModel(Model):
         sex = BooleanField(),
         age = IntField()
     )
-'''
+"""
 class Model(object):
     #对应mongodb collection 名称
     _name = None
