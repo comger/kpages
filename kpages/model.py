@@ -108,11 +108,12 @@ class Model(object):
 
         return data
     
-    def _get_coll(self, dbname = __conf__.DB_NAME):
-        return kwargs, get_context().get_mongoclient(dbname)[self._name]
+    def _get_coll(self, dbname = None):
+        dbname = dbname or __conf__.DB_NAME
+        return get_context().get_mongoclient(dbname)[self._name]
     
     def insert(self, dbname=None, **kwargs):
-        """ No longer supported """
+        """ insert data to _name  """
         coll = self._get_coll(dbname)
         _id  = str(coll.insert(kwargs))
         return _id
@@ -124,18 +125,27 @@ class Model(object):
            
         cond = {key:_id}
         coll.update(cond, {'$set':kwargs})
-
     
-    def page(self, page=1, size=10, sort=None,dbname=None, **kwargs):
-        """ page list  """
-        coll = self._get_coll(dbname)
-        return coll.find(kwargs).skip(size*page).limit(size).sort(sort)
-
-    def del(self, _id, key='_id', dbname=None, **kwargs):
+    def remove(self, _id, key='_id', dbname=None, **kwargs):
         coll = self._get_coll(dbname)
         if key == '_id':
             _id = ObjectId(_id)
         
         cond = {key:_id}
-        cond.upadte(kwargs)
+        cond.update(kwargs)
         coll.remove(cond)
+    
+    def page(self, page=1, size=10, sort=None, fields=None, dbname=None, **kwargs):
+        """ page list  """
+        coll = self._get_coll(dbname)
+        _sort = [('_id',-1),]
+        if type(sort) == str:
+            _sort.insert(0,(sort,-1))
+        elif type(sort) in (list,tuple):
+            _sort.insert(0,sort)
+
+        return coll.find(kwargs, fields).skip(size*(page-1)).limit(size).sort(_sort)
+
+
+        
+        
