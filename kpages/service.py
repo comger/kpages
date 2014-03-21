@@ -20,6 +20,7 @@
 import time
 import datetime
 import json
+import traceback
 from sys import stderr, argv
 from multiprocessing import cpu_count, Process
 try:
@@ -175,11 +176,10 @@ class Service(object):
                 
                 svrs[v.__service__].append(v)
                 
-            #return dict([(v.__service__, v) for k, v in members.items()])
             return svrs
 
         except Exception as e:
-            print 'load error:',e,e.message 
+            traceback.print_exc()
             return {}
 
     def _subscribe(self):

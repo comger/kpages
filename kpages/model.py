@@ -5,9 +5,11 @@
     help you easy to manage mongodb data by tornado request(cu-rd)
 """
 import time
+import traceback
+from inspect import isclass
 from bson import ObjectId
 from context import get_context
-from utility import mongo_conv
+from utility import mongo_conv,not_empty,get_members
 
 class Field(object):
     """
@@ -170,4 +172,36 @@ class Model(object):
         else:
             return False
 
+class ModelMaster(object):
+    _objects = {}
+    _models = {}
+    
+    def __init__(self):
+        if not ModelMaster._models:
+            ModelMaster._models = self.load()
+
+    def load(self):
+        try:
+            members = get_members(__conf__.JOB_DIR, lambda o: isclass(o) and issubclass(o,Model) and o._name)
+            models = {}
+            for k,v in members.items():
+                models[v._name] = v
+            
+            return models
+        except Exception as e:
+            traceback.print_exc()
+            return {}
+    
+    def __call__(self, model_name):
+        if model_name in ModelMaster._objects:
+            return ModelMaster._objects[model_name]
+
+        if model_name not in ModelMaster._models:
+            cls = Model
+            cls._name = model_name
+        else:
+            cls = ModelMaster._models[model_name]
+
+        obj = ModelMaster._objects[model_name] = cls()
+        return obj
 
