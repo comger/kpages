@@ -66,20 +66,24 @@ class DatetimeField(Field):
 
     
 
-"""
-use demo:
-class DemoModel(Model):
-    _name = 'demomodel'
-    _field = dict(
-        name = CharField(label='username',required=True),
-        sex = BooleanField(),
-        age = IntField()
-    )
-"""
 class Model(object):
+    """
+    class DemoModel(Model):
+        _name = 'demomodel'
+        _field = dict(
+            name = CharField(label='username',required=True),
+            sex = BooleanField(),
+            age = IntField()
+        )
+    """
     #对应mongodb collection 名称
+    _dbname = None
     _name = None
     _fields = {}
+    
+    def __init__(self, dbname=None):
+        self._dbname = dbname or self._dbname
+        self._dbname = self._dbname or __conf__.DB_NAME
 
     def _get_fields(self):
         """get all fields  in model"""
@@ -89,17 +93,18 @@ class Model(object):
 
         return self._fields
     
-    def _get_postdata(self, **kwargs):
+    def fetch_data(self, handler=None, **kwargs):
         """ fill fields value """
+        handler = handler or self
         data = kwargs
         try:
             for key,field in self._get_fields().items():
                 if hasattr(field,'datatype') and isinstance(field, ListField):
-                    vals = self.get_arguments(key,())
+                    vals = handler.get_arguments(key,())
                     data[key] = field.val(vals)
                     continue
                 
-                val = self.get_argument(key,data.get(key,None))
+                val = handler.get_argument(key,data.get(key,None))
                 if field.required and not val:
                     raise Exception('field {0} is required'.format(key))
                 elif not val:
@@ -112,73 +117,73 @@ class Model(object):
 
         return data
     
-    def _get_coll(self, dbname = None):
-        dbname = dbname or __conf__.DB_NAME
-        return get_context().get_mongoclient(dbname)[self._name]
+    def _coll(self):
+        return get_context().get_mongoclient(self._dbname)[self._name]
     
-    def insert(self, dbname=None, **kwargs):
-        """ insert data to _name  """
-        coll = self._get_coll(dbname)
-        _id  = str(coll.insert(kwargs))
+    def insert(self, obj={}, **kwargs):
+        """ insert obj and kwargs to _name  """
+        obj.update(kwargs)
+        _id  = str(self._coll().insert(obj))
         return _id
        
-    def update(self, _id, key='_id', dbname=None,  **kwargs):
+    def update(self, _id, key='_id', **kwargs):
         ''' update record by _id'''
         not_empty(_id)
-        coll = self._get_coll(dbname)
         if key == '_id':
             _id = ObjectId(_id)
            
         cond = {key:_id}
-        coll.update(cond, {'$set':kwargs})
+        self._coll().update(cond, {'$set':kwargs})
     
-    def remove(self, _id, key='_id', dbname=None, **kwargs):
+    def remove(self, _id, key='_id', **kwargs):
         ''' remove record by _id '''
         not_empty(_id)
-        coll = self._get_coll(dbname)
         if key == '_id':
             _id = ObjectId(_id)
         
         cond = {key:_id}
         cond.update(kwargs)
-        coll.remove(cond)
+        self._coll().remove(cond)
     
-    def page(self, page=1, size=10, sort=None, fields=None, dbname=None, **kwargs):
+    def page(self, page=1, size=10, sort=None, fields=None, **kwargs):
         """ page list  """
-        coll = self._get_coll(dbname)
         _sort = [('_id',-1),]
         if type(sort) == str:
             _sort.insert(0,(sort,-1))
         elif type(sort) in (list,tuple):
             _sort.insert(0,sort)
 
-        return coll.find(kwargs, fields).skip(size*(page-1)).limit(size).sort(_sort)
+        return self._coll().find(kwargs, fields).skip(size*(page-1)).limit(size).sort(_sort)
 
-    def info(self, _id, key='_id', dbname=None):
+    def info(self, _id, key='_id'):
         ''' show info by _id '''
         not_empty(_id)
-        coll = self._get_coll(dbname)
         if key == '_id':
             _id = ObjectId(_id)
         
         cond = {key:_id}
-        return mongo_conv(coll.findOne(cond))
+        return mongo_conv(self._coll().findOne(cond))
 
-    def exists(self, dbname=None, **kwargs):
+    def exists(self, **kwargs):
         ''' is exists records find by kwargs '''
-        coll = self._get_coll(dbname)
-        if coll.findOne(kwargs):
+        if self._coll().findOne(kwargs):
             return True
         else:
             return False
 
+
 class ModelMaster(object):
+    """
+    easy to load Model and select Model db
+    """
     _objects = {}
     _models = {}
     
-    def __init__(self):
+    def __init__(self, dbname=None):
         if not ModelMaster._models:
             ModelMaster._models = self.load()
+
+        self._dbname = dbname or __conf__.DB_NAME
 
     def load(self):
         try:
@@ -192,16 +197,21 @@ class ModelMaster(object):
             traceback.print_exc()
             return {}
     
-    def __call__(self, model_name):
-        if model_name in ModelMaster._objects:
-            return ModelMaster._objects[model_name]
+    def __getattr__(self, model_name):
+        key = '{0}_{1}'.format(self._dbname, model_name)
+        if key in ModelMaster._objects:
+            return ModelMaster._objects[key]
 
         if model_name not in ModelMaster._models:
             cls = Model
-            cls._name = model_name
+            cls._name = '{0}_model'.format(model_name)
         else:
             cls = ModelMaster._models[model_name]
 
-        obj = ModelMaster._objects[model_name] = cls()
+        obj = ModelMaster._objects[key] = cls(self._dbname)
         return obj
 
+    def __call__(self, model_name, dbname=None):
+        obj =  self.__getattr__(model_name)
+        obj._dbname = dbname or self._dbname 
+        return obj
