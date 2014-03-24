@@ -54,9 +54,9 @@ class LogicContext(object):
     """
     _thread_local = local()
 
-    def __init__(self, cache_host=None, db_host=None):
-        self._cache_host = cache_host or __conf__.CACHE_HOST
-        self._db_host = db_host or __conf__.DB_HOST
+    def __init__(self, redis_host=None, mongo_host=None):
+        self._redis_host = redis_host or __conf__.CACHE_HOST
+        self._mongo_host = mongo_host or __conf__.DB_HOST
         self._db_conn = None
         self._sync_db = None
         self._motor_clt = None
@@ -79,7 +79,7 @@ class LogicContext(object):
 
     def get_redis(self):
         ''' get redis from context '''
-        host = self._cache_host
+        host = self._redis_host
         h, p = host.split(":") if ":" in host else (host, 6379)
         cache = Redis(
             host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
@@ -117,7 +117,7 @@ class LogicContext(object):
         name = name or __conf__.DB_NAME
         if not self._motor_clt:
             result, err = (yield gen.Task(
-                motor.MotorClient(host=self._db_host).open, )).args
+                motor.MotorClient(host=self._mongo_host).open, )).args
             if err:
                 raise err
             self._motor_clt = result
@@ -157,7 +157,7 @@ class LogicContext(object):
         """
         name = name or __conf__.DB_NAME
         if not hasattr(cls,'__mongoclient__'):
-            cls.__mongoclient__ = MongoClient(host = __conf__.DB_HOST,
+            cls.__mongoclient__ = MongoClient(host = self._mongo_host,
                 socketTimeoutMS = __conf__.SOCK_TIMEOUT_MS)
         
         return cls.__mongoclient__[name]
@@ -168,6 +168,8 @@ class LogicContext(object):
         get redis clinet in application 
         """
         if not hasattr(cls,'__redisclient__'):
+            host = self._redis_host
+            h, p = host.split(":") if ":" in host else (host, 6379)
             cp = ConnectionPool(host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
             cls.__redisclient__ = Redis(connection_pool=cp)
         
