@@ -92,7 +92,7 @@ class LogicContext(object):
 
     def get_mongo(self, name=None):
         '''
-        get mongodb by connection
+        get temp  mongodb by connection
         '''
         name = name or __conf__.DB_NAME
         if not self._db_conn:
