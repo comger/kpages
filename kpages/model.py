@@ -124,7 +124,15 @@ class Model(object):
     
     def _coll(self):
         return get_context().get_mongoclient(self._dbname)[self._name]
-    
+   
+    def save(self, obj={}, **kwargs):
+        obj.update(kwargs)
+        _id = obj.get('_id',None)
+        if _id:
+            return self.update(_id, **obj)
+        else:
+            return self.insert(obj)
+
     def insert(self, obj={}, **kwargs):
         """ insert obj and kwargs to _name  """
         obj.update(kwargs)
@@ -138,7 +146,7 @@ class Model(object):
             _id = ObjectId(_id)
            
         cond = {key:_id}
-        self._coll().update(cond, {'$set':kwargs})
+        return self._coll().update(cond, {'$set':kwargs})
     
     def remove(self, _id, key='_id', **kwargs):
         ''' remove record by _id '''
@@ -148,7 +156,7 @@ class Model(object):
         
         cond = {key:_id}
         cond.update(kwargs)
-        self._coll().remove(cond)
+        return self._coll().remove(cond)
     
     def page(self, page=1, size=10, sort=None, fields=None, **kwargs):
         """ page list  """
