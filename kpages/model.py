@@ -4,6 +4,7 @@
     tornado mongodb model tool
     help you easy to manage mongodb data by tornado request(cu-rd)
 """
+import re
 import time
 import traceback
 from inspect import isclass
@@ -15,13 +16,14 @@ class Field(object):
     """
     Field Base Class
     """
-    required,initial = False,None
+    required,initial,pattern = False,None,''
 
-    def __init__(self, label=None, initial=None, required=False, description=None,**kwargs):
+    def __init__(self, label=None, initial=None, required=False, description=None, pattern='', **kwargs):
         self.required = required or self.required
         self.label = label
         self.initial = initial or self.initial
         self.description = description 
+        self.pattern = re.compile(pattern or self.pattern)
 
     def val(self, v):
         return v
@@ -110,7 +112,10 @@ class Model(object):
                 elif not val:
                     data[key] = field.initial
                 else:
-                    data[key] = field.val(val)
+                    if self.pattern and not self.pattern.match(val):
+                        raise Exception('field {0}:{1} is not matched by {2}'.format(key,val,self.pattern))
+                    else:
+                        data[key] = field.val(val)
 
         except Exception as e:
             raise Exception('{0} in Model {1}'.format(e.message, self._name))
