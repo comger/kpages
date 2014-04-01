@@ -45,7 +45,7 @@ class ContextHandler(object):
         if __conf__.REDIS_SESSION:
             return get_context().redis_session(_id, key, val)
         else:
-            get_context().session(_id, key, val)
+            return get_context().session(_id, key, val)
 
 
 class LogicContext(object):
@@ -157,7 +157,7 @@ class LogicContext(object):
         """
         name = name or __conf__.DB_NAME
         if not hasattr(cls,'__mongoclient__'):
-            cls.__mongoclient__ = MongoClient(host = self._mongo_host,
+            cls.__mongoclient__ = MongoClient(host = __conf__.DB_HOST,
                 socketTimeoutMS = __conf__.SOCK_TIMEOUT_MS)
         
         return cls.__mongoclient__[name]
@@ -168,7 +168,7 @@ class LogicContext(object):
         get redis clinet in application 
         """
         if not hasattr(cls,'__redisclient__'):
-            host = self._redis_host
+            host = __conf__.CACHE_HOST
             h, p = host.split(":") if ":" in host else (host, 6379)
             cp = ConnectionPool(host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
             cls.__redisclient__ = Redis(connection_pool=cp)

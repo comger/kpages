@@ -112,8 +112,8 @@ class Model(object):
                 elif not val:
                     data[key] = field.initial
                 else:
-                    if self.pattern and not self.pattern.match(val):
-                        raise Exception('field {0}:{1} is not matched by {2}'.format(key,val,self.pattern))
+                    if field.pattern and not field.pattern.match(val):
+                        raise Exception('field {0}:{1} is not matched by {2}'.format(key,val,field.pattern.pattern))
                     else:
                         data[key] = field.val(val)
 
