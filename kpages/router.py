@@ -33,7 +33,7 @@ def reg_ui_method(name=None, intro=None):
     return actual
 
 
-def url(pattern, order=0):
+def url(pattern=None, order=0):
     """
     set router for RequestHandler 
 
@@ -48,6 +48,8 @@ def url(pattern, order=0):
         assert(issubclass(handler, tornado.web.RequestHandler))
         if not hasattr(handler, "__urls__") or not handler.__urls__:
             handler.__urls__ = []
+        
+        pattern = pattern or handler.__name__
         handler.__urls__.append((pattern, order))
         return handler
 
