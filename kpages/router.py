@@ -49,8 +49,13 @@ def url(pattern=None, order=0):
         if not hasattr(handler, "__urls__") or not handler.__urls__:
             handler.__urls__ = []
         
-        pattern = pattern or handler.__name__
-        handler.__urls__.append((pattern, order))
+        if not pattern:
+            p = '/{0}/{1}'.format(handler.__module__,handler.__name__).lower()
+            p = p.replace('.','/')
+            handler.__urls__.append((p, 0))
+        else:
+            handler.__urls__.append((pattern,order))
+        
         return handler
 
     return actual
