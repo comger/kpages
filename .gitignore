@@ -2,6 +2,7 @@
 
 */nohup.out
 */dump.rdb
+*.swp
 # C extensions
 *.so
 
