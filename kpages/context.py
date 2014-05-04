@@ -143,7 +143,7 @@ class LogicContext(object):
         '''
         redis session for tornado
         '''
-        return self.get_redis().hget(_id, key) if val else self.get_redis().hset(_id, key, val)
+        return self.get_redis().hset(_id, key, val) if val else self.get_redis().hget(_id, key)
 
     @classmethod
     def get_context(cls):
