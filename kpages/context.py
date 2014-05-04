@@ -111,6 +111,14 @@ class LogicContext(object):
 
         return self._sync_db
 
+
+    def get_asyncmongo(self, dbname, **kwargs):
+        not_empty(dbname)
+        name = name or __conf__.DB_NAME
+        h, p = self._mongo_host.split(":") if ":" in self._mongo_host else (self._mongo_host, 27017)
+        db = asyncmongo.Client(pool_id='asyncmongo', host = h, port = p, dbname = dbname, **kwargs)
+        return db
+
     @gen.coroutine
     def get_motor(self, name=None):
         ''' yield  motor client '''
