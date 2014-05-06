@@ -127,7 +127,9 @@ class Model(object):
    
     def save(self, obj={}, **kwargs):
         obj.update(kwargs)
-        _id = obj.get('_id',None)
+        _id = None
+        if '_id' in obj:_id = obj.pop('_id')
+
         if _id:
             return self.update(_id, **obj)
         else:
@@ -166,7 +168,7 @@ class Model(object):
         elif type(sort) in (list,tuple):
             _sort.insert(0,sort)
 
-        return self._coll().find(kwargs, fields).skip(size*(page-1)).limit(size).sort(_sort)
+        return self._coll().find(kwargs, fields).skip(size*page).limit(size).sort(_sort)
 
     def info(self, _id, key='_id'):
         ''' show info by _id '''
@@ -175,7 +177,7 @@ class Model(object):
             _id = ObjectId(_id)
         
         cond = {key:_id}
-        return mongo_conv(self._coll().findOne(cond))
+        return mongo_conv(self._coll().find_one(cond))
 
     def exists(self, **kwargs):
         ''' is exists records find by kwargs '''
@@ -203,7 +205,7 @@ class ModelMaster(object):
             members = get_members(__conf__.JOB_DIR, lambda o: isclass(o) and issubclass(o,Model) and o._name)
             models = {}
             for k,v in members.items():
-                models[v._name] = v
+                models[v.__name__] = v
             
             return models
         except Exception as e:

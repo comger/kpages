@@ -6,6 +6,7 @@
 """
 import os
 import time
+import asyncmongo
 import tornado.gen as gen
 
 from threading import local
@@ -101,6 +102,13 @@ class LogicContext(object):
 
         return self._db_conn[name]
     
+
+    def get_asyncmongo(self, name=None):
+        name = name or __conf__.DB_NAME
+        if not hasattr(self,'_async_db'):
+            self._async_db = asyncmongo.Client(pool_id='kpages_db', host=__conf__.DB_HOST, port=27017,dbname=name)
+
+        return self._async_db
 
     def get_async_mongo(self, name=None):
         """ get motor client"""
