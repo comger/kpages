@@ -181,11 +181,13 @@ class Model(object):
 
     def exists(self, **kwargs):
         ''' is exists records find by kwargs '''
-        if self._coll().findOne(kwargs):
+        if self._coll().find_one(kwargs):
             return True
         else:
             return False
-
+    
+    def count(self, **kwargs):
+        return self._coll().find(kwargs).count()
 
 class ModelMaster(object):
     """
