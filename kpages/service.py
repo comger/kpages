@@ -198,7 +198,7 @@ class Service(object):
                         
                         if cmd and data:
                             cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
-                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY,cmd_key, num=1)
+                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, 0, cmd_key)
 
 
                         for fun in srv_funcs:

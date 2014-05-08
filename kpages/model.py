@@ -66,7 +66,6 @@ class DatetimeField(Field):
         v = time.mktime(time.strptime(v, self.timeformat)) + 60*60*8
         return v
 
-    
 
 class Model(object):
     """
@@ -86,6 +85,11 @@ class Model(object):
     def __init__(self, dbname=None):
         self._dbname = dbname or self._dbname
         self._dbname = self._dbname or __conf__.DB_NAME
+    
+    
+    def instance(self, dbname=None):
+        m = ModelMaster(dbname=dbname) 
+        return m(self.__class__.split('.')[-1])
 
     def _get_fields(self):
         """get all fields  in model"""

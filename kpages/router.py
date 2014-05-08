@@ -6,7 +6,6 @@
 """
 import os
 import tornado.web
-
 from fnmatch import fnmatch
 from inspect import getmembers
 from utility import app_path

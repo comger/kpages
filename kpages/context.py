@@ -151,7 +151,7 @@ class LogicContext(object):
         '''
         redis session for tornado
         '''
-        return self.get_redis().hget(_id, key) if val else self.get_redis().hset(_id, key, val)
+        return self.get_redis().hset(_id, key, val) if val else self.get_redis().hget(_id, key)
 
     @classmethod
     def get_context(cls):
@@ -170,18 +170,6 @@ class LogicContext(object):
         
         return cls.__mongoclient__[name]
     
-    @classmethod
-    def get_redisclient(cls):
-        """
-        get redis clinet in application 
-        """
-        if not hasattr(cls,'__redisclient__'):
-            host = __conf__.CACHE_HOST
-            h, p = host.split(":") if ":" in host else (host, 6379)
-            cp = ConnectionPool(host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
-            cls.__redisclient__ = Redis(connection_pool=cp)
-        
-        return cls.__redisclient__
 
     @classmethod
     def get_replicaset(cls, hosts=None, replicaSet=None):
@@ -192,6 +180,7 @@ class LogicContext(object):
             cls.__replicaset__ = MongoReplicaSetClient(hosts, replicaSet=relicaSet)
             
         return cls.__replicaset__
+
 
 get_context = LogicContext.get_context
 
