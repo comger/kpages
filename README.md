@@ -21,6 +21,10 @@ Params
      port=PORT      set http port for server
      debug          Debug mode.
      ndebug         No Debug mode.
+     
+
+
+you can run script kpages_web.py in you app root dir (version >= 0.8.0.dev)
 ```
 
 ## How to start kpages mq
@@ -32,6 +36,8 @@ Params
      debug          Debug mode.
      ndebug         No Debug mode.
      channel        set channel for redis mq
+
+you can run script kpages_service.py in you app root dir (version >= 0.8.0.dev)
 ```
 
 

@@ -5,6 +5,7 @@
     author comger@gmail.com
 """
 import os
+import sys
 import tornado.web
 from fnmatch import fnmatch
 from inspect import getmembers
@@ -81,6 +82,7 @@ def _load_handlers(handler_dir='action'):
     '''
     #path = os.path.join(os.getcwd(), handler_dir)
     path = app_path(handler_dir)
+    sys.path.append(os.getcwd())
     py_filter = lambda f: fnmatch(f, '*.py') and not f.startswith('__')
     member_filter = lambda m: isinstance(
         m, type) and hasattr(m, '__urls__') and m.__urls__

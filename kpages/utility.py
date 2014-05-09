@@ -3,6 +3,7 @@
     author comger@gmail.com
 """
 import os
+import sys
 import datetime
 import __builtin__
 from types import ModuleType
@@ -46,6 +47,7 @@ def get_modules(m_path):
     path = app_path(m_path)
     py_filter = lambda f: fnmatch(f, '*.py') and not f.startswith('__')
     names = [os.path.splitext(n)[0] for n in os.listdir(path) if py_filter(n)]
+    sys.path.append(os.getcwd())
     return [__import__("{0}.{1}".format(m_path, n)).__dict__[n] for n in names]
 
 
