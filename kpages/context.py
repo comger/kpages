@@ -6,6 +6,7 @@
 """
 import os
 import time
+import asyncmongo
 import tornado.gen as gen
 
 from threading import local
@@ -102,6 +103,13 @@ class LogicContext(object):
         return self._db_conn[name]
     
 
+    def get_asyncmongo(self, name=None):
+        name = name or __conf__.DB_NAME
+        if not hasattr(self,'_async_db'):
+            self._async_db = asyncmongo.Client(pool_id='kpages_db', host=__conf__.DB_HOST, port=27017,dbname=name)
+
+        return self._async_db
+
     def get_async_mongo(self, name=None):
         """ get motor client"""
         name = name or __conf__.DB_NAME
@@ -170,18 +178,6 @@ class LogicContext(object):
         
         return cls.__mongoclient__[name]
     
-    @classmethod
-    def get_redisclient(cls):
-        """
-        get redis clinet in application 
-        """
-        if not hasattr(cls,'__redisclient__'):
-            host = __conf__.CACHE_HOST
-            h, p = host.split(":") if ":" in host else (host, 6379)
-            cp = ConnectionPool(host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
-            cls.__redisclient__ = Redis(connection_pool=cp)
-        
-        return cls.__redisclient__
 
     @classmethod
     def get_replicaset(cls, hosts=None, replicaSet=None):
@@ -192,6 +188,7 @@ class LogicContext(object):
             cls.__replicaset__ = MongoReplicaSetClient(hosts, replicaSet=relicaSet)
             
         return cls.__replicaset__
+
 
 get_context = LogicContext.get_context
 
