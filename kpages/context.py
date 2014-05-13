@@ -101,14 +101,7 @@ class LogicContext(object):
                                        network_timeout=__conf__.SOCK_TIMEOUT)
 
         return self._db_conn[name]
-    
 
-    def get_asyncmongo(self, name=None):
-        name = name or __conf__.DB_NAME
-        if not hasattr(self,'_async_db'):
-            self._async_db = asyncmongo.Client(pool_id='kpages_db', host=__conf__.DB_HOST, port=27017,dbname=name)
-
-        return self._async_db
 
     def get_async_mongo(self, name=None):
         """ get motor client"""
@@ -121,10 +114,10 @@ class LogicContext(object):
 
 
     def get_asyncmongo(self, dbname, **kwargs):
-        not_empty(dbname)
-        name = name or __conf__.DB_NAME
+        dbname = dbname or __conf__.DB_NAME
         h, p = self._mongo_host.split(":") if ":" in self._mongo_host else (self._mongo_host, 27017)
-        db = asyncmongo.Client(pool_id='asyncmongo', host = h, port = p, dbname = dbname, **kwargs)
+        print h, p
+        db = asyncmongo.Client(pool_id='asyncmongo', host = h, port = int(p), dbname = dbname, **kwargs)
         return db
 
     @gen.coroutine
