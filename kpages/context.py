@@ -115,7 +115,6 @@ class LogicContext(object):
     def get_asyncmongo(self, dbname, **kwargs):
         dbname = dbname or __conf__.DB_NAME
         h, p = self._mongo_host.split(":") if ":" in self._mongo_host else (self._mongo_host, 27017)
-        print h, p
         db = asyncmongo.Client(pool_id='asyncmongo', host = h, port = int(p), dbname = dbname, **kwargs)
         return db
 
@@ -133,7 +132,7 @@ class LogicContext(object):
         raise gen.Return(self._motor_clt[name])
 
 
-    def session(self, key, val=None, expire=30*24*60*60):
+    def session(self, key, val=None, expire= __conf__.SESSION_EXPIRE):
         '''
         redis session for tornado
         '''
