@@ -39,15 +39,18 @@ class ContextHandler(object):
 
     def session(self, key, val=None):
         ''' session for handler '''
+        return get_context().session(self.get_redis_key(key), val)
+    
+    def clear_session(self, key):
+        get_context().clear_session(self.get_redis_key(key))
+    
+    def get_redis_key(self, key):
         _id = self.get_secure_cookie('session_id', None)
         if not _id:
             _id = session_id()
             self.set_secure_cookie('session_id', _id)
-        if __conf__.REDIS_SESSION:
-            return get_context().redis_session(_id, key, val)
-        else:
-            return get_context().session(_id, key, val)
-
+        return '{0}.{1}'.format(_id, key)
+        
 
 class LogicContext(object):
     """
@@ -61,7 +64,6 @@ class LogicContext(object):
         self._db_conn = None
         self._sync_db = None
         self._motor_clt = None
-        self._session = None
 
     def __enter__(self):
         if not hasattr(self._thread_local, "contexts"):
@@ -70,9 +72,6 @@ class LogicContext(object):
         return self
 
     def __exit__(self, exc_type, exc_value, trackback):
-        if self._session:
-            self._session.update(dict(
-                _id=self._session_id), {'$set': {'data': self._session_val}})
 
         self._thread_local.contexts.remove(self)
         if self._db_conn:
@@ -132,26 +131,15 @@ class LogicContext(object):
 
         raise gen.Return(self._motor_clt[name])
 
-    def session(self, _id, key, val=None, expire=None):
-        ''' mongodb session for tornado'''
-        if not self._session:
-            self._session = self.get_mongoclient('session')['session']
-            self._session_val = (
-                self._session.find_one(dict(_id=_id)) or {}).get('data', {})
-            self._session_id = _id
 
-        if not val:
-            return self._session_val.get(key)
-        if not self._session_val:
-            self._session.insert(dict(_id = _id, data = dict(key = val)))
-
-        self._session_val[key] = val
-
-    def redis_session(self, _id, key, val=None):
+    def session(self, key, val=None, expire=0):
         '''
         redis session for tornado
         '''
-        return self.get_redis().hset(_id, key, val) if val else self.get_redis().hget(_id, key)
+        return self.get_redis().setex(key, val, expire) if val else self.get_redis().get(key)
+    
+    def clear_session(self, key):
+        self.get_redis().delete(key)
 
     @classmethod
     def get_context(cls):
