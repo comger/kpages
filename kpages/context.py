@@ -133,7 +133,7 @@ class LogicContext(object):
         raise gen.Return(self._motor_clt[name])
 
 
-    def session(self, key, val=None, expire=0):
+    def session(self, key, val=None, expire=30*24*60*60):
         '''
         redis session for tornado
         '''
