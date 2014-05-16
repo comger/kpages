@@ -14,11 +14,11 @@ from hashlib import sha1
 from tornado.web import RequestHandler
 from tornado.websocket import WebSocketHandler
 try:
-    import asyncmongo
-    import motor
     from gridfs import GridFS
     from redis import Redis, ConnectionPool
     from pymongo import Connection, MongoClient
+    import asyncmongo
+    import motor
 except Exception as e:
     print e.message
 
