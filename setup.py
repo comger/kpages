@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "0.8.0.dev"
+version = "0.8.1.dev"
 
 with open('README.md') as f:
     long_description = f.read()
@@ -67,8 +67,8 @@ distutils.core.setup(
     ],
     long_description=long_description,
     keywords=["pymongo", "gridfs", "profile","tornado", "redis", "session", "router","MQ"],
-    install_requires=['pymongo', 'redis', 'tornado'],
-    setup_requires=[ 'pymongo', 'redis', 'tornado'],
+    install_requires=['pymongo', 'redis', 'tornado','asyncmongo'],
+    setup_requires=[ 'pymongo', 'redis', 'tornado','asyncmongo'],
     cmdclass={'test': PyTest},
     **kwargs
 )
