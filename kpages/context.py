@@ -132,10 +132,11 @@ class LogicContext(object):
         raise gen.Return(self._motor_clt[name])
 
 
-    def session(self, key, val=None, expire= __conf__.SESSION_EXPIRE):
+    def session(self, key, val=None, expire= None):
         '''
         redis session for tornado
         '''
+        expire = expire or __conf__.SESSION_EXPIRE
         return self.get_redis().setex(key, val, expire) if val else self.get_redis().get(key)
     
     def clear_session(self, key):
