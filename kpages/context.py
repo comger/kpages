@@ -11,12 +11,12 @@ import tornado.gen as gen
 from threading import local
 from hashlib import sha1
 
-from gridfs import GridFS
-from redis import Redis, ConnectionPool
-from pymongo import Connection, MongoClient
 from tornado.web import RequestHandler
 from tornado.websocket import WebSocketHandler
 try:
+    from gridfs import GridFS
+    from redis import Redis, ConnectionPool
+    from pymongo import Connection, MongoClient
     import asyncmongo
     import motor
 except Exception as e:
@@ -132,10 +132,11 @@ class LogicContext(object):
         raise gen.Return(self._motor_clt[name])
 
 
-    def session(self, key, val=None, expire= __conf__.SESSION_EXPIRE):
+    def session(self, key, val=None, expire= None):
         '''
         redis session for tornado
         '''
+        expire = expire or __conf__.SESSION_EXPIRE
         return self.get_redis().setex(key, val, expire) if val else self.get_redis().get(key)
     
     def clear_session(self, key):

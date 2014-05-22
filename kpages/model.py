@@ -66,6 +66,7 @@ class DatetimeField(Field):
         v = time.mktime(time.strptime(v, self.timeformat)) + 60*60*8
         return v
 
+    
 
 class Model(object):
     """
@@ -85,11 +86,6 @@ class Model(object):
     def __init__(self, dbname=None):
         self._dbname = dbname or self._dbname
         self._dbname = self._dbname or __conf__.DB_NAME
-    
-    
-    def instance(self, dbname=None):
-        m = ModelMaster(dbname=dbname) 
-        return m(self.__class__.split('.')[-1])
 
     def _get_fields(self):
         """get all fields  in model"""
@@ -114,7 +110,8 @@ class Model(object):
                 if field.required and not val:
                     raise Exception('field {0} is required'.format(key))
                 elif not val:
-                    data[key] = field.initial
+                    if field.initial:
+                        data[key] = field.initial
                 else:
                     if field.pattern and not field.pattern.match(val):
                         raise Exception('field {0}:{1} is not matched by {2}'.format(key,val,field.pattern.pattern))
@@ -164,7 +161,7 @@ class Model(object):
         cond.update(kwargs)
         return self._coll().remove(cond)
     
-    def page(self, page=1, size=10, sort=None, fields=None, **kwargs):
+    def page(self, page=0, size=10, sort=None, fields=None, **kwargs):
         """ page list  """
         _sort = [('_id',-1),]
         if type(sort) == str:
@@ -185,10 +182,7 @@ class Model(object):
 
     def exists(self, **kwargs):
         ''' is exists records find by kwargs '''
-        if self._coll().find_one(kwargs):
-            return True
-        else:
-            return False
+        return self._coll().find_one(kwargs)
     
     def count(self, **kwargs):
         return self._coll().find(kwargs).count()
@@ -209,6 +203,7 @@ class ModelMaster(object):
     def load(self):
         try:
             members = get_members(__conf__.JOB_DIR, lambda o: isclass(o) and issubclass(o,Model) and o._name)
+            print members
             models = {}
             for k,v in members.items():
                 models[v.__name__] = v
