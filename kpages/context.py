@@ -112,7 +112,7 @@ class LogicContext(object):
         return self._sync_db
 
 
-    def get_asyncmongo(self, dbname, **kwargs):
+    def get_asyncmongo(self, dbname=None, **kwargs):
         dbname = dbname or __conf__.DB_NAME
         h, p = self._mongo_host.split(":") if ":" in self._mongo_host else (self._mongo_host, 27017)
         db = asyncmongo.Client(pool_id='asyncmongo', host = h, port = int(p), dbname = dbname, **kwargs)
