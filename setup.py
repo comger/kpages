@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "0.8.3.dev"
+version = "0.8.4.dev"
 
 with open('README.md') as f:
     long_description = f.read()
@@ -56,7 +56,7 @@ distutils.core.setup(
     url="http://github.com/comger/kpages",
     license="http://www.apache.org/licenses/LICENSE-2.0",
     description="kpages is api-centric web application framework for the Tornado and Mongodb",
-    scripts=['kpages/kpages_init.py','kpages/kpages_web.py','kpages/kpages_service.py'],
+    scripts=['kpages/kpages_init.py','kpages/kpages_web.py','kpages/kpages_service.py','kpages/kpages_tool.py'],
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
