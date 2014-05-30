@@ -66,7 +66,7 @@ class DatetimeField(Field):
         v = time.mktime(time.strptime(v, self.timeformat)) + 60*60*8
         return v
 
-    
+
 
 class Model(object):
     """
@@ -203,7 +203,6 @@ class ModelMaster(object):
     def load(self):
         try:
             members = get_members(__conf__.JOB_DIR, lambda o: isclass(o) and issubclass(o,Model) and o._name)
-            print members
             models = {}
             for k,v in members.items():
                 models[v.__name__] = v
@@ -214,6 +213,12 @@ class ModelMaster(object):
             return {}
     
     def __getattr__(self, model_name):
+        if not type(model_name)==str:
+            if issubclass(model_name,Model):
+                model_name = model_name.__name__
+            else:
+                raise Exception('can not find this Model')
+
         key = '{0}_{1}'.format(self._dbname, model_name)
         if key in ModelMaster._objects:
             return ModelMaster._objects[key]

@@ -19,6 +19,19 @@ def callback(app):
             continue
         print "  {0:<40} : {1}".format(k, app.settings[k])
 
+    
+    print
+    print "UI Modules"
+    for k,v in app.uimodules.items():
+        print ' {0:<20} :{1}'.format(k,v.__doc__)
+
+    print 
+    print "UI  Methods"
+    for k,v in app.uimethods.items():
+        print ' {0:<20} :{1}'.format(k,v.__intro__)
+
+    print
+    
     print
     print "Router Handlers"
     for h in app.handlers:
