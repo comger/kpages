@@ -132,7 +132,8 @@ class Model(object):
         if '_id' in obj:_id = obj.pop('_id')
 
         if _id:
-            return self.update(_id, **obj)
+            self.update(_id, **obj)
+            return _id
         else:
             return self.insert(obj)
 
