@@ -87,9 +87,6 @@ class Model(object):
         self._dbname = dbname or self._dbname
         self._dbname = self._dbname or __conf__.DB_NAME
     
-    def __new__(cls, dbname=None):
-        if not hasattr(cls, '_instance'):
-            cls._instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
 
     def _get_fields(self):
         """get all fields  in model"""

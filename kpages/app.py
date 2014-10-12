@@ -5,7 +5,9 @@
 """
 import tornado.web
 import tornado.ioloop
+import tornado.options
 
+from tornado.options import define, options
 from inspect import isclass
 from tornado.httpserver import HTTPServer
 from optparse import OptionParser, OptionGroup
@@ -85,25 +87,17 @@ class WebApp(object):
         self._run_server()
 
 
-def _get_opt():
-    parser = OptionParser("%prog [options]", version="%prog v0.9")
-    parser.add_option("--config", dest="config",
-                      default='setting.py', help="set config for server")
-    parser.add_option("--port", dest="port", default=None,
-                      help="set http port for server")
-    parser.add_option("--ip", dest="ip", default=None,
-                      help="bind accept ip for server")
-    parser.add_option("--debug", dest="debug", action="store_true",
-                      default=None, help="Debug mode.")
-    parser.add_option("--ndebug", dest="debug",
-                      action="store_false", help="No Debug mode.")
-
-    return parser.parse_args()
+define("port", default=8888, help="run on the given port", type=int)
+define("config", default='setting.py', help="set config for server")
+define("ip",  help="bind accept ip  for server")
+define("debug", default=None,  help="Debug Mode")
+define("ndebug",  help="No Debug Mode")
 
 
 def run(callback=None):
     set_default_encoding()
-    opts, args = _get_opt()
+    tornado.options.parse_command_line()
+    opts = options
     refresh_config(opts.config)
 
     __conf__.PORT = opts.port or __conf__.PORT

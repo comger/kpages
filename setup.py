@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "0.8.5.dev"
+version = "0.8.6.dev"
 
 with open('README.md') as f:
     long_description = f.read()
@@ -50,7 +50,7 @@ distutils.core.setup(
     name="kpages",
     version=version,
     packages=["kpages"],
-    package_data={},
+    package_data= {'':['*.*']},
     author="comger@gmail.com",
     author_email="comger@gmail.com",
     url="http://github.com/comger/kpages",
