@@ -126,7 +126,8 @@ class LogicContext(object):
             result, err = (yield gen.Task(
                 motor.MotorClient(host=self._mongo_host).open, )).args
             if err:
-                raise err
+                #raise err
+                print err
             self._motor_clt = result
 
         raise gen.Return(self._motor_clt[name])
