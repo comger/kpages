@@ -12,3 +12,6 @@ def demofun1(data):
     print '2',data
 
 
+@srvcmd('demofun1')
+def demofun2(data):
+    print '2',data
