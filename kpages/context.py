@@ -32,6 +32,7 @@ class ContextHandler(object):
     def _execute(self, transforms, *args, **kwargs):
         ''' select base handler for self '''
         with LogicContext():
+            get_context().handler = self
             if isinstance(self, WebSocketHandler):
                 WebSocketHandler._execute(self, transforms, *args, **kwargs)
             elif isinstance(self, RequestHandler):

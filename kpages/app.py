@@ -74,7 +74,7 @@ class WebApp(object):
         if __conf__.DEBUG:
             self._webapp.listen(self._port, address=self._ip)
         else:
-            server = HTTPServer(self._webapp)
+            server = HTTPServer(self._webapp, xheaders=True)
             server.bind(self._port, address=self._ip)
             server.start(0)
         tornado.ioloop.IOLoop.instance().start()
