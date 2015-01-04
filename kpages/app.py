@@ -87,7 +87,7 @@ class WebApp(object):
         self._run_server()
 
 
-define("port", default=8888, help="run on the given port", type=int)
+define("port", default=None, help="run on the given port", type=int)
 define("config", default='setting.py', help="set config for server")
 define("ip",  help="bind accept ip  for server")
 define("debug", default=None,  help="Debug Mode")

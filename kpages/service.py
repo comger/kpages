@@ -25,7 +25,6 @@ import pkgutil
 from sys import stderr, argv
 from multiprocessing import cpu_count, Process
 
-from tornado.autoreload import add_reload_hook,watch,start
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
     from signal import signal, pause, SIGCHLD, SIGINT, SIGTERM, SIGUSR1, SIGUSR2, SIG_IGN
@@ -220,19 +219,9 @@ class Service(object):
 
             exit(0)
     
-    def autoload(self):
-        self._services = self._get_services()
-	print self._services
-	
 
     def run(self):
-	add_reload_hook(self.autoload)	
-	loader = pkgutil.get_loader(__conf__.JOB_DIR)
-	if loader is not None:
-	    watch(loader.get_filename())
-	start()
-        
-	if not iswin:
+        if not iswin:
             self._signal()
 
         try:
@@ -241,10 +230,7 @@ class Service(object):
             print "Is running?"
             exit(-1)
 	
-	#添加代码改动监控
-
-
-
+	    #添加代码改动监控
         while True:
             pause()
 
