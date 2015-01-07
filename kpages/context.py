@@ -116,7 +116,7 @@ class LogicContext(object):
     def get_asyncmongo(self, dbname=None, **kwargs):
         dbname = dbname or __conf__.DB_NAME
         h, p = self._mongo_host.split(":") if ":" in self._mongo_host else (self._mongo_host, 27017)
-        db = asyncmongo.Client(pool_id='asyncmongo', host = h, port = int(p), dbname = dbname, **kwargs)
+        db = asyncmongo.Client(pool_id=dbname, host = h, port = int(p), dbname = dbname, **kwargs)
         return db
 
     @gen.coroutine
