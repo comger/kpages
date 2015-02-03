@@ -59,6 +59,14 @@ def srvcmd(cmd, sub_mode=0):
 
     return actual
 
+
+def srvtimer(delay):
+    def actual(func):
+        func.__timer__ = delay
+        return func
+
+    return actual
+
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
@@ -134,6 +142,7 @@ class Service(object):
 
         self._consumer = Consumer(self._channel, self._host)
         self._services = self._get_services()
+        self._timer = self._get_timer()
 
         if callback:
             kwargs = dict(
@@ -175,13 +184,30 @@ class Service(object):
             for k,v in members.items():
                 if not svrs.get(v.__service__, None):
                     svrs[v.__service__] = []
-                
+
                 svrs[v.__service__].append(v)
-                
             return svrs
 
         except Exception as e:
-	    print '服务加载失败'
+            print '服务加载失败'
+            traceback.print_exc()
+            return {}
+
+    def _get_timer(self):
+        try:
+            members = get_members(
+                __conf__.JOB_DIR, lambda o: hasattr(o, "__timer__"))
+            svrs = {}
+            for k,v in members.items():
+                if not svrs.get(v.__timer__, None):
+                    svrs[v.__timer__] = []
+
+                svrs[v.__timer__].append(v)
+
+            return svrs
+
+        except Exception as e:
+            print '定时任务加载失败'
             traceback.print_exc()
             return {}
 
@@ -198,7 +224,7 @@ class Service(object):
                     while True:
                         cmd, data = self._consumer.consume()
                         srv_funcs = self._services.get(cmd, ())
-                        
+
                         if cmd and data:
                             cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
                             count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
@@ -207,7 +233,7 @@ class Service(object):
                             try:
                                 if fun.__sub_mode__ == -1 and count==0:
                                     continue
-                                
+
                                 p = Process(target=fun, args=(data,))
                                 p.start()
                                 p.join()
@@ -218,7 +244,31 @@ class Service(object):
                 print 'Expception:'+e.message
 
             exit(0)
-    
+
+    def _corn(self):
+        if not iswin:
+            if fork() > 0:
+                return
+
+        try:
+            with LogicContext():
+                self._timer = [[time.time() + k, v, k] for k, v in self._timer.items()]
+                while True:
+                    for no, task in enumerate(self._timer):
+                        if task[0] <= time.time():
+                            for fun in task[1]:
+                                p = Process(target=fun, args=())
+                                p.start()
+                                p.join()
+
+                            task[0] = task[0] + task[2]
+
+                    time.sleep(1)
+
+        except ConnectionError as e:
+            print 'Expception:'+e.message
+
+        exit(0)
 
     def run(self):
         if not iswin:
@@ -226,11 +276,12 @@ class Service(object):
 
         try:
             self._subscribe()
+            self._corn()
         except RuntimeError:
             print "Is running?"
             exit(-1)
-	
-	    #添加代码改动监控
+
+        #添加代码改动监控
         while True:
             pause()
 
@@ -238,5 +289,6 @@ class Service(object):
 Redis.send_pack = Pack.send_pack
 service_async = Pack.async_send_pack
 
+__all__ = ["Consumer", "Service", "srvcmd", "srvtimer", "service_async"]
 
-__all__ = ["Consumer", "Service", "srvcmd", "service_async"]
+
