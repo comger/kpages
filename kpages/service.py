@@ -150,6 +150,7 @@ class Service(object):
                 channel=self._channel,
                 processes=self._processes,
                 services=self._services,
+                timers = self._timer,
                 debug=__conf__.DEBUG
             )
             callback(**kwargs)
