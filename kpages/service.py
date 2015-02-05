@@ -137,8 +137,8 @@ class Service(object):
     def __init__(self, host=None, channel=None, callback=None):
         self._host = host or "localhost"
         self._channel = channel or __conf__.SERVICE_CHANNEL
-        #self._processes = __conf__.DEBUG and 1 or cpu_count()
-        self._processes = 1
+        self._processes = __conf__.DEBUG and 1 or cpu_count()
+        #self._processes = 1
 
         self._consumer = Consumer(self._channel, self._host)
         self._services = self._get_services()
@@ -230,6 +230,7 @@ class Service(object):
                             cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
                             count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
 
+                        ps = []
                         for fun in srv_funcs:
                             try:
                                 if fun.__sub_mode__ == -1 and count==0:
