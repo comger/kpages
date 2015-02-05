@@ -1,6 +1,7 @@
 import Queue
 import sys
 import threading
+import traceback
 
 class ThreadPoolWorker(threading.Thread):
     def __init__(self, pool):
@@ -11,8 +12,11 @@ class ThreadPoolWorker(threading.Thread):
     def run(self):
         while not self.pool.stopping:
             func, args, kwargs, callback = self.pool._queue.get()
-            rv = func(*args, **kwargs)
-            if callback: callback(rv)
+            try:
+                rv = func(*args, **kwargs)
+                if callback: callback(rv)
+            except:
+                traceback.print_exc()
             self.pool.task_done()
         self.pool.worker_done()
         
