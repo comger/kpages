@@ -24,6 +24,7 @@ import traceback
 import pkgutil
 from sys import stderr, argv
 from multiprocessing import cpu_count, Process
+import threadpool
 
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
@@ -221,6 +222,7 @@ class Service(object):
 
             try:
                 with LogicContext():
+                    pool = threadpool.ThreadPool.getinstance(size = 10)
                     while True:
                         cmd, data = self._consumer.consume()
                         srv_funcs = self._services.get(cmd, ())
@@ -234,10 +236,10 @@ class Service(object):
                                 if fun.__sub_mode__ == -1 and count==0:
                                     continue
 
-                                p = Process(target=fun, args=(data,))
-                                p.start()
-                                p.join()
+                                pool.add_task(fun, args = (data,))
                             except Exception as e:
+                                import traceback
+                                traceback.print_exc()
                                 print cmd,e
 
             except ConnectionError as e:
