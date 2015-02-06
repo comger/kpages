@@ -151,7 +151,6 @@ class Service(object):
                 channel=self._channel,
                 processes=self._processes,
                 services=self._services,
-                timers = self._timer,
                 debug=__conf__.DEBUG
             )
             callback(**kwargs)
@@ -221,10 +220,10 @@ class Service(object):
                 if fork() > 0:
                     continue
 
-            try:
-                with LogicContext():
-                    pool = threadpool.ThreadPool.getinstance(size = 10)
-                    while True:
+            with LogicContext():
+                pool = threadpool.ThreadPool.getinstance(size = 10)
+                while True:
+                    try:
                         cmd, data = self._consumer.consume()
                         srv_funcs = self._services.get(cmd, ())
 
@@ -233,18 +232,15 @@ class Service(object):
                             count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
 
                         for fun in srv_funcs:
-                            try:
-                                if fun.__sub_mode__ == -1 and count==0:
-                                    continue
+                            if fun.__sub_mode__ == -1 and count==0:
+                                continue
 
-                                pool.add_task(fun, args = (data,))
-                            except Exception as e:
-                                import traceback
-                                traceback.print_exc()
-                                print cmd,e
+                            pool.add_task(fun, args = (data,))
 
-            except ConnectionError as e:
-                print 'Expception:'+e.message
+                    except Exception as e:
+                        import traceback
+                        traceback.print_exc()
+                        print cmd,e
 
             exit(0)
 
