@@ -18,6 +18,7 @@
         2011-08-29  * 取消 Timeout。
 """
 import time
+import copy
 import datetime
 import json
 import traceback
@@ -237,6 +238,7 @@ class Service(object):
                             if fun.__sub_mode__ == -1 and count==0:
                                 continue
 
+                            data = copy.deepcopy(data)
                             pool.add_task(fun, args = (data,))
 
                     except Exception as e:
