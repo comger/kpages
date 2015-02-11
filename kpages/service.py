@@ -239,7 +239,8 @@ class Service(object):
                             if fun.__sub_mode__ == -1 and count==0:
                                 continue
 
-                            pool.add_task(fun, args = (data,))
+                            cp_data = copy.deepcopy(data)
+                            pool.add_task(fun, args = (cp_data,))
 
                     except Exception as e:
                         import traceback
