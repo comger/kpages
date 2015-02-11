@@ -234,7 +234,6 @@ class Service(object):
                             count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
 
                         ps = []
-                        data = copy.deepcopy(data)
                         for fun in srv_funcs:
                             if fun.__sub_mode__ == -1 and count==0:
                                 continue
