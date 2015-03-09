@@ -238,8 +238,8 @@ class Service(object):
                             if fun.__sub_mode__ == -1 and count==0:
                                 continue
 
-                            data = copy.deepcopy(data)
-                            pool.add_task(fun, args = (data,))
+                            cp_data = copy.deepcopy(data)
+                            pool.add_task(fun, args = (cp_data,))
 
                     except Exception as e:
                         import traceback
@@ -253,23 +253,23 @@ class Service(object):
             if fork() > 0:
                 return
 
-        try:
-            with LogicContext():
-                self._timer = [[time.time() + k, v, k] for k, v in self._timer.items()]
-                while True:
+        with LogicContext():
+            self._timer = [[time.time() + k, v, k] for k, v in self._timer.items()]
+            pool = threadpool.ThreadPool.getinstance(size = 10)
+            while True:
+                try:
                     for no, task in enumerate(self._timer):
                         if task[0] <= time.time():
                             for fun in task[1]:
-                                p = Process(target=fun, args=())
-                                p.start()
-                                p.join()
+                                pool.add_task(fun)
 
                             task[0] = task[0] + task[2]
 
-                    time.sleep(1)
-
-        except ConnectionError as e:
-            print 'Expception:'+e.message
+                    time.sleep(2)
+                except ConnectionError as e:
+                    import traceback
+                    traceback.print_exc()
+                    print 'Expception:'+e.message
 
         exit(0)
 
