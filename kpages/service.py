@@ -26,6 +26,7 @@ import pkgutil
 from sys import stderr, argv
 from multiprocessing import cpu_count, Process
 import threadpool
+import time, sched
 
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
@@ -200,12 +201,9 @@ class Service(object):
         try:
             members = get_members(
                 __conf__.JOB_DIR, lambda o: hasattr(o, "__timer__"))
-            svrs = {}
+            svrs = []
             for k,v in members.items():
-                if not svrs.get(v.__timer__, None):
-                    svrs[v.__timer__] = []
-
-                svrs[v.__timer__].append(v)
+                svrs.append((v.__timer__, v))
 
             return svrs
 
@@ -223,7 +221,8 @@ class Service(object):
                     continue
 
             with LogicContext():
-                pool = threadpool.ThreadPool.getinstance(size = 10)
+                pool = threadpool.ThreadPool(64)
+
                 while True:
                     try:
                         cmd, data = self._consumer.consume()
@@ -234,17 +233,18 @@ class Service(object):
                             count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
 
                         ps = []
-                        for fun in srv_funcs:
-                            if fun.__sub_mode__ == -1 and count==0:
+                        for func in srv_funcs:
+                            if func.__sub_mode__ == -1 and count==0:
                                 continue
 
                             cp_data = copy.deepcopy(data)
-                            pool.add_task(fun, args = (cp_data,))
+                            print "{}: CONSUMER [{}: {}]".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), func, cp_data)
+
+                            req = threadpool.makeRequests(func, (cp_data,))
+                            [pool.putRequest(r) for r in req]
 
                     except Exception as e:
-                        import traceback
                         traceback.print_exc()
-                        print cmd,e
 
             exit(0)
 
@@ -253,23 +253,22 @@ class Service(object):
             if fork() > 0:
                 return
 
+        s = sched.scheduler(time.time, time.sleep)
+
+        def event_func(task):
+            delay_ts, func = task
+            print "{}: TIMER [{}: {}]".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), delay_ts, func)
+            try:
+                func()
+            except:
+                pass
+            s.enter(delay_ts, 1, event_func, (task,))
+
         with LogicContext():
-            self._timer = [[time.time() + k, v, k] for k, v in self._timer.items()]
-            pool = threadpool.ThreadPool.getinstance(size = 10)
-            while True:
-                try:
-                    for no, task in enumerate(self._timer):
-                        if task[0] <= time.time():
-                            for fun in task[1]:
-                                pool.add_task(fun)
+            for task in self._timer:
+                s.enter(2, 1, event_func, (task,))
 
-                            task[0] = task[0] + task[2]
-
-                    time.sleep(2)
-                except ConnectionError as e:
-                    import traceback
-                    traceback.print_exc()
-                    print 'Expception:'+e.message
+            s.run()
 
         exit(0)
 
