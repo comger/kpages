@@ -264,19 +264,25 @@ class Service(object):
 
         def event_func(task):
             delay_ts, func = task
-            log_timer.debug("{}-{}".format(delay_ts, func))
+            log_timer.debug("*START* {}-{}".format(delay_ts, func))
             try:
                 func()
+                log_timer.debug("*END*\r\n")
+                s.enter(delay_ts, 1, event_func, (task,))
             except:
-                pass
-            s.enter(delay_ts, 1, event_func, (task,))
+                log_timer.error("{}-{}-{}".format(delay_ts, func, traceback.format_exc()))
+
 
         with LogicContext():
-            for task in self._timer:
-                s.enter(2, 1, event_func, (task,))
+            while True:
+                for task in self._timer:
+                    s.enter(2, 1, event_func, (task,))
 
-            s.run()
+                s.run()
 
+                log_timer.debug("TIMER RELOAD")
+
+        log_timer.debug("PROCESS TIMER EXIT")
         exit(0)
 
     def run(self):
