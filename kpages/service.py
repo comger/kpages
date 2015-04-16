@@ -27,6 +27,7 @@ from sys import stderr, argv
 from multiprocessing import cpu_count, Process
 import threadpool
 import time, sched
+from log import log
 
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
@@ -221,8 +222,7 @@ class Service(object):
                     continue
 
             with LogicContext():
-                pool = threadpool.ThreadPool(64)
-
+                log_consumer = log("log/service-consumer")
                 while True:
                     try:
                         cmd, data = self._consumer.consume()
@@ -237,14 +237,20 @@ class Service(object):
                             if func.__sub_mode__ == -1 and count==0:
                                 continue
 
-                            cp_data = copy.deepcopy(data)
-                            print "{}: CONSUMER [{}: {}]".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), func, cp_data)
-
-                            req = threadpool.makeRequests(func, (cp_data,))
-                            [pool.putRequest(r) for r in req]
+                            try:
+                                log_consumer.debug("{}".format(data.keys()))
+                                func(data)
+                            except:
+                                log_consumer.error("{}".format(traceback.format_exc()))
 
                     except Exception as e:
-                        traceback.print_exc()
+                        log_consumer.error("{}".format(traceback.format_exc()))
+                        while True:
+                            try:
+                                self._consumer.subscribe()
+                                break
+                            except:
+                                time.sleep(5)
 
             exit(0)
 
@@ -254,10 +260,11 @@ class Service(object):
                 return
 
         s = sched.scheduler(time.time, time.sleep)
+        log_timer = log("log/service-timer")
 
         def event_func(task):
             delay_ts, func = task
-            print "{}: TIMER [{}: {}]".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), delay_ts, func)
+            log_timer.debug("{}-{}".format(delay_ts, func))
             try:
                 func()
             except:
@@ -292,5 +299,3 @@ Redis.send_pack = Pack.send_pack
 service_async = Pack.async_send_pack
 
 __all__ = ["Consumer", "Service", "srvcmd", "srvtimer", "service_async"]
-
-
