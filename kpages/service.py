@@ -222,7 +222,7 @@ class Service(object):
                     continue
 
             with LogicContext():
-                log_consumer = log("log/service-consumer")
+                log_consumer = log("log/service-consumer", level = 'info' if not __conf__.DEBUG else 'debug')
                 while True:
                     try:
                         cmd, data = self._consumer.consume()
@@ -238,7 +238,7 @@ class Service(object):
                                 continue
 
                             try:
-                                log_consumer.debug("{}".format(data.keys()))
+                                log_consumer.debug("{}".format(data))
                                 func(data)
                             except:
                                 log_consumer.error("{}".format(traceback.format_exc()))
@@ -260,7 +260,7 @@ class Service(object):
                 return
 
         s = sched.scheduler(time.time, time.sleep)
-        log_timer = log("log/service-timer")
+        log_timer = log("log/service-timer",level = 'info' if not __conf__.DEBUG else 'debug')
 
         def event_func(task):
             delay_ts, func = task
