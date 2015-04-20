@@ -25,9 +25,9 @@ import traceback
 import pkgutil
 from sys import stderr, argv
 from multiprocessing import cpu_count, Process
-import threadpool
 import time, sched
 from log import log
+import threading
 
 try:
     from os import wait, fork, getpid, getppid, killpg, waitpid
@@ -266,11 +266,13 @@ class Service(object):
             delay_ts, func = task
             log_timer.debug("*START* {}-{}".format(delay_ts, func))
             try:
-                func()
+                threading.Thread(target=func).start()
+                #func()
                 log_timer.debug("*END*\r\n")
-                s.enter(delay_ts, 1, event_func, (task,))
             except:
-                log_timer.error("{}-{}-{}".format(delay_ts, func, traceback.format_exc()))
+                log_timer.debug("{}-{}-{}".format(delay_ts, func, traceback.format_exc()))
+
+            s.enter(delay_ts, 1, event_func, (task,))
 
 
         with LogicContext():
