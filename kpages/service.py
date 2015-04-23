@@ -85,7 +85,6 @@ class Pack(object):
 
     @staticmethod
     def send_pack(mq, channel, cmd, data):
-        sendtime = time.time()
         data['uuid'] = str(uuid.uuid1())
         cmd_key = '{}_{}'.format(cmd, data['uuid'])
         mq.lpush(__conf__.SERVICE_LISTKEY, cmd_key)        
