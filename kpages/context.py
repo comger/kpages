@@ -63,6 +63,7 @@ class LogicContext(object):
         self._redis_host = redis_host or __conf__.CACHE_HOST
         self._mongo_host = mongo_host or __conf__.DB_HOST
         self._db_conn = None
+        self._cache = None
         self._sync_db = None
         self._motor_clt = None
 
@@ -78,13 +79,17 @@ class LogicContext(object):
         if self._db_conn:
             self._db_conn.disconnect()
 
-    def get_redis(self):
+    @classmethod
+    def get_redis(cls):
         ''' get redis from context '''
-        host = self._redis_host
+        host = __conf__.CACHE_HOST
         h, p = host.split(":") if ":" in host else (host, 6379)
-        cache = Redis(
-            host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
-        return cache
+
+        if not hasattr(cls,'__cache__') or (cls.__cache__ and not cls.__cache__.ping()):
+            cls.__cache__ = Redis(
+                host=h, port=int(p), socket_timeout=__conf__.SOCK_TIMEOUT)
+
+        return cls.__cache__
 
     def get_gfs(self, name=None):
         ''' get gfs from context '''
