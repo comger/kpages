@@ -17,6 +17,7 @@
         2011-08-28  * 重构 Pack 为一个独立类。
         2011-08-29  * 取消 Timeout。
 """
+import uuid
 import time
 import copy
 import datetime
@@ -84,9 +85,8 @@ class Pack(object):
 
     @staticmethod
     def send_pack(mq, channel, cmd, data):
-        sendtime = time.time()
-        data['sendtime'] = str(sendtime)
-        cmd_key = '{}_{}'.format(cmd, data['sendtime'])
+        data['uuid'] = str(uuid.uuid1())
+        cmd_key = '{}_{}'.format(cmd, data['uuid'])
         mq.lpush(__conf__.SERVICE_LISTKEY, cmd_key)        
         
         pack = dumps(dict(cmd=cmd, data=data), cls=DateTimeEncoder)
@@ -228,9 +228,15 @@ class Service(object):
                         cmd, data = self._consumer.consume()
                         srv_funcs = self._services.get(cmd, ())
 
+<<<<<<< HEAD
                         #if cmd and data:
                         #    cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
                         #    count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
+=======
+                        if cmd and data:
+                            cmd_key = '{}_{}'.format(cmd, data.get('uuid',''))
+                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
+>>>>>>> a27982e477a890ab474342e4008cfb1476ab40d7
 
                         ps = []
                         for func in srv_funcs:
