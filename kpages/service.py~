@@ -228,23 +228,22 @@ class Service(object):
                         cmd, data = self._consumer.consume()
                         srv_funcs = self._services.get(cmd, ())
 
-                        #if cmd and data:
-                        #    cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
-                        #    count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
+                        if cmd and data:
+                            cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
+                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
 
                         ps = []
                         for func in srv_funcs:
-                            #if func.__sub_mode__ == -1 and count==0:
-                            #    continue
+                            if func.__sub_mode__ == -1 and count==0:
+                                continue
 
                             try:
-                                #log_consumer.debug("{}".format(data))
-                                log_consumer.debug("{} -- {} -- {} -- {} -- {}".format(cmd, data.get('sensor_type', ''), data.get('dtime', ''), data.get('ts', ''), data.get('unix_time', '')))
+                                log_consumer.debug("{}".format(data))
                                 func(data)
                             except:
                                 log_consumer.error("{}".format(traceback.format_exc()))
 
-                    except Exception as e :
+                    except Exception as e:
                         log_consumer.error("{}".format(traceback.format_exc()))
                         while True:
                             try:
@@ -308,4 +307,3 @@ Redis.send_pack = Pack.send_pack
 service_async = Pack.async_send_pack
 
 __all__ = ["Consumer", "Service", "srvcmd", "srvtimer", "service_async"]
-
