@@ -228,15 +228,9 @@ class Service(object):
                         cmd, data = self._consumer.consume()
                         srv_funcs = self._services.get(cmd, ())
 
-<<<<<<< HEAD
                         #if cmd and data:
                         #    cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
                         #    count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
-=======
-                        if cmd and data:
-                            cmd_key = '{}_{}'.format(cmd, data.get('uuid',''))
-                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
->>>>>>> a27982e477a890ab474342e4008cfb1476ab40d7
 
                         ps = []
                         for func in srv_funcs:
