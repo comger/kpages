@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 """
-    Reids MQ Service
+    Reids MQ QService
 
 
 
@@ -10,14 +10,13 @@
 
     历史:
         2011-08-03  + srvcmd 装饰器
-        2011-08-04  * 取消 Service callback，改为自动查找 service function。
+        2011-08-04  * 取消 QService callback，改为自动查找 service function。
                     + 增加 _send_pack, _unpack。
-        2011-08-07  * 将 Consumer 从 Service 中分离。便于单元测试使用。
+        2011-08-07  * 将 Consumer 从 QService 中分离。便于单元测试使用。
         2011-08-27  + 新增 service_async 函数。
         2011-08-28  * 重构 Pack 为一个独立类。
         2011-08-29  * 取消 Timeout。
 """
-import uuid
 import time
 import copy
 import datetime
@@ -37,7 +36,6 @@ try:
 except:
     iswin = True
     print 'some function only support unix and linux '
-
 
 from redis import Redis, ConnectionError
 from json import loads, dumps
@@ -86,8 +84,9 @@ class Pack(object):
 
     @staticmethod
     def send_pack(mq, channel, cmd, data):
-        data['uuid'] = str(uuid.uuid1())
-        cmd_key = '{}_{}'.format(cmd, data['uuid'])
+        sendtime = time.time()
+        data['sendtime'] = str(sendtime)
+        cmd_key = '{}_{}'.format(cmd, data['sendtime'])
         mq.lpush(__conf__.SERVICE_LISTKEY, cmd_key)        
         
         pack = dumps(dict(cmd=cmd, data=data), cls=DateTimeEncoder)
@@ -129,9 +128,9 @@ class Consumer(object):
             self._redis.connection_pool.disconnect()
 
 
-class Service(object):
+class QService(object):
     """
-        MQ Service
+        QService
 
         Demo:
             ./service.py [host] [channel]
@@ -229,23 +228,22 @@ class Service(object):
                         cmd, data = self._consumer.consume()
                         srv_funcs = self._services.get(cmd, ())
 
-                        #if cmd and data:
-                        #    cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
-                        #    count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
+                        if cmd and data:
+                            cmd_key = '{}_{}'.format(cmd, data.get('sendtime',''))
+                            count = get_context().get_redis().lrem(__conf__.SERVICE_LISTKEY, cmd_key)
 
                         ps = []
                         for func in srv_funcs:
-                            #if func.__sub_mode__ == -1 and count==0:
-                            #    continue
+                            if func.__sub_mode__ == -1 and count==0:
+                                continue
 
                             try:
-                                #log_consumer.debug("{}".format(data))
-                                log_consumer.debug("{} -- {} -- {} -- {} -- {}".format(cmd, data.get('sensor_type', ''), data.get('dtime', ''), data.get('ts', ''), data.get('unix_time', '')))
+                                log_consumer.debug("{}".format(data))
                                 func(data)
                             except:
                                 log_consumer.error("{}".format(traceback.format_exc()))
 
-                    except Exception as e :
+                    except Exception as e:
                         log_consumer.error("{}".format(traceback.format_exc()))
                         while True:
                             try:
@@ -308,5 +306,4 @@ class Service(object):
 Redis.send_pack = Pack.send_pack
 service_async = Pack.async_send_pack
 
-__all__ = ["Consumer", "Service", "srvcmd", "srvtimer", "service_async"]
-
+__all__ = ["Consumer", "QService", "srvcmd", "srvtimer", "service_async"]
