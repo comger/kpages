@@ -93,13 +93,13 @@ class Pack(object):
     @classmethod
     def async_send_pack(cls, cmd, data, channel=None):
         r = get_context().get_redis()
-        pack = dumps(dict(cmd=cmd, data=data))
+        pack = dumps(dict(cmd=cmd, data=data), cls=DateTimeEncoder)
         r.publish(channel or __conf__.SERVICE_CHANNEL, pack)
 
     @classmethod
     def async_queue(cls, cmd, data, channel=None):
         r = get_context().get_redis()
-        pack = dumps(dict(cmd=cmd, data=data))
+        pack = dumps(dict(cmd=cmd, data=data), cls=DateTimeEncoder)
         r.rpush(channel or __conf__.SERVICE_CHANNEL, pack)
 
 
@@ -151,7 +151,6 @@ class Service(object):
                 channel=self._channel,
                 processes=self._processes,
                 services=self._services,
-                timers = self._timer,
                 debug=__conf__.DEBUG
             )
             callback(**kwargs)
@@ -280,5 +279,5 @@ class Service(object):
 service_async = Pack.async_send_pack
 service_async_queue = Pack.async_queue
 
-__all__ = ["PSConsumer", "Service", "srvcmd", "srvtimer", "service_async"]
+__all__ = ["Service", "srvcmd", "service_async", "srvtimer", "service_async_queue"]
 
