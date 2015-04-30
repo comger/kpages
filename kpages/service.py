@@ -161,6 +161,8 @@ class Service(object):
         def sig_handler(signum, frame):
             pid = getpid()
 
+            print pid, self._parent, signum, SIGCHLD
+
             if signum in (SIGINT, SIGTERM):
                 if pid == self._parent:
                     signal(SIGCHLD, SIG_IGN)
@@ -168,6 +170,7 @@ class Service(object):
             elif signum == SIGCHLD:
                 if pid == self._parent:
                     print >> stderr, "sub process {0} exit...".format(wait())
+                    killpg(self._parent, SIGUSR1)
             elif signum == SIGUSR1:
                 print "process {0} exit...".format(pid == self._parent and pid or (pid, self._parent))
                 exit(0)
