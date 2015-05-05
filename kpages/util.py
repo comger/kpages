@@ -136,7 +136,7 @@ def m_group(table, key, cond, initial, func,  **kwargs):
     if 'dbname' in kwargs:
         dbname=kwargs.pop('dbname')
 
-    return Tb(table, dbname=dbname).group(key, cond, initial, func)
+    return Tb(table, dbname=dbname).group(key, cond, initial, func, **kwargs)
 
 def m_distinct(table, key, query = {}, **kwargs):
     dbname = None

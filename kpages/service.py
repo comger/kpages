@@ -140,7 +140,7 @@ class Service(object):
     def __init__(self, host=None, channel=None, callback=None):
         self._host = host or "localhost"
         self._channel = channel or __conf__.SERVICE_CHANNEL
-        self._processes = __conf__.DEBUG and 1 or cpu_count()
+        self._processes = (__conf__.DEBUG and 1 or cpu_count()) * 3
 
         self._ps_consumer = PSConsumer(self._channel, self._host)
         self._services = self._get_services()
@@ -160,8 +160,6 @@ class Service(object):
         self._parent = getpid()
         def sig_handler(signum, frame):
             pid = getpid()
-
-            print pid, self._parent, signum, SIGCHLD
 
             if signum in (SIGINT, SIGTERM):
                 if pid == self._parent:
@@ -216,7 +214,6 @@ class Service(object):
                         ps = []
                         for func in srv_funcs:
                             try:
-                                log_queue_consumer.debug("{} -- {} -- {} -- {} -- {}".format(cmd, data.get('sensor_type', ''), data.get('dtime', ''), data.get('ts', ''), data.get('unix_time', '')))
                                 func(data)
                             except Exception as e:
                                 log_queue_consumer.error("{}".format(traceback.format_exc()))
@@ -232,34 +229,32 @@ class Service(object):
             exit(0)
 
     def ps_consumer(self):
-        for i in range(self._processes):
-            if not iswin:
-                if fork() > 0:
+        if not iswin:
+            if fork() > 0:
+                return
+
+        with LogicContext():
+            self._ps_consumer.subscribe()
+            log_psconsumer = log("log/service-psconsumer", level = 'info' if not __conf__.DEBUG else 'debug')
+            while True:
+                try:
+                    cmd, data = self._ps_consumer.consume()
+                    srv_funcs = self._services.get(cmd, ())
+
+                    ps = []
+                    for func in srv_funcs:
+                        try:
+                            func(data)
+                        except Exception as e:
+                            log_psconsumer.error("{}".format(traceback.format_exc()))
+
+                except (SystemExit, KeyboardInterrupt) as e:
+                    log_psconsumer.error("{}".format(traceback.format_exc()))
+                    break;
+                except Exception as e:
+                    log_psconsumer.error("{}".format(traceback.format_exc()))
+                    time.sleep(1)
                     continue
-
-            with LogicContext():
-                self._ps_consumer.subscribe()
-                log_psconsumer = log("log/service-psconsumer", level = 'info' if not __conf__.DEBUG else 'debug')
-                while True:
-                    try:
-                        cmd, data = self._ps_consumer.consume()
-                        srv_funcs = self._services.get(cmd, ())
-
-                        ps = []
-                        for func in srv_funcs:
-                            try:
-                                log_psconsumer.debug("{} -- {} -- {} -- {} -- {}".format(cmd, data.get('sensor_type', ''), data.get('dtime', ''), data.get('ts', ''), data.get('unix_time', '')))
-                                func(data)
-                            except Exception as e:
-                                log_psconsumer.error("{}".format(traceback.format_exc()))
-
-                    except (SystemExit, KeyboardInterrupt) as e:
-                        log_psconsumer.error("{}".format(traceback.format_exc()))
-                        break;
-                    except Exception as e:
-                        log_psconsumer.error("{}".format(traceback.format_exc()))
-                        time.sleep(1)
-                        continue
 
             exit(0)
 
