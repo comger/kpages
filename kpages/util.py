@@ -26,7 +26,7 @@ def m_find_one(table, fields=None, **kwargs):
     if 'dbname' in kwargs:
         dbname=kwargs.pop('dbname')
 
-    return mongo_conv(Tb(table, dbname=dbname.lower()).find_one(kwargs, fields)) or {}
+    return mongo_conv(Tb(table, dbname=dbname).find_one(kwargs, fields)) or {}
 
 def m_count(table, **kwargs):
     """
@@ -144,5 +144,26 @@ def m_distinct(table, key, query = {}, **kwargs):
         dbname=kwargs.pop('dbname')
 
     return Tb(table, dbname=dbname).find(query).distinct(key)
+
+def init_page(page):
+    start, end = 1, page.get('page_num')
+
+    page_index = int(page.get('page_index', '1'))
+    page_num = int(page.get('page_num'))
+
+    if page_index >5:
+        start = page_index - 5
+
+    if end >= 10:
+        end = start +9
+
+    if end > page_num:
+        end = page_num
+        start = page_num - 9
+
+    page['start'] = start
+    page['end'] = end
+
+    return page
 
 

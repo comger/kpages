@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "1.1.9.dev"
+version = "1.2.4.dev"
 
 with open('README.md') as f:
     long_description = f.read()

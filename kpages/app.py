@@ -74,9 +74,9 @@ class WebApp(object):
 
     def _run_server(self):
         if __conf__.DEBUG:
-            self._webapp.listen(self._port, address=self._ip)
+            self._webapp.listen(self._port, address=self._ip, max_buffer_size = __conf__.max_buffer_size)
         else:
-            server = HTTPServer(self._webapp, xheaders=True)
+            server = HTTPServer(self._webapp, xheaders=True, max_buffer_size = __conf__.max_buffer_size)
             server.bind(self._port, address=self._ip)
             server.start(0)
         tornado.ioloop.IOLoop.instance().start()

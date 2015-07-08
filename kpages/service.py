@@ -140,7 +140,7 @@ class Service(object):
     def __init__(self, host=None, channel=None, callback=None):
         self._host = host or "localhost"
         self._channel = channel or __conf__.SERVICE_CHANNEL
-        self._processes = (__conf__.DEBUG and 1 or cpu_count()) * 3
+        self._processes = (__conf__.DEBUG and 1 or cpu_count()) * __conf__.CPU_MULTIPLE
 
         self._ps_consumer = PSConsumer(self._channel, self._host)
         self._services = self._get_services()
@@ -191,7 +191,7 @@ class Service(object):
             return svrs
 
         except Exception as e:
-            print '服务加载失败'
+            traceback.print_exc()
             return {}
 
 
