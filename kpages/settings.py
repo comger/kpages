@@ -18,6 +18,8 @@ BIND_IP = None
 SOCK_TIMEOUT = 10
 SOCK_TIMEOUT_MS = None
 
+CPU_MULTIPLE = 5
+
 # SESSION 过期时间(秒)
 SESSION_EXPIRE = 30*24*60*60
 
@@ -65,3 +67,6 @@ GFS_NAME = 'gfs'
 SERVICE_CHANNEL = "channel1"
 
 SERVICE_LISTKEY = "kpages_cmd_list"
+
+max_buffer_size = 104857600 * 10
+
