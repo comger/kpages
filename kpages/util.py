@@ -18,30 +18,6 @@ def m_insert(table, **kwargs):
 
     return str(Tb(table, dbname=dbname).insert(kwargs))
 
-def m_insert_ts(table, mode=0, **kwargs):
-    """
-    时序数据插入保存
-    数据项里必须包含ts 时间字段, ts 数据类型为Datetime,如果ts 为空,ts 默认为当前时间
-    mode: 0 一小时一文档,1 一天一文档,2 一月一文档；默认为0
-    """
-    dbname = None
-    if 'dbname' in kwargs:
-        dbname=kwargs.pop('dbname')
-
-    #check has ts
-    if 'ts' not in kwargs:
-        return 'Not Time Seriers Model'
-
-    if not type(kwargs['ts']) == datetime:
-        return 'ts date type is not python datetime'
-
-    if mode ==0 :
-        dtime = kwargs['ts']
-        itemkey = '{}{}{}'.format(dbname,table,)
-        date = datetime(dtime.year,dtime.month,dtime.day)
-        item = Tb(table, dbname=dbname).find_one(dict(_id=date))
-
-        
 
 def m_find_one(table, fields=None, **kwargs):
     """
