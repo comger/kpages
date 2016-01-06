@@ -75,7 +75,10 @@ def get_members(dirs, member_filter=None):
 
     ms = {}
     for path in dirs:
-        ms.update(_get_members(path,member_filter=member_filter))
+        try:
+            ms.update(_get_members(path,member_filter=member_filter))
+        except Exception as e:
+            print e
 
     return ms
 

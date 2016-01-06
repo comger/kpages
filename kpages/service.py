@@ -37,6 +37,7 @@ except:
     iswin = True
     print 'some function only support unix and linux '
 
+
 from redis import Redis, ConnectionError
 from json import loads, dumps
 
