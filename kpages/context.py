@@ -19,6 +19,7 @@ try:
     from pymongo import Connection, MongoClient
     import asyncmongo
     import motor
+    from motor.motor_tornado import MotorClient
 except Exception as e:
     print e.message
 
@@ -124,19 +125,13 @@ class LogicContext(object):
         db = asyncmongo.Client(pool_id=dbname, host = h, port = int(p), dbname = dbname, **kwargs)
         return db
 
-    @gen.coroutine
     def get_motor(self, name=None):
-        ''' yield  motor client '''
+        ''' motor client '''
         name = name or __conf__.DB_NAME
         if not self._motor_clt:
-            result, err = (yield gen.Task(
-                motor.MotorClient(host=self._mongo_host).open, )).args
-            if err:
-                #raise err
-                print err
-            self._motor_clt = result
+            self._motor_clt = MotorClient(host=__conf__.DB_HOST)
 
-        raise gen.Return(self._motor_clt[name])
+        return self._motor_clt[name]
 
 
     def session(self, key, val=None, expire= None):
