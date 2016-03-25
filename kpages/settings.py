@@ -70,3 +70,7 @@ SERVICE_LISTKEY = "kpages_cmd_list"
 
 max_buffer_size = 104857600 * 10
 
+
+RPC_PORT = 8080
+RPC_DIR = ('rpc',)
+
