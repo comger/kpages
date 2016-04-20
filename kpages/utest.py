@@ -20,13 +20,16 @@ from inspect import isclass, ismethod, getmembers
 from unittest import TestCase, TextTestRunner, TestSuite
 from utility import _get_members
 
+def load_testcase(module=None):
+    _filter = lambda m: isclass(m) and issubclass(m, TestCase) and not m==TestCase
+    testcases = _get_members(
+        __conf__.UTEST_DIR, member_filter=_filter, in_module=module)
+    
+    return testcases
 
 def load_testsuites(module=None):
     """ load all test cases in module, if module==None,all test cases in utest dir """
-    _filter = lambda m: isclass(m) and issubclass(m, TestCase)
-    testcases = _get_members(
-        __conf__.UTEST_DIR, member_filter=_filter, in_module=module)
-
+    testcases = load_testcase(module)
     _suites = {}
     for name, cls in testcases.items():
         for n, m in getmembers(cls):
@@ -36,7 +39,7 @@ def load_testsuites(module=None):
     return _suites
 
 
-def run_test(line=None):
+def load_testsuites_bypath(line=None):
     _suites = []
     if not line:
         _suites = load_testsuites().values()
@@ -51,6 +54,12 @@ def run_test(line=None):
             _suites = suites.get('utest.' + line)
         elif len(ls) == 1:
             _suites = suites.values()
+    
+    return _suites
+   
+
+def run_test(line=None):
+    _suites = load_testsuites_bypath(line)
 
     print "Unittest:"
     print _suites

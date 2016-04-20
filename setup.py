@@ -25,7 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "1.2.4.dev"
+version = "1.2.6.dev"
 
 with open('README.md') as f:
     long_description = f.read()
@@ -56,7 +56,7 @@ distutils.core.setup(
     url="http://github.com/comger/kpages",
     license="http://www.apache.org/licenses/LICENSE-2.0",
     description="kpages is api-centric web application framework for the Tornado and Mongodb",
-    scripts=['kpages/kpages_init.py','kpages/kpages_web.py','kpages/kpages_service.py','kpages/kpages_tool.py'],
+    scripts=['kpages/kpages_init.py','kpages/kpages_web.py','kpages/kpages_service.py','kpages/kpages_tool.py','kpages/kpages_rpc.py'],
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
@@ -67,8 +67,8 @@ distutils.core.setup(
     ],
     long_description=long_description,
     keywords=["pymongo", "gridfs", "profile","tornado", "redis", "session", "router","MQ"],
-    install_requires=['pymongo', 'redis', 'tornado','asyncmongo','threadpool'],
-    setup_requires=[ 'pymongo', 'redis', 'tornado','asyncmongo','threadpool'],
+    install_requires=['pymongo', 'redis', 'tornado==4.0','asyncmongo','threadpool'],
+    setup_requires=[ 'pymongo', 'redis', 'tornado==4.0','asyncmongo','threadpool'],
     cmdclass={'test': PyTest},
     **kwargs
 )

@@ -61,19 +61,19 @@ def url(pattern=None, order=0):
     return actual
 
 
-def load_handlers(handler_dir='action'):
+def load_handlers(handler_dir='action', member_filter=None):
     ''' load all handler in dirs '''
     dirs = handler_dir
     if isinstance(handler_dir, str):
         dirs = (handler_dir,)
     handlers = []
     for path in dirs:
-        handlers.extend(_load_handlers(path))
+        handlers.extend(_load_handlers(path, member_filter=member_filter))
 
     return handlers
 
 
-def _load_handlers(handler_dir='action'):
+def _load_handlers(handler_dir='action', member_filter=None):
     '''
         Load handler_dir's Handler
         Demo:
@@ -84,8 +84,10 @@ def _load_handlers(handler_dir='action'):
     path = app_path(handler_dir)
     sys.path.append(os.getcwd())
     py_filter = lambda f: fnmatch(f, '*.py') and not f.startswith('__')
-    member_filter = lambda m: isinstance(
-        m, type) and hasattr(m, '__urls__') and m.__urls__
+
+    if not member_filter:
+        member_filter = lambda m: isinstance(
+            m, type) and hasattr(m, '__urls__') and m.__urls__
 
     names = [os.path.splitext(n)[0] for n in os.listdir(path) if py_filter(n)]
     modules = [__import__(
