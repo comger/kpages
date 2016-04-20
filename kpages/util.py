@@ -93,6 +93,17 @@ def m_update(table, query, upsert = False, **kwargs):
     Tb(table, dbname=dbname).update(query, {'$set': kwargs}, upsert = upsert, multi = True)
     return True
 
+def m_update_original(table, query, doc, upsert = False, **kwargs):
+    """
+        复杂自定义更新逻辑
+    """
+    dbname = None
+    if 'dbname' in kwargs:
+        dbname=kwargs.pop('dbname')
+
+    Tb(table, dbname=dbname).update(query, doc, upsert = upsert, multi = True)
+    return True
+
 def m_unset(table, query, fields, **kwargs):
     """
         fields: ['col1', 'col2']
