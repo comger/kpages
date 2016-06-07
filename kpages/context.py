@@ -13,15 +13,11 @@ from hashlib import sha1
 
 from tornado.web import RequestHandler
 from tornado.websocket import WebSocketHandler
-try:
-    from gridfs import GridFS
-    from redis import Redis, ConnectionPool
-    from pymongo import Connection, MongoClient
-    import asyncmongo
-    import motor
-    from motor.motor_tornado import MotorClient
-except Exception as e:
-    print e.message
+from gridfs import GridFS
+
+from redis import Redis
+from pymongo import MongoClient
+from motor.motor_tornado import MotorClient
 
 session_id = lambda: sha1('%s%s' % (os.urandom(16), time.time())).hexdigest()
 
@@ -97,33 +93,6 @@ class LogicContext(object):
         name = name or __conf__.GFS_NAME
         return GridFS(self.get_mongo(name))
 
-    def get_mongo(self, name=None):
-        '''
-        get temp  mongodb by connection
-        '''
-        name = name or __conf__.DB_NAME
-        if not self._db_conn:
-            self._db_conn = Connection(host=__conf__.DB_HOST,
-                                       network_timeout=__conf__.SOCK_TIMEOUT)
-
-        return self._db_conn[name]
-
-
-    def get_async_mongo(self, name=None):
-        """ get motor client"""
-        name = name or __conf__.DB_NAME
-        if not self._sync_db:
-            self._sync_db = motor.MotorClient(
-                host=__conf__.DB_HOST).open_sync()[name]
-
-        return self._sync_db
-
-
-    def get_asyncmongo(self, dbname=None, **kwargs):
-        dbname = dbname or __conf__.DB_NAME
-        h, p = self._mongo_host.split(":") if ":" in self._mongo_host else (self._mongo_host, 27017)
-        db = asyncmongo.Client(pool_id=dbname, host = h, port = int(p), dbname = dbname, **kwargs)
-        return db
 
     def get_motor(self, name=None):
         ''' motor client '''
