@@ -114,9 +114,9 @@ class LogicContext(object):
         self.get_redis().delete(key)
 
     @classmethod
-    def get_context(cls, db_host):
+    def get_context(cls, **kwargs):
         return hasattr(cls._thread_local, "contexts") and cls._thread_local.contexts and \
-            cls._thread_local.contexts[-1] or cls(mongo_host=db_host)
+            cls._thread_local.contexts[-1] or cls(mongo_host=kwargs.get('db_host'))
 
     @classmethod 
     def get_mongoclient(cls, name=None):
