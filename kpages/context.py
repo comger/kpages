@@ -91,7 +91,7 @@ class LogicContext(object):
     def get_gfs(self, name=None):
         ''' get gfs from context '''
         name = name or __conf__.GFS_NAME
-        return GridFS(self.get_mongo(name))
+        return GridFS(self.get_mongoclient(name = name))
 
 
     def get_motor(self, name=None):
