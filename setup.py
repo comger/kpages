@@ -25,10 +25,7 @@ except ImportError:
 
 kwargs = {}
 
-version = "1.3.4.dev"
-
-with open('README.md') as f:
-    long_description = f.read()
+version = "1.3.8"
 
 class PyTest(distutils.core.Command):
     user_options = []
@@ -65,10 +62,7 @@ distutils.core.setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    long_description=long_description,
     keywords=["pymongo", "gridfs", "profile","tornado", "redis", "session", "router","MQ"],
-    install_requires=['pymongo', 'redis', 'tornado==4.0','asyncmongo','threadpool', 'motor==0.5'],
-    setup_requires=[ 'pymongo', 'redis', 'tornado==4.0','asyncmongo','threadpool', 'motor==0.5'],
     cmdclass={'test': PyTest},
     **kwargs
 )

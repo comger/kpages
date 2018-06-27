@@ -110,7 +110,8 @@ class PSConsumer(object):
         self._host = host
 
     def subscribe(self):
-        self._redis = Redis(host=self._host) 
+        h, p = self._host.split(":") if ":" in self._host else (self._host, 6379)
+        self._redis = Redis(host=h, port = p)
         self._pubsub = self._redis.pubsub()
         self._pubsub.subscribe(self._channel)
 
