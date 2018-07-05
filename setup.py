@@ -25,10 +25,8 @@ except ImportError:
 
 kwargs = {}
 
-version = "1.3.6.dev"
 
-with open('README.md') as f:
-    long_description = f.read()
+version = "1.3.8"
 
 class PyTest(distutils.core.Command):
     user_options = []
@@ -65,7 +63,6 @@ distutils.core.setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    long_description=long_description,
     keywords=["pymongo", "gridfs", "profile","tornado", "redis", "session", "router","MQ"],
     cmdclass={'test': PyTest},
     **kwargs
