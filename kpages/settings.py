@@ -62,7 +62,7 @@ DB_HOST = "localhost"
 # 数据库名
 DB_NAME = "test"
 
-GFS_NAME = 'gfs'
+GFS_NAME = DB_NAME
 
 SERVICE_CHANNEL = "channel1"
 
