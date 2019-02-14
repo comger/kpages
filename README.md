@@ -138,11 +138,12 @@ data is like {'name':'youname','sex':1,'pwd':'xdssss'}
 
 ## test command
 ```
-run_test(test_city.DemoCase.testprint) :test testprint method
-run_test(test_city.DemoCase)           :test methods in DemoCase class
-run_test(test_city)                    :test methods in test_city.py
-run_test(all )                         :test methods in app's __conf__.UTEST_DIR
+    kpages_tool.py --test test_label.LabelCase.test_update :test test_update method
+    kpages_tool.py --test test_label.LabelCase           :test methods in LabelCase class
+    kpages_tool.py --test test_label                    :test methods in test_label.py
+    kpages_tool.py --test all                          :test methods in app's __conf__.UTEST_DIR
 ```
+
 
 ## pro command
 ```
