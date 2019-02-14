@@ -35,10 +35,14 @@ try:
     iswin = False
 except:
     iswin = True
-    print 'some function only support unix and linux '
+    print('some function only support unix and linux ')
 
 
-from redis import Redis, ConnectionError
+try:
+    from redis import Redis, ConnectionError
+except:
+    print("Redis is no exist!")
+
 from json import loads, dumps
 
 from context import LogicContext, get_context
@@ -172,7 +176,7 @@ class Service(object):
                     print >> stderr, "sub process {0} exit...".format(wait())
                     killpg(self._parent, SIGUSR1)
             elif signum == SIGUSR1:
-                print "process {0} exit...".format(pid == self._parent and pid or (pid, self._parent))
+                print("process {0} exit...".format(pid == self._parent and pid or (pid, self._parent)))
                 exit(0)
 
         signal(SIGINT, sig_handler)
@@ -268,7 +272,7 @@ class Service(object):
             self.ps_consumer()
             self._queue_consumer()
         except RuntimeError:
-            print "Is running?"
+            print("Is running?")
             exit(-1)
 
         #添加代码改动监控

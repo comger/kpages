@@ -20,4 +20,4 @@ if __name__ == '__main__':
     to_path = app_path(path)
     _file = zipfile.ZipFile(from_path)
     _file.extractall(to_path)
-    print 'init project at:',to_path
+    print('init project at:',to_path)

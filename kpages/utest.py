@@ -61,8 +61,8 @@ def load_testsuites_bypath(line=None):
 def run_test(line=None):
     _suites = load_testsuites_bypath(line)
 
-    print "Unittest:"
-    print _suites
+    print("Unittest:")
+    print(_suites)
     TextTestRunner().run(TestSuite(_suites))
 
 

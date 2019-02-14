@@ -37,6 +37,6 @@ if __name__ == "__main__":
 
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
-        print 'exit tool '
+        print('exit tool ')
 
 # vim: ts=4 sw=4 sts=4 expandtab

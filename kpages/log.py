@@ -72,7 +72,7 @@ def test():
     else:
         mylog = log("test")
               
-    print "Log testing ..."
+    print("Log testing ...")
     mylog.debug('This is a debug message')
     mylog.info('This is an info message')
     mylog.error('This is an error message')

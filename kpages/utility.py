@@ -78,7 +78,7 @@ def get_members(dirs, member_filter=None):
         try:
             ms.update(_get_members(path,member_filter=member_filter))
         except Exception as e:
-            print e
+            print(e)
 
     return ms
 

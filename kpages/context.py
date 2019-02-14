@@ -13,11 +13,22 @@ from hashlib import sha1
 
 from tornado.web import RequestHandler
 from tornado.websocket import WebSocketHandler
-from gridfs import GridFS
 
-from redis import Redis
-from pymongo import MongoClient
-from motor.motor_tornado import MotorClient
+try:
+    from pymongo import MongoClient
+    from gridfs import GridFS
+except:
+    print("pymongo is no exist!")
+
+try:
+    from redis import Redis
+except:
+    print("Redis is no exist!")
+
+try:
+    from motor.motor_tornado import MotorClient
+except:
+    print("motor is no exist!")
 
 session_id = lambda: sha1('%s%s' % (os.urandom(16), time.time())).hexdigest()
 
@@ -61,7 +72,6 @@ class LogicContext(object):
         self._mongo_host = mongo_host or __conf__.DB_HOST
         self._db_conn = None
         self._cache = None
-        self._sync_db = None
         self._motor_clt = None
 
     def __enter__(self):

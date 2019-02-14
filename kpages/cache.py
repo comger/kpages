@@ -45,7 +45,7 @@ class Cache(object):
 if __name__ == '__main__':
     Cache().setex(1, 2, 6)
     for i in range(10):
-        print Cache().get(1)
+        print(Cache().get(1))
         time.sleep(1)
 
     import tornado.ioloop

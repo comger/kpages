@@ -20,21 +20,20 @@ def _show_info(**kwargs):
     services = kwargs.pop("services")
     settings = kwargs
 
-    print "MQ Service, version 0.9.2011.08"
-    print
+    print("MQ Service, version 0.9.2011.08")
 
-    print "Parameters:"
+
+    print("Parameters:")
     for k in sorted(settings.keys()):
         if k.startswith("__"):
             continue
-        print "  {0:<20} : {1}".format(k.upper(), settings[k])
+        print("  {0:<20} : {1}".format(k.upper(), settings[k]))
 
-    print
 
-    print "Services:"
+
+    print("Services:")
     pprint(services)
 
-    print
 
 
 def _get_opt():

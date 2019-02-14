@@ -73,22 +73,22 @@ def run():
 
 def callback(handlers):
     settings = __conf__.__dict__
-    print "Start time: {0}".format(datetime.now().isoformat(" "))
-    print "Config Params"
+    print("Start time: {0}".format(datetime.now().isoformat(" ")))
+    print("Config Params")
     for k in sorted(settings.keys()):
         if k.startswith("__"):
             continue
-        print "  {0:<40} : {1}".format(k, settings[k])
+        print("  {0:<40} : {1}".format(k, settings[k]))
     
-    print
-    print "RPC Router Handlers"
+
+    print("RPC Router Handlers")
     for h in handlers:
-        print '  {0:<50} : {1}'.format(h[1],h[0])
+        print('  {0:<50} : {1}'.format(h[1],h[0]))
 
 if __name__ == "__main__":
     try:
         run()
     except KeyboardInterrupt:
-        print 'exit server '
+        print('exit server ')
 
 # vim: ts=4 sw=4 sts=4 expandtab

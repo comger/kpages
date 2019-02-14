@@ -28,9 +28,9 @@ class ConsistentHash(object):
                 hsh = self._hash(key)
                 
                 self._hosts[str(hsh)] = host
-                print bisect_right(self._ring, hsh),hsh,host
+                print(bisect_right(self._ring, hsh),hsh,host)
                 self._ring.insert(bisect_right(self._ring, hsh), hsh)
-                print self._ring
+                print(self._ring)
 
 
     def _hash(self,s):
@@ -69,14 +69,14 @@ if __name__ == '__main__':
 
     for h in sorted(count.iterkeys()):
         c = count[h]
-        print "{0:15} {1:8} {2:8.2f}%".format(h, c, float(c) / avg * 100)
+        print("{0:15} {1:8} {2:8.2f}%".format(h, c, float(c) / avg * 100))
 
         if c< avg*0.6:
-            print "ERROR", h,c
+            print("ERROR", h,c)
     '''
     
     dh = 'asdfasd'
     hosts = ["192.168.1.%d" % i for i in xrange(1, 5)]
     ch = ConsistentHash(hosts,replicas=10)
-    print ch.get_host(dh)
+    print(ch.get_host(dh))
 
