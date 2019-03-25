@@ -100,6 +100,8 @@ def _load_handlers(handler_dir='action', member_filter=None):
         ret.update(members)
     return _sorted_hanlders(ret.values())
 
+
+
 def _sorted_hanlders(handlers):
     ''' sort handlers '''
     handlers = [(pattern, order, h) for h in handlers for pattern,

@@ -26,7 +26,7 @@ except ImportError:
 kwargs = {}
 
 
-version = "1.4.0"
+version = "1.4.1"
 
 class PyTest(distutils.core.Command):
     user_options = []

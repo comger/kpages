@@ -6,7 +6,7 @@
 import tornado.ioloop
 
 from optparse import OptionParser
-from kpages import LogicContext, run_test, pro_test, reflesh_config, set_default_encoding
+from kpages import LogicContext, run_test, pro_test, run_doc, reflesh_config, set_default_encoding
 
 
 def _get_opt():
@@ -14,6 +14,7 @@ def _get_opt():
     parser.add_option("--config", dest="config",
                       default='setting.py', help="config for app")
     parser.add_option("--test", dest="test", default=None, help="utest module")
+    parser.add_option("--doc", dest="doc", default=None, help="doc all router api to markdown")
     parser.add_option(
         "--pro", dest="pro", default=None, help="profile for method")
     return parser.parse_args()
@@ -34,6 +35,10 @@ if __name__ == "__main__":
         elif opts.pro is not None:
             with LogicContext():
                 pro_test(opts.pro)
+
+        elif opts.doc is not None:
+            with LogicContext():
+                run_doc(opts.doc)
 
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:

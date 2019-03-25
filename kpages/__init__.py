@@ -5,3 +5,4 @@ from utility import *
 from app import *
 from utest import *
 from service import *
+from api2doc import *

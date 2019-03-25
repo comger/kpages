@@ -99,42 +99,7 @@ class DemoHandler(ContextHandler,tornado.web.RequestHandler):
         self.session(key,val)
 ```
 
-## How to use model
-```
-class Demo(Model):
-    _name = 'collection_name'
-    _fields = dict(
-        name = CharField(required=True),
-        sex = IntField(label='sex',initial=1,required=True),
-        pwd = CharField(label='password')
-    )
 
-
-m = Demo()
-m = Demo(dbname)
-master = ModelMaster()
-# set dbname for Master's model
-master = ModelMaster(dbname)
-
-# get attr, this method can auto create temp model; set collection name as modelname_model
-m = master.modelname
-
-# call get attr
-m = master(modelname)
-
-# call get attr and temp dbname 
-m = master(modelname,dbname)
-
-_id = m.insert(data)
-m.update(_id, c = 'acd')
-obj = m.info(_id)
-m.remove(_id)
-cursor = m.page(page=1,size=10,**condition)
-
-#parse requesthandler arguments to model
-data = m.fetch_data(requesthandler)
-data is like {'name':'youname','sex':1,'pwd':'xdssss'}
-```
 
 ## test command
 ```
@@ -145,12 +110,9 @@ data is like {'name':'youname','sex':1,'pwd':'xdssss'}
 ```
 
 
-## pro command
+## doc command
 ```
-pro_test(test_city.DemoCase.testprint) :profile testprint method
-pro_test(test_city.DemoCase)           :profile methods in DemoCase class
-pro_test(test_city)                    :profile methods in test_city.py
-pro_test(all)                          :profile methods in app's __conf__.UTEST_DIR
+    kpages_tool.py --doc all                    : auto gen all restful api to apis.md with markdown
 
 ```
 
