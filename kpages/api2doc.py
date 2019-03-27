@@ -46,7 +46,9 @@ def _load_api(handler_dir='action', member_filter=None):
             print(k, v, v.__module__)
             for _method in mts:
                 _mt = getattr(v, _method)
-                if _mt:
+                #import pdb;pdb.set_trace()
+                #todo if method in private for subclass 
+                if _mt and _mt.__doc__:
                     mt_doc = dict(method=_method, url=v.__urls__, doc=_mt.__doc__, func=_mt)
                     apis.append(mt_doc)
 
