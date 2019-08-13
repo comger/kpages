@@ -14,8 +14,9 @@ import sys
 import profile
 from fnmatch import fnmatch
 from inspect import isclass, ismethod, getmembers
-from utility import _get_members, app_path
-from router import load_handlers
+
+from kpages.utility import _get_members, app_path
+from kpages.router import load_handlers
 
 
 def _load_api(handler_dir='action', member_filter=None):
@@ -34,7 +35,7 @@ def _load_api(handler_dir='action', member_filter=None):
     modules = [__import__(
         "{0}.{1}".format(handler_dir, n)).__dict__[n] for n in names]
 
-    mts = ('get','post','put','patch','delete')
+    mts = ('get', 'post', 'put', 'patch', 'delete')
 
     rets = []
     for m in modules:        

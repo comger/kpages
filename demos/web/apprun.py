@@ -6,6 +6,8 @@
 import sys
 import json
 
+sys.path.append('../../')
+
 from datetime import datetime
 from pprint import pprint
 from kpages import run
@@ -14,14 +16,15 @@ def callback(app):
 
     print("Start time: {0}".format(datetime.now().isoformat(" ")))
     print("Config Params")
+    
     for k in sorted(app.settings.keys()):
         if k.startswith("__"):
             continue
-        print("  {0:<40} : {1}".format(k, app.settings[k]))
+        print("{0:<40}:{1}".format(k, app.settings[k]))
 
     print("Router Handlers")
     for h in app.handlers:
-        print('  {0:<50} : {1}'.format(h[1],h[0]))
+        print('{0:<50}:{1}'.format(str(h[1]),str(h[0])))
 
 if __name__ == "__main__":
     try:

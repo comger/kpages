@@ -1,4 +1,4 @@
-EBUG = True
+DEBUG = True
 DB_NAME = 'kpages'
 DB_HOST = 'localhost'
 PORT = 8888

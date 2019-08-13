@@ -4,8 +4,9 @@
 """
 import os
 import sys
+import imp
 import datetime
-import __builtin__
+import builtins
 from types import ModuleType
 from bson.objectid import ObjectId
 from fnmatch import fnmatch
@@ -90,7 +91,7 @@ def not_empty(*args):
 
 def refresh_config(*args):
     '''
-        reflesh setting.py to __builtin__
+        reflesh setting.py to builtins
 
         demo: reflesh_config('setting.py.txt','cacheconfig.py.txt')
         use like : __conf__.DB_HOST
@@ -99,20 +100,20 @@ def refresh_config(*args):
         args = ()
 
     dct = {}
-    import settings
+    from kpages import settings
     dct.update(settings.__dict__)
 
     pys = map(app_path, args)
     for py in pys:
         if os.path.exists(py):
-            execfile(py, dct)
+            exec(compile(open(py, "rb").read(), py, 'exec'), dct)
 
     module = ModuleType("__conf__")
     for k, v in dct.items():
         if not k.startswith("__"):
             setattr(module, k, v)
 
-    __builtin__.__conf__ = module
+    builtins.__conf__ = module
 
 reflesh_config = refresh_config
 
@@ -133,14 +134,9 @@ def mongo_conv(d):
 
 def set_default_encoding():
     import sys
-    import locale
-    reload(sys)
+    imp.reload(sys)
 
-    lang, coding = locale.getdefaultlocale()
-    if not coding:
-        coding = 'utf-8'
 
-    sys.setdefaultencoding(coding)
 
 __all__ = ["app_path", "not_empty", "refresh_config", "reflesh_config", "mongo_conv",
-           "set_default_encoding", "get_modules", "get_members","lpro"]
+           "set_default_encoding", "get_modules", "get_members", "lpro"]

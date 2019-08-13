@@ -16,6 +16,7 @@ from tornado.websocket import WebSocketHandler
 
 try:
     from pymongo import MongoClient
+    from pymongo.errors import AutoReconnect
     from gridfs import GridFS
 except:
     print("pymongo is no exist!")
@@ -39,20 +40,25 @@ class ContextHandler(object):
     """
     def _execute(self, transforms, *args, **kwargs):
         ''' select base handler for self '''
-        with LogicContext():
-            get_context().handler = self
-            if isinstance(self, WebSocketHandler):
-                WebSocketHandler._execute(self, transforms, *args, **kwargs)
-            elif isinstance(self, RequestHandler):
-                RequestHandler._execute(self, transforms, *args, **kwargs)
+        try:
+            with LogicContext():
+                get_context().handler = self
+                if isinstance(self, WebSocketHandler):
+                    WebSocketHandler._execute(self, transforms, *args, **kwargs)
+                elif isinstance(self, RequestHandler):
+                    RequestHandler._execute(self, transforms, *args, **kwargs)
+        except AutoReconnect as e:
+            print(e)
 
     def session(self, key, val=None):
         ''' session for handler '''
         return get_context().session(self.get_redis_key(key), val)
-    
+
+
     def clear_session(self, key):
         get_context().clear_session(self.get_redis_key(key))
-    
+
+
     def get_redis_key(self, key):
         _id = self.get_secure_cookie('session_id', None)
         if not _id:
@@ -119,9 +125,11 @@ class LogicContext(object):
         '''
         expire = expire or __conf__.SESSION_EXPIRE
         return self.get_redis().setex(key, val, expire) if val else self.get_redis().get(key)
-    
+
+
     def clear_session(self, key):
         self.get_redis().delete(key)
+
 
     @classmethod
     def get_context(cls, **kwargs):
@@ -137,7 +145,7 @@ class LogicContext(object):
         if not hasattr(cls,'__mongoclient__'):
             cls.__mongoclient__ = MongoClient(host = __conf__.DB_HOST,
                 socketTimeoutMS = __conf__.SOCK_TIMEOUT_MS)
-        
+
         return cls.__mongoclient__[name]
     
 
@@ -148,7 +156,7 @@ class LogicContext(object):
 
         if not hasattr(cls, '__replicaset__'):
             cls.__replicaset__ = MongoReplicaSetClient(hosts, replicaSet=relicaSet)
-            
+
         return cls.__replicaset__
 
 

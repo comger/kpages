@@ -9,7 +9,7 @@ import sys
 import tornado.web
 from fnmatch import fnmatch
 from inspect import getmembers
-from utility import app_path
+from kpages.utility import app_path
 
 
 def reg_ui_method(name=None, intro=None):
@@ -48,14 +48,14 @@ def url(pattern=None, order=0):
         assert(issubclass(handler, tornado.web.RequestHandler))
         if not hasattr(handler, "__urls__") or not handler.__urls__:
             handler.__urls__ = []
-        
+
         if not pattern:
-            p = '/{0}/{1}'.format(handler.__module__,handler.__name__).lower()
-            p = p.replace('.','/')
+            p = '/{0}/{1}'.format(handler.__module__, handler.__name__).lower()
+            p = p.replace('.', '/')
             handler.__urls__.append((p, 0))
         else:
-            handler.__urls__.append((pattern,order))
-        
+            handler.__urls__.append((pattern, order))
+
         return handler
 
     return actual
@@ -106,7 +106,8 @@ def _sorted_hanlders(handlers):
     ''' sort handlers '''
     handlers = [(pattern, order, h) for h in handlers for pattern,
                 order in h.__urls__]
-    handlers.sort(cmp=cmp, key=lambda x: x[1])
+
+    handlers.sort(key=lambda x: x[1])
     return [(pattern, handler) for pattern, _, handler in handlers]
 
 

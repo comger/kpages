@@ -4,14 +4,11 @@
     author comger@gmail.com
 """
 
-import tornado
-
-from kpages import url, ContextHandler
+import tornado.web
+from kpages import url, ContextHandler, get_context
 
 
 @url(r"/")
-class IndexHandler(ContextHandler,tornado.web.RequestHandler):
+class IndexHandler(tornado.web.RequestHandler, ContextHandler):
     def get(self):
         self.write('Hello world!')
-
-

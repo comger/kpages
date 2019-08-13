@@ -18,13 +18,13 @@ import os
 import profile
 from inspect import isclass, ismethod, getmembers
 from unittest import TestCase, TextTestRunner, TestSuite
-from utility import _get_members
+from kpages.utility import _get_members
 
 def load_testcase(module=None):
     _filter = lambda m: isclass(m) and issubclass(m, TestCase) and not m==TestCase
     testcases = _get_members(
         __conf__.UTEST_DIR, member_filter=_filter, in_module=module)
-    
+
     return testcases
 
 def load_testsuites(module=None):
@@ -56,7 +56,7 @@ def load_testsuites_bypath(line=None):
             _suites = suites.values()
     
     return _suites
-   
+
 
 def run_test(line=None):
     _suites = load_testsuites_bypath(line)

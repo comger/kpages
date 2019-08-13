@@ -11,9 +11,9 @@ from tornado.options import define, options
 from inspect import isclass
 from tornado.httpserver import HTTPServer
 from optparse import OptionParser, OptionGroup
-from router import load_handlers
-from context import LogicContext
-from utility import refresh_config, app_path, set_default_encoding,get_members
+from kpages.router import load_handlers
+from kpages.context import LogicContext
+from kpages.utility import refresh_config, app_path, set_default_encoding, get_members
 
 def get_ui_modules():
     """
@@ -70,16 +70,20 @@ class WebApp(object):
                     "ui_methods":self.uimethods,
                     "xsrf_cookies": __conf__.XSRF_COOKIES}
 
+        
         return tornado.web.Application(self._handlers, **settings)
+
 
     def _run_server(self):
         if __conf__.DEBUG:
+            print('web app')
             self._webapp.listen(self._port, address=self._ip, max_buffer_size = __conf__.max_buffer_size)
         else:
             server = HTTPServer(self._webapp, xheaders=True, max_buffer_size = __conf__.max_buffer_size)
             server.bind(self._port, address=self._ip)
             server.start(0)
-        tornado.ioloop.IOLoop.instance().start()
+        #tornado.ioloop.IOLoop.instance().start()
+        tornado.ioloop.IOLoop.current().start()
 
     def run(self):
         if self._callback:
