@@ -6,3 +6,4 @@ from kpages.app import *
 from kpages.utest import *
 from kpages.service import *
 from kpages.api2doc import *
+import kpages.mongo_util

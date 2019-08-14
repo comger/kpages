@@ -26,7 +26,7 @@ except ImportError:
 kwargs = {}
 
 
-version = "2.0.0"
+version = "2.0.3"
 
 class PyTest(distutils.core.Command):
     user_options = []
@@ -66,6 +66,8 @@ distutils.core.setup(
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
     keywords=["pymongo", "gridfs", "profile", "tornado", "redis", "session", "router", "MQ"],
+    install_requires=['pymongo==3.8.0', 'tornado==6.0.3', 'threadpool==1.3.2', 'motor==2.0.0'],
+    setup_requires=['pymongo==3.8.0', 'tornado==6.0.3', 'threadpool==1.3.2', 'motor==2.0.0'],
     cmdclass={'test': PyTest},
     **kwargs
 )
