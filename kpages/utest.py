@@ -16,7 +16,8 @@
 """
 import os
 import profile
-from inspect import isclass, ismethod, getmembers
+import asyncio
+from inspect import isclass, isfunction, getmembers
 from unittest import TestCase, TextTestRunner, TestSuite
 from kpages.utility import _get_members
 
@@ -33,7 +34,7 @@ def load_testsuites(module=None):
     _suites = {}
     for name, cls in testcases.items():
         for n, m in getmembers(cls):
-            if n.startswith("test") and ismethod(m):
+            if n.startswith("test") and isfunction(m):
                 _suites["{0}.{1}".format(name, n)] = TestSuite((cls(n),))
 
     return _suites
@@ -72,4 +73,25 @@ def pro_test(m):
     profile.runctx("_run()", globals(), locals())
 
 
-__al__ = ['run_test', 'pro_test']
+class AioTestCase(TestCase):
+    
+    # noinspection PyPep8Naming
+    def __init__(self, methodName='runTest', loop=None):
+        self.loop = loop or asyncio.get_event_loop()
+        self._function_cache = {}
+        super(AioTestCase, self).__init__(methodName=methodName)
+
+    def coroutine_function_decorator(self, func):
+        def wrapper(*args, **kw):
+            return self.loop.run_until_complete(func(*args, **kw))
+        return wrapper
+
+    def __getattribute__(self, item):
+        attr = object.__getattribute__(self, item)
+        if asyncio.iscoroutinefunction(attr):
+            if item not in self._function_cache:
+                self._function_cache[item] = self.coroutine_function_decorator(attr)
+            return self._function_cache[item]
+        return attr
+
+__all__ = ['run_test', 'pro_test','AioTestCase']

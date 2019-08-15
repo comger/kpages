@@ -66,8 +66,8 @@ distutils.core.setup(
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
     keywords=["pymongo", "gridfs", "profile", "tornado", "redis", "session", "router", "MQ"],
-    install_requires=['pymongo==3.8.0', 'tornado==6.0.3', 'threadpool==1.3.2', 'motor==2.0.0'],
-    setup_requires=['pymongo==3.8.0', 'tornado==6.0.3', 'threadpool==1.3.2', 'motor==2.0.0'],
+    install_requires=['tornado==6.0.3', 'threadpool==1.3.2', 'motor==2.0.0','asyncio==3.4.3'],
+    setup_requires=['tornado==6.0.3', 'threadpool==1.3.2', 'motor==2.0.0','asyncio==3.4.3'],
     cmdclass={'test': PyTest},
     **kwargs
 )
