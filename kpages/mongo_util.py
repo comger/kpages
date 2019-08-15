@@ -76,7 +76,14 @@ async def m_count(table, **kwargs):
 async def m_insert(table, **kwargs):
     """ 简单插入 """
     tb, kwargs = get_tb(table, **kwargs)
-    _id = await tb.insert(kwargs)
+    _id = await tb.insert_one(kwargs)
+    return str(_id)
+
+
+async def m_insert_many(table, lst, **kwargs):
+    """ 批量插入 """
+    tb, kwargs = get_tb(table, **kwargs)
+    _id = await tb.insert_many(lst)
     return str(_id)
 
 
