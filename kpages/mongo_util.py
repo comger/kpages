@@ -63,12 +63,12 @@ def get_motor(**kwargs):
 
 def get_tb(table, **kwargs):
     """ 获取 Motor mongodb collection """
-    db,kwargs= get_motor(**kwargs)
+    db, kwargs = get_motor(**kwargs)
     return db[table], kwargs
 
 
 async def m_count(table, **kwargs):
-    """ 统计数据记录数量 """
+    """统计数据记录数量 """
     tb, kwargs = get_tb(table, **kwargs)
     return await tb.count_documents(kwargs)
 
@@ -78,6 +78,7 @@ async def m_insert(table, **kwargs):
     tb, kwargs = get_tb(table, **kwargs)
     _id = await tb.insert(kwargs)
     return str(_id)
+
 
 async def m_find_one(table, fields=None, **kwargs):
     """ 获取单条数据记录 """
@@ -118,11 +119,8 @@ async def m_list(table, fields=None, sorts=None, **kwargs):
 
 async def m_aggregate(table, pipeline, **kwargs):
     """ aggregate """
-    db,kwargs= get_motor(**kwargs)
-    plan = await db.command(
-        'aggregate', table,
-        pipeline=pipeline,
-        explain=True)
+    db, kwargs = get_motor(**kwargs)
+    plan = await db.command('aggregate', table, pipeline=pipeline, explain=True)
     return plan
 
 
@@ -130,4 +128,58 @@ async def m_distinct(table, key, **kwargs):
     """ distinct """
     tb, kwargs = get_tb(table, **kwargs)
     return await tb.distinct(key, filter=kwargs)
+
+
+async def m_update(table, query, upsert = False, **kwargs):
+    """简单更新逻辑"""
+    tb, kwargs = get_tb(table, **kwargs)
+    await tb.update(query, {'$set': kwargs}, upsert = upsert, multi = True)
+    return True
+
+
+async def m_update_original(table, query, doc, upsert = False, **kwargs):
+    """
+        复杂自定义更新逻辑
+    """
+    tb, kwargs = get_tb(table, **kwargs)
+    await tb.update(query, doc, upsert = upsert, multi = True)
+    return True
+
+
+async def m_unset(table, query, fields, **kwargs):
+    """ 删除字段
+        fields:[f,f2]
+    """
+    unset = {}
+    for item in fields:
+        unset[item] = 1
+    tb, kwargs = get_tb(table, **kwargs)
+    await tb.update(query, {'$unset': unset}, multi = True)
+    return True
+
+
+async def m_add_to_set(table, query, upsert=False, **kwargs):
+    """ 追加列表 """
+    tb, kwargs = get_tb(table, **kwargs)
+    await tb.update(query, {'$addToSet': kwargs}, upsert = upsert)
+    return True
+
+async def m_pull(table, query, **kwargs):
+    """ 
+    追加列表
+    fields: {字段: 值}
+    """
+    tb, kwargs = get_tb(table, **kwargs)
+    await tb.update(query, {'$pull': kwargs})
+    return True
+
+async def m_group(table, key, cond, initial, func,  **kwargs):
+    """group """
+    tb, kwargs = get_tb(table, **kwargs)
+    return await tb.group(key, cond, initial, func, **kwargs)
+
+async def m_map_reduce(table, m, r, output, **kwargs):
+    """ map reduce """
+    tb, kwargs = get_tb(table, **kwargs)
+    return await tb.map_reduce(m, r, output, **kwargs)
 
