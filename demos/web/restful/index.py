@@ -7,7 +7,8 @@
 import tornado.web
 from bson import ObjectId
 
-from kpages import url, ContextHandler, get_context,mongo_util
+from kpages import url, ContextHandler, get_context
+from logic import mongo_util
 
 @url(r"/")
 class IndexHandler(tornado.web.RequestHandler, ContextHandler):
@@ -44,3 +45,17 @@ class DictHandler(tornado.web.RequestHandler, ContextHandler):
     async def get(self):
         rs = await mongo_util.m_distinct('alarm', 'code')
         self.write(dict(arr=rs))
+
+
+@url(r"/crud")
+class CURDHandler(tornado.web.RequestHandler, ContextHandler):
+    async def get(self):
+        dbname = 'comgertest'
+        table = 'sensors'
+        #_id = await mongo_util.m_insert(table, name='comger', age=12, dbname=dbname)
+        #_id = ObjectId(_id)
+        #await mongo_util.m_update(table, {'_id': _id}, age=30, dbname=dbname)
+        #await mongo_util.m_update(table, {'_id': 1}, age=1, upsert=True, dbname=dbname)
+        await mongo_util.m_update(table, {'_id':{'$lt':ObjectId("5d59ffba7819221bf09c96a1")}}, tz=1, multi=True, dbname=dbname)
+        #doc = await mongo_util.m_find_one(table, _id=_id, dbname=dbname)
+        self.write('ok')

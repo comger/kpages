@@ -12,7 +12,7 @@ doc = await m_util.m_find_one(table,  **{'_id':1})
 """
 import datetime
 import motor.motor_tornado
-from bson import ObjectId
+from bson import ObjectId, SON
 
 
 def mongo_conv(d):
@@ -76,15 +76,15 @@ async def m_count(table, **kwargs):
 async def m_insert(table, **kwargs):
     """ 简单插入 """
     tb, kwargs = get_tb(table, **kwargs)
-    _id = await tb.insert_one(kwargs)
-    return str(_id)
+    doc = await tb.insert_one(kwargs)
+    return str(doc.inserted_id)
 
 
 async def m_insert_many(table, lst, **kwargs):
     """ 批量插入 """
     tb, kwargs = get_tb(table, **kwargs)
-    _id = await tb.insert_many(lst)
-    return str(_id)
+    await tb.insert_many(lst)
+
 
 
 async def m_find_one(table, fields=None, **kwargs):
@@ -97,7 +97,7 @@ async def m_find_one(table, fields=None, **kwargs):
 async def m_del(table, fields=None, **kwargs):
     """ 删除数据记录 """
     tb, kwargs = get_tb(table, **kwargs)
-    await tb.remove(kwargs, fields)
+    await tb.delete_many(kwargs)
     return True
 
 
@@ -127,7 +127,7 @@ async def m_list(table, fields=None, sorts=None, **kwargs):
 async def m_aggregate(table, pipeline, **kwargs):
     """ aggregate """
     db, kwargs = get_motor(**kwargs)
-    plan = await db.command('aggregate', table, pipeline=pipeline, explain=True)
+    plan = await db.command(SON([("aggregate", table), ("pipeline", pipeline)]))
     return plan
 
 
@@ -140,7 +140,12 @@ async def m_distinct(table, key, **kwargs):
 async def m_update(table, query, upsert = False, **kwargs):
     """简单更新逻辑"""
     tb, kwargs = get_tb(table, **kwargs)
-    await tb.update(query, {'$set': kwargs}, upsert = upsert, multi = True)
+    multi = kwargs.pop('multi', False)
+    if multi:
+        await tb.update_many(query, {'$set': kwargs})
+    else:
+        await tb.update_one(query, {'$set': kwargs}, upsert = upsert)
+
     return True
 
 
@@ -149,7 +154,7 @@ async def m_update_original(table, query, doc, upsert = False, **kwargs):
         复杂自定义更新逻辑
     """
     tb, kwargs = get_tb(table, **kwargs)
-    await tb.update(query, doc, upsert = upsert, multi = True)
+    await tb.replace_one(query, doc, upsert = upsert)
     return True
 
 
@@ -189,4 +194,5 @@ async def m_map_reduce(table, m, r, output, **kwargs):
     """ map reduce """
     tb, kwargs = get_tb(table, **kwargs)
     return await tb.map_reduce(m, r, output, **kwargs)
+
 
